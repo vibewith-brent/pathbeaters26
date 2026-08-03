@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Path Beaters '26 · Spanish Peaks Loop</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --fri: #2a78d6;
+    --sat: #eb6834;
+    --sun: #1baf7a;
+    --mon: #eda100;
+    --camp: #4a3aa7;
+    --fri-tint: rgba(42,120,214,0.09);
+    --sat-tint: rgba(235,104,52,0.09);
+    --sun-tint: rgba(27,175,122,0.10);
+    --mon-tint: rgba(237,161,0,0.10);
+    --neutral-tint: rgba(11,11,11,0.045);
+    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 4px 14px rgba(11,11,11,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px 72px; }
+  h1, h2, h3 { line-height: 1.2; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(34px, 6.5vw, 56px); font-weight: 700; letter-spacing: -0.025em; }
+  h2 { font-size: clamp(20px, 3.2vw, 26px); font-weight: 600; margin-bottom: 6px; }
+  h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  section { margin-top: clamp(48px, 8vw, 80px); scroll-margin-top: 64px; }
+  .kicker {
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px; font-weight: 600;
+  }
+  .sub { color: var(--ink-2); max-width: 70ch; font-size: 15.5px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px; box-shadow: var(--shadow);
+  }
+  a { color: var(--fri); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* sticky nav */
+  nav.top {
+    position: sticky; top: 0; z-index: 500;
+    background: rgba(249,249,247,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--grid);
+  }
+  nav.top .inner {
+    max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 6px;
+    padding: 10px 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  nav.top .inner::-webkit-scrollbar { display: none; }
+  @media (max-width: 640px) {
+    nav.top .brand { display: none; }
+    nav.top .inner {
+      mask-image: linear-gradient(to right, #000 86%, transparent);
+      -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
+    }
+  }
+  nav.top .brand { font-weight: 700; font-size: 13px; letter-spacing: 0.06em; white-space: nowrap; margin-right: 10px; color: var(--ink); }
+  nav.top .brand span { color: var(--sat); }
+  nav.top a.lnk {
+    font-size: 13px; color: var(--ink-2); white-space: nowrap; padding: 5px 11px; border-radius: 999px;
+  }
+  nav.top a.lnk:hover { background: var(--neutral-tint); text-decoration: none; color: var(--ink); }
+
+  /* hero */
+  .hero { position: relative; overflow: hidden; }
+  .hero img { width: 100%; height: clamp(380px, 62vh, 560px); object-fit: cover; display: block; }
+  .hero .scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(8,10,14,0.25) 0%, rgba(8,10,14,0.02) 38%, rgba(8,10,14,0.66) 100%);
+  }
+  .hero .hero-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px clamp(20px, 4.5vw, 40px) 58px; color: #fff; }
+  .hero .badge {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #fff; background: rgba(235,104,52,0.92); border-radius: 999px; padding: 6px 16px; margin-bottom: 14px;
+  }
+  .hero h1 { color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
+  .hero .dates { margin-top: 8px; font-size: clamp(14px, 2.4vw, 17px); color: rgba(255,255,255,0.94); }
+  .hero .credit { position: absolute; right: 12px; top: 10px; font-size: 10.5px; color: rgba(255,255,255,0.85); text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: -34px; position: relative; z-index: 5; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+  }
+  .stat .v { font-size: clamp(18px, 2.8vw, 23px); letter-spacing: -0.01em; font-weight: 600; }
+  .stat .l { font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 3px; }
+
+  /* figures */
+  figure.photo { margin: 0; border-radius: 14px; overflow: hidden; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  figure.photo img { width: 100%; display: block; height: 100%; object-fit: cover; }
+  figure.photo figcaption { padding: 10px 14px; font-size: 12.5px; color: var(--ink-2); }
+  figure.photo figcaption .cr { color: var(--muted); }
+  .photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+  .photo-pair .tall img { aspect-ratio: 3 / 3.4; }
+  @media (max-width: 700px) { .photo-pair { grid-template-columns: 1fr; } }
+
+  /* calendar */
+  .cal-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; }
+  .cal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; min-width: 640px; box-shadow: var(--shadow); }
+  .cal-head, .cal-row { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cal-head div {
+    padding: 10px 0; text-align: center; font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--grid);
+  }
+  .cal-row div {
+    min-height: 64px; padding: 8px 9px; border-bottom: 1px solid var(--grid);
+    border-right: 1px solid var(--grid); font-size: 13px; color: var(--muted);
+  }
+  .cal-row div:last-child { border-right: none; }
+  .cal-row:last-child div { border-bottom: none; }
+  .cal-row .trip { color: var(--ink); }
+  .cal-row .trip .tag { display: block; font-size: 11.5px; color: var(--ink-2); margin-top: 3px; line-height: 1.35; }
+  .cal-row .t-neutral { background: var(--neutral-tint); }
+  .cal-row .t-fri { background: var(--fri-tint); box-shadow: inset 3px 0 0 var(--fri); }
+  .cal-row .t-sat { background: var(--sat-tint); box-shadow: inset 3px 0 0 var(--sat); }
+  .cal-row .t-sun { background: var(--sun-tint); box-shadow: inset 3px 0 0 var(--sun); }
+  .cal-row .t-mon { background: var(--mon-tint); box-shadow: inset 3px 0 0 var(--mon); }
+
+  .timeline { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 18px; }
+  @media (max-width: 900px) { .timeline { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .timeline { grid-template-columns: repeat(2, 1fr); } }
+  .tcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 13px 14px; border-top: 3px solid var(--baseline); font-size: 12.5px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
+  }
+  .tcard.c-fri { border-top-color: var(--fri); }
+  .tcard.c-sat { border-top-color: var(--sat); }
+  .tcard.c-sun { border-top-color: var(--sun); }
+  .tcard.c-mon { border-top-color: var(--mon); }
+  .tcard .d { font-size: 13.5px; color: var(--ink); font-weight: 600; }
+  .tcard .dt { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 7px; }
+  .tcard p { color: var(--ink-2); margin-bottom: 6px; }
+  .tcard .sleep { color: var(--ink); font-size: 12px; margin-top: auto; padding-top: 8px; border-top: 1px solid var(--grid); }
+
+  /* map */
+  #map { height: clamp(340px, 55vh, 560px); border-radius: 14px; border: 1px solid var(--border); background: var(--surface); z-index: 0; box-shadow: var(--shadow); }
+  #map-fallback { display: none; padding: 40px; text-align: center; color: var(--ink-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px 22px; margin-top: 14px; font-size: 13px; color: var(--ink-2); }
+  .legend .item { display: flex; align-items: center; gap: 8px; }
+  .chip { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; border: 2px solid var(--ink); background: var(--surface); }
+  .dot.site { width: 10px; height: 10px; border: 2px solid var(--camp); }
+  .leaflet-popup-content { font-family: "Inter", system-ui, sans-serif; font-size: 13px; line-height: 1.45; }
+  .leaflet-popup-content .pn { font-weight: 600; }
+  .leaflet-popup-content .pe { color: #52514e; }
+
+  /* profile */
+  .profile-box { position: relative; padding: 14px 6px 6px; }
+  .profile-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  #profile { width: 100%; min-width: 690px; height: auto; display: block; }
+  #tip {
+    position: absolute; pointer-events: none; display: none;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
+    padding: 6px 10px; font-size: 12.5px; color: var(--ink); box-shadow: 0 2px 8px rgba(11,11,11,0.08);
+    white-space: nowrap; z-index: 2;
+  }
+  #tip .td { color: var(--ink-2); }
+
+  /* tables */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--surface); }
+  th {
+    text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--grid); white-space: nowrap;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--grid); color: var(--ink-2); vertical-align: top; }
+  td:first-child { color: var(--ink); }
+  tr:last-child td { border-bottom: none; }
+  .tbl { border: 1px solid var(--border); border-radius: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--surface); box-shadow: var(--shadow); }
+  .scroll-hint { position: relative; }
+  @media (max-width: 760px) {
+    .scroll-hint::after {
+      content: ""; position: absolute; top: 1px; right: 1px; bottom: 1px; width: 30px;
+      background: linear-gradient(to right, rgba(252,252,251,0), var(--surface));
+      pointer-events: none; border-radius: 0 14px 14px 0;
+    }
+  }
+  .tbl table { min-width: 560px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .rec td { background: var(--sun-tint); }
+
+  /* camp cards */
+  .sites { display: grid; gap: 14px; margin-top: 20px; }
+  .site-card { border-left: 3px solid var(--camp); }
+  .site-card .cap { display: block; width: fit-content; font-size: 11.5px; font-weight: 600; color: var(--ink); background: var(--neutral-tint); border-radius: 999px; padding: 2px 11px; margin: 6px 0 2px; }
+  .site-card .meta { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+  .site-card p { color: var(--ink-2); margin-bottom: 6px; }
+  .site-card .fb { font-size: 13px; color: var(--ink-2); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--grid); }
+
+  /* weather */
+  .wx { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+  @media (max-width: 860px) { .wx { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .wx { grid-template-columns: 1fr; } }
+  .wx .card { padding: 16px 18px; }
+  .wx .big { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+  .wx .lab { font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+  .wx p { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+
+  /* pack grid */
+  .pack { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 18px; }
+  .pack ul { margin: 8px 0 0 18px; color: var(--ink-2); }
+  .pack li { margin-bottom: 5px; }
+  .pack .hd { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+
+  /* day-by-day */
+  .days { display: grid; gap: 14px; margin-top: 20px; }
+  .day-card { border-left: 3px solid var(--baseline); }
+  .day-card.c-fri { border-left-color: var(--fri); }
+  .day-card.c-sat { border-left-color: var(--sat); }
+  .day-card.c-sun { border-left-color: var(--sun); }
+  .day-card.c-mon { border-left-color: var(--mon); }
+  #bears .cols { align-items: start; }
+  .day-card .meta { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+  .day-card ul, .plain ul { margin: 6px 0 0 18px; color: var(--ink-2); }
+  .day-card li, .plain li { margin-bottom: 5px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+
+  /* tradition rail */
+  .years { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+  .yearchip {
+    font-size: 12.5px; font-weight: 600; color: var(--ink-2); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .yearchip:hover { color: var(--ink); background: var(--neutral-tint); }
+  .yearchip span { color: var(--muted); font-weight: 400; }
+  .yearchip.is-active { background: var(--sat); border-color: var(--sat); color: #fff; }
+  .yearchip.is-active span { color: rgba(255,255,255,0.85); }
+  .rail-wrap { position: relative; margin-top: 14px; }
+  .rail {
+    display: grid; grid-auto-flow: column; grid-auto-columns: min(76vw, 290px); gap: 14px;
+    overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+    padding: 4px 4px 16px; scroll-padding-left: 4px;
+  }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-track { background: var(--grid); border-radius: 999px; }
+  .rail::-webkit-scrollbar-thumb { background: var(--baseline); border-radius: 999px; }
+  .rail figure {
+    scroll-snap-align: start; margin: 0; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); position: relative;
+  }
+  .rail img { width: 100%; height: 300px; object-fit: cover; display: block; }
+  .rail .yb {
+    position: absolute; top: 10px; left: 10px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em;
+    color: #fff; background: rgba(11,11,11,0.72); border-radius: 999px; padding: 3px 11px;
+  }
+  .rail figcaption { padding: 9px 13px 11px; font-size: 12.5px; color: var(--ink-2); }
+  .rail figcaption .when { color: var(--muted); }
+
+  .check { list-style: none; margin-left: 0 !important; }
+  .check li { padding-left: 26px; position: relative; margin-bottom: 6px; color: var(--ink-2); }
+  .check li::before {
+    content: ""; position: absolute; left: 2px; top: 5px; width: 12px; height: 12px;
+    border: 1.5px solid var(--baseline); border-radius: 3px;
+  }
+  footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--grid); font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: underline; }
+  footer .pb { font-weight: 700; letter-spacing: 0.06em; color: var(--ink-2); }
+  footer .pb span { color: var(--sat); }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="brand">PATH BEATERS <span>'26</span></span>
+    <a class="lnk" href="#plan">Plan</a>
+    <a class="lnk" href="#map-sec">Map</a>
+    <a class="lnk" href="#camps">Camps</a>
+    <a class="lnk" href="#weather">Weather</a>
+    <a class="lnk" href="#pack">Pack</a>
+    <a class="lnk" href="#days">Day by day</a>
+    <a class="lnk" href="#summits">Summits</a>
+    <a class="lnk" href="#tradition">The tradition</a>
+    <a class="lnk" href="#checklist">Checklist</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <img src="images/hero_spanish_peaks_pano.jpg"
+       srcset="images/hero_spanish_peaks_pano_1000.jpg 1000w, images/hero_spanish_peaks_pano.jpg 3840w"
+       sizes="100vw" alt="North face of the Spanish Peaks above the Spanish Creek valley" fetchpriority="high">
+  <div class="scrim"></div>
+  <div class="credit">Spanish Peaks from Spanish Creek valley · Mike Cline · CC BY-SA 4.0</div>
+  <div class="hero-text">
+    <span class="badge">Path Beaters '26</span>
+    <h1>Spanish Peaks Loop</h1>
+    <div class="dates">Lee Metcalf Wilderness · Madison Range, Montana · September 16 – 21, 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<div class="stats">
+  <div class="stat"><div class="v num">~20 mi</div><div class="l">loop · no shuttle</div></div>
+  <div class="stat"><div class="v num">+5,500 ft</div><div class="l">total climb</div></div>
+  <div class="stat"><div class="v num">9,435 ft</div><div class="l">high point</div></div>
+  <div class="stat"><div class="v num">3</div><div class="l">nights on trail</div></div>
+  <div class="stat"><div class="v">None</div><div class="l">permits needed</div></div>
+  <div class="stat"><div class="v">Grizzly</div><div class="l">spray + canister</div></div>
+</div>
+
+<section id="plan">
+  <div class="kicker">The plan</div>
+  <h2>Six days, door to door</h2>
+  <p class="sub">Fly into Salt Lake, stage at Dad's in Pocatello, drive up Thursday, and walk a lake-to-lake loop
+  through the Spanish Peaks with three camps: the Spanish Lakes, the Jerome Rock Lakes, and a warm last night
+  on lower Falls Creek that turns Monday into a short stroll to the van and an afternoon flight out of Bozeman.</p>
+
+  <div class="scroll-hint" style="margin-top: 18px;">
+  <div class="cal-scroll">
+  <div class="cal">
+    <div class="cal-head"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+    <div class="cal-row"><div></div><div></div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div></div>
+    <div class="cal-row"><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div></div>
+    <div class="cal-row">
+      <div>13</div><div>14</div><div>15</div>
+      <div class="trip t-neutral">16<span class="tag">Fly into SLC · drive to Pocatello · gear night</span></div>
+      <div class="trip t-neutral">17<span class="tag">Drive to Spanish Creek TH · sleep at trailhead</span></div>
+      <div class="trip t-fri">18<span class="tag">Hike to Spanish Lakes · camp 1</span></div>
+      <div class="trip t-sat">19<span class="tag">Divide + Lake Solitude · camp 2</span></div>
+    </div>
+    <div class="cal-row">
+      <div class="trip t-sun">20<span class="tag">Day-hike am · move to camp 3</span></div>
+      <div class="trip t-mon">21<span class="tag">Dawn exit · BZN flights</span></div>
+      <div>22</div><div>23</div><div>24</div><div>25</div><div>26</div>
+    </div>
+    <div class="cal-row"><div>27</div><div>28</div><div>29</div><div>30</div><div></div><div></div><div></div></div>
+  </div>
+  </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tcard">
+      <div class="dt">Wed Sept 16</div><div class="d">Travel + stage</div>
+      <p>Fly into SLC, consolidate into the Sprinter, drive to Pocatello (~2.5 hr). Gear sort, food, fuel canisters.</p>
+      <div class="sleep">Sleep: Pocatello (beds)</div>
+    </div>
+    <div class="tcard">
+      <div class="dt">Thu Sept 17</div><div class="d">Drive to trailhead</div>
+      <p>Pocatello → Spanish Creek TH (~4.5–5 hr) via Butte and Bozeman. Register, pack check, water top-off.</p>
+      <div class="sleep">Sleep: trailhead (van / cabin)</div>
+    </div>
+    <div class="tcard c-fri">
+      <div class="dt">Fri Sept 18</div><div class="d">Hike in</div>
+      <p>~8 mi, +2,900 ft. Flat first 3 mi along the creek, then the climb. Camp on the west Spanish Lake.</p>
+      <div class="sleep">Camp 1 · Spanish Lakes · 8,830 ft</div>
+    </div>
+    <div class="tcard c-sat">
+      <div class="dt">Sat Sept 19</div><div class="d">The divide</div>
+      <p>~4.5 mi over the 9,435-ft divide, long lunch at Lake Solitude. In camp by ~1 pm.</p>
+      <div class="sleep">Camp 2 · Jerome Rock Lakes · ~8,830 ft</div>
+    </div>
+    <div class="tcard c-sun">
+      <div class="dt">Sun Sept 20</div><div class="d">Day-hike + move</div>
+      <p>Light-pack morning around the lakes. ~2–3 pm: 3.5 mi down Falls Creek to the low camp.</p>
+      <div class="sleep">Camp 3 · lower Falls Creek · ~7,150 ft</div>
+    </div>
+    <div class="tcard c-mon">
+      <div class="dt">Mon Sept 21</div><div class="d">Dawn exit</div>
+      <p>Hiking by 7:00, past Pioneer Falls, at the van by ~10. BZN is an hour away. Van returns south.</p>
+      <div class="sleep">Fliers home · van south</div>
+    </div>
+  </div>
+</section>
+
+<section id="map-sec">
+  <div class="kicker">Route</div>
+  <h2>The map: four legs, three camps</h2>
+  <p class="sub" style="margin-bottom: 16px;">Tap any marker for details. Purple dots are the campsites we're aiming for,
+  loaded as waypoints in the group GPX along with the divide, the junction, and Pioneer Falls.</p>
+  <div id="map"><div id="map-fallback">Map tiles need an internet connection. All coordinates live in the GPX.</div></div>
+  <div class="legend">
+    <span class="item"><span class="chip" style="background:var(--fri)"></span>Fri · hike in</span>
+    <span class="item"><span class="chip" style="background:var(--sat)"></span>Sat · the divide</span>
+    <span class="item"><span class="chip" style="background:var(--sun)"></span>Sun · camp move</span>
+    <span class="item"><span class="chip" style="background:var(--mon)"></span>Mon · hike out</span>
+    <span class="item"><span class="dot"></span>Waypoint</span>
+    <span class="item"><span class="dot site"></span>Campsite</span>
+  </div>
+</section>
+
+<section id="profile-sec">
+  <div class="kicker">Elevation</div>
+  <h2>The shape of the four days</h2>
+  <p class="sub" style="margin-bottom: 16px;">One real climb (Friday), one pass day (Saturday), then it's all downhill.
+  Hover or tap for point values; scroll sideways on a phone.</p>
+  <div class="card profile-box">
+    <div class="profile-scroll">
+      <svg id="profile" viewBox="0 0 980 330" role="img" aria-label="Elevation profile of the four-day loop"></svg>
+    </div>
+    <div id="tip"></div>
+  </div>
+</section>
+
+<section id="camps">
+  <div class="kicker">Camps</div>
+  <h2>Where we sleep</h2>
+  <p class="sub">Three camps, each picked for group-of-six-plus space. The first two are big established lakeside sites
+  (site numbers match the waypoints in the GPX); the last is a warm, sheltered night in the timber that sets up the easy exit.</p>
+
+  <div class="photo-pair">
+    <figure class="photo"><img src="images/spanish_lakes_camp.jpg" alt="Campers and tents at sunset in the Spanish Lakes basin" loading="lazy">
+      <figcaption>Camp 1's basin: an evening at the Spanish Lakes. <span class="cr">USDA Forest Service, July 2023.</span></figcaption>
+    </figure>
+    <figure class="photo tall"><img src="images/spanish_lakes.jpg" alt="Spanish Lakes shoreline and headwall" loading="lazy">
+      <figcaption>The Spanish Lakes sit at 8,800 ft under the divide headwall. <span class="cr">USDA Forest Service.</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="sites">
+    <div class="card site-card">
+      <h3>Friday · Spanish Lakes, west lake NW shore <span class="cap">Site 56 · fits 15+</span></h3>
+      <div class="meta">6,000 sq ft of flat ground · open forest · 30 ft to the creek · 50 ft off the trail</div>
+      <p>The biggest site in the basin and the group anchor: room for every tent with a real kitchen area. It's an
+      outfitter-style camp, so expect a big fire ring and some horse sign; that's the price of flat ground for eight.</p>
+      <div class="fb"><strong>If it's taken</strong> (Friday basins fill, so we arrive mid-afternoon): Site 66, then 61,
+      working south along the west shore; Site 52 is the small quiet one right off the trail.</div>
+    </div>
+    <div class="card site-card">
+      <h3>Saturday · Jerome Rock Lakes, upper lake <span class="cap">Site 18 · fits 7–10</span></h3>
+      <div class="meta">1,800 sq ft · open forest · 50 ft to the lake · right beside the trail</div>
+      <p>Home for the trip's best afternoon: the three-lake circuit, crest viewpoints, and six hours of light.
+      Overflow tents go at sites 15/16/17 within a couple hundred yards; 15 is tucked in the trees, the most sheltered spot.</p>
+      <div class="fb"><strong>Bonus options on the walk in:</strong> Lake Solitude (mile 2.5, sites 29/31, both huge) if
+      weather says stop early, and quiet Upper Falls Creek Lake (mile 3.4, site 25) if we want the basin to ourselves.</div>
+    </div>
+    <div class="card site-card">
+      <h3>Sunday · lower Falls Creek <span class="cap">~7,150 ft</span></h3>
+      <div class="meta">Timbered creek bottom · warmest night of the trip · ~2 hr above the van</div>
+      <p>Dispersed camp on a bench above the creek: pick a flat spot in the trees 200 ft off the water, above the
+      Pioneer Falls gorge. Trading the alpine view for a mild night and a two-hour Monday is the move that makes
+      the afternoon flights work.</p>
+      <div class="fb"><strong>Running late Sunday?</strong> Drop even lower; every step down shrinks Monday.</div>
+    </div>
+  </div>
+</section>
+
+<section id="weather">
+  <div class="kicker">Conditions</div>
+  <h2>What September gives us up there</h2>
+  <p class="sub">Mid-September in the Madison Range is the sweet spot: stable weather, no bugs, gold in the meadows.
+  It is also genuinely cold at night at 8,800 ft. Plan for summer days and winter nights.</p>
+  <div class="wx">
+    <div class="card"><div class="lab">Days</div><div class="big">45–60°F</div>
+      <p>Sunny hiking weather; T-shirt warm in the sun, chilly the second you stop in shade or wind.</p></div>
+    <div class="card"><div class="lab">Nights</div><div class="big">20s–30s</div>
+      <p>Hard freezes at both high camps. Water bottles ice up; camp shoes and a puffy are not optional.</p></div>
+    <div class="card"><div class="lab">Daylight</div><div class="big">12h 20m</div>
+      <p>Sunrise 7:08, sunset 7:30. First usable light ~6:40 am, fully dark by 8 pm. Headlamps for dinner.</p></div>
+    <div class="card"><div class="lab">Sky</div><div class="big">Watch PM</div>
+      <p>Afternoon storms build fast on the divide; cross it in the morning. Late-season snow is possible above 9,000 ft.</p></div>
+    <div class="card"><div class="lab">Wind</div><div class="big">Exposed</div>
+      <p>Camps 1 and 2 sit in open basins. Pitch tents for wind, not for the view; the view is everywhere anyway.</p></div>
+    <div class="card"><div class="lab">Water</div><div class="big">Everywhere*</div>
+      <p>*Except the divide. Lakes and creeks all four days; carry 2 L leaving camp Saturday for the high traverse. Filter everything.</p></div>
+  </div>
+</section>
+
+<section id="pack">
+  <div class="kicker">Packing</div>
+  <h2>What to bring</h2>
+  <p class="sub">The freeze at the high camps sets the list. If your sleeping bag isn't rated to 20°F, fix that first;
+  everything else is standard early-fall alpine kit.</p>
+  <div class="pack">
+    <div class="card">
+      <div class="hd">Wear / hike in</div>
+      <ul>
+        <li>Sun hoody or tee + hiking pants/shorts</li>
+        <li>Broken-in boots or trail runners</li>
+        <li>Wool socks (3 pairs for the trip)</li>
+        <li>Sun hat + sunglasses + sunscreen</li>
+        <li>Trekking poles: 3,000 ft of rocky downhill Sunday–Monday</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="hd">Warm layers</div>
+      <ul>
+        <li>Real puffy (down or synthetic)</li>
+        <li>Fleece or midlayer</li>
+        <li>Beanie + gloves</li>
+        <li>Wind shell for the divide, rain shell regardless</li>
+        <li>Base layer top + bottom to sleep in</li>
+        <li>Microspikes only if snow shows in the forecast</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="hd">Sleep + camp</div>
+      <ul>
+        <li>20°F bag (this is the non-negotiable)</li>
+        <li>Insulated pad, R-value 4+</li>
+        <li>Camp shoes for frosty mornings</li>
+        <li>Headlamp + fresh batteries</li>
+        <li>2 L water capacity + filter</li>
+        <li>Camp mug for the summit-night pour</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="hd">Group + bear kit</div>
+      <ul>
+        <li>Bear spray on every hip belt (grizzly country)</li>
+        <li>IGBC bear canisters, food split across them</li>
+        <li>Stoves + fuel (bought in Pocatello; can't fly with it)</li>
+        <li>Satellite messenger (no cell service anywhere on the loop)</li>
+        <li>Paper map + the group GPX on two phones</li>
+        <li>First-aid kit + repair bits</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="days">
+  <div class="kicker">Day by day</div>
+  <h2>On the trail</h2>
+
+  <div class="photo-pair" style="margin-bottom: 6px;">
+    <figure class="photo"><img src="images/south_fork_trail.jpg" alt="Backpackers on the South Fork Spanish Creek Trail" loading="lazy">
+      <figcaption>Friday's approach up the South Fork Spanish Creek Trail. <span class="cr">USDA Forest Service.</span></figcaption>
+    </figure>
+    <figure class="photo"><img src="images/hiker_near_spanish_lakes.jpg" alt="Hiker on granite near the Spanish Lakes" loading="lazy">
+      <figcaption>Granite country near the Spanish Lakes. <span class="cr">USDA Forest Service.</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="days">
+    <div class="card day-card c-fri">
+      <h3>Friday: trailhead to Spanish Lakes</h3>
+      <div class="meta">~8 mi · +2,900 ft · 6,100 → 8,830 ft · 5–6.5 hr · on trail by 8:30</div>
+      <ul>
+        <li>Three flat, fast miles along the creek to warm up; the Falls Creek junction we'll come back down Monday passes at mile 3.</li>
+        <li>The climb is all in the back half: ~1,500 ft through miles 5–7. Steady pace, plenty of breaks.</li>
+        <li>In camp by ~3 pm at Site 56. Fill bottles and cook before dark; the freeze comes fast once the sun drops.</li>
+        <li>Evening option: walk up tomorrow's trail toward the divide for sunset on the crest, headlamps back down.</li>
+      </ul>
+    </div>
+    <div class="card day-card c-sat">
+      <h3>Saturday: over the divide, past Lake Solitude</h3>
+      <div class="meta">~4.5 mi · over the 9,435-ft divide at mile 1.7 · ~4 hr · carry 2 L from camp</div>
+      <ul>
+        <li>Short climb out of the basin to the trip's high point and its best view. We cross in the morning, before any weather builds.</li>
+        <li>Mile 2.5: Lake Solitude sits right off the trail. Long lunch, maybe a very brave swim.</li>
+        <li>Mile 3.4: Upper Falls Creek Lake, the last water before camp.</li>
+        <li>In camp by ~1 pm with six hours of light: the three-lake circuit, a crest viewpoint, fishing, or aggressive napping.</li>
+      </ul>
+    </div>
+    <div class="card day-card c-sun">
+      <h3>Sunday: play morning, then the camp move</h3>
+      <div class="meta">Morning light packs · then 3.5 mi, −1,500 ft, ~2 hr · camp at ~7,150 ft</div>
+      <ul>
+        <li>Morning is free: finish the lakes circuit, tag a crest point, or hike back up to Solitude without packs.</li>
+        <li>~2–3 pm: down Falls Creek. The first mile is the steep, rocky bit; poles out, take it easy.</li>
+        <li>Camp 3 in the timber near the creek: the warm night. Fires only if the district hasn't posted restrictions.</li>
+        <li>Moving low today is what turns Monday from an 8-mile race into a 2-hour walk.</li>
+      </ul>
+    </div>
+    <div class="card day-card c-mon">
+      <h3>Monday: dawn exit, fly home</h3>
+      <div class="meta">~4 mi · mostly gentle downhill · ~2–3 hr · vans by 10, BZN by 11:30</div>
+      <ul>
+        <li>Hiking at 7:00, coffee at the van instead of a second camp breakfast.</li>
+        <li>Half a mile below camp: Pioneer Falls, a 40-footer in a narrow gorge, right on the trail. The trip's closing shot.</li>
+        <li>Rejoin Friday's flat corridor at the junction and cruise the last 2.5 mi.</li>
+        <li>Fliers to BZN (about an hour); the van heads for Pocatello or SLC.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top: 18px;" class="scroll-hint">
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Monday plan</th><th>Hike out</th><th>At the van</th><th>At BZN</th><th>Book flights</th></tr></thead>
+      <tbody>
+        <tr class="rec"><td>Low camp Sunday (the plan)</td><td class="num">~4 mi, gentle</td><td class="num">9:30–10:30 am</td><td class="num">~11:30 am</td><td class="num">1:30 pm or later</td></tr>
+        <tr><td>If we stay high Sunday</td><td class="num">~8 mi, −3,000 ft</td><td class="num">12:30–1:30 pm</td><td class="num">~2:30 pm</td><td class="num">4:30 pm or later</td></tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+  <p class="sub" style="margin-top: 12px; font-size: 13.5px;">Zero-stress option: hotel in Bozeman Monday night, fly Tuesday.
+  The van driver has no time pressure either way.</p>
+</section>
+
+<section id="summits">
+  <div class="kicker">Summits</div>
+  <h2>Gallatin Peak vs Blaze Mountain</h2>
+  <p class="sub" style="margin-bottom: 16px;">The range high point is real mountaineering and a 20+ mile day from anywhere;
+  the summit that actually fits this trip is Blaze, right above camp 1.</p>
+
+  <div class="photo-pair">
+    <figure class="photo"><img src="images/gallatin_peak.jpg" alt="Gallatin Peak, the high point of the Spanish Peaks" loading="lazy">
+      <figcaption>Gallatin Peak, 11,015 ft: admired from the divide, saved for its own trip. <span class="cr">Mike Cline · CC BY-SA 4.0.</span></figcaption>
+    </figure>
+    <figure class="photo"><img src="images/blaze_ridge_pano.jpg"
+      srcset="images/blaze_ridge_pano_1000.jpg 1000w, images/blaze_ridge_pano.jpg 3840w"
+      sizes="(max-width: 700px) 100vw, 50vw" alt="Blaze Mountain above the Spanish Creek valley" loading="lazy">
+      <figcaption>Blaze Mountain (~10,400 ft) above Spanish Creek: the scramble option from camp 1. <span class="cr">Mike Cline · CC BY-SA 4.0.</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="cols">
+    <div class="card plain">
+      <h3>Gallatin Peak: not this year</h3>
+      <ul>
+        <li>Every route to it runs 19–25 miles round trip with 5,500–7,800 ft of gain via Summit Lake, and strong parties report 10–12 hours.</li>
+        <li>No trail heads that way from our side of the range, and the summit block is a Class 3–4 scramble on loose rock.</li>
+        <li>The divide crossing already hands us the big Gallatin view for free. We wave, we file it for a future year built around a Summit Lake camp.</li>
+      </ul>
+    </div>
+    <div class="card plain">
+      <h3>Blaze Mountain: the one that fits</h3>
+      <ul>
+        <li>An off-trail scramble straight from the Spanish Lakes basin: up the flank of the blaze-shaped snowfield, a mile of bushwhack, summit a short scramble beyond.</li>
+        <li>Views across the whole Spanish Peaks to Lone Peak and the Madison Valley.</li>
+        <li>Saturday-morning option for the scramblers before the short pack day; confident feet, paper map, hard turnaround time.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="bears">
+  <div class="kicker">Wildlife</div>
+  <h2>Bear country, done right</h2>
+  <div class="cols">
+    <div class="card plain">
+      <h3>The rules we run</h3>
+      <ul>
+        <li>Spray rides on the hip belt, never inside the pack. Practice the draw at the trailhead.</li>
+        <li>All food, trash, toiletries, and any drink that isn't plain water lives in the bear canisters, even empties.</li>
+        <li>Triangle camp: tents, kitchen, and food storage ~100 yards apart, cooking downwind of the tents.</li>
+        <li>Noise through the brushy creek bottoms; packs never left unattended on side trips.</li>
+      </ul>
+    </div>
+    <div class="card plain" style="padding: 0; overflow: hidden;">
+      <figure class="photo" style="border: none; box-shadow: none; border-radius: 0;">
+        <img src="images/mountain_goats.jpg" alt="Mountain goats in the Lee Metcalf Wilderness" loading="lazy" style="aspect-ratio: 4/3;">
+        <figcaption>The neighbors: mountain goats in the Lee Metcalf. <span class="cr">USDA Forest Service.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="tradition">
+  <div class="kicker">The tradition</div>
+  <h2>Since we were lighter and our packs were heavier</h2>
+  <p class="sub">Off and on for quite a while now, usually around Labor Day: mostly the Sawtooths, twice the
+  Wind Rivers, and in 2026 the Spanish Peaks join the list. Scroll the archive; every card carries its year.</p>
+  <div class="years">
+    <button class="yearchip" data-year="y2017">2017 <span>· Sept · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2020">2020 <span>· Sept · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2021">2021 <span>· Aug · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2022">2022 <span>· Sept · Wind Rivers, WY</span></button>
+    <button class="yearchip" data-year="y2023">2023 <span>· Aug · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2024">2024 <span>· Sept · Wind Rivers, WY</span></button>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail" id="rail">
+      <figure id="y2017"><span class="yb">2017</span><img src="images/py_2017_trail.jpg" alt="Two hikers heading into a mountain valley" loading="lazy"><figcaption>Into the high country. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_mapcheck.jpg" alt="Map check beside a lake under rock spires" loading="lazy"><figcaption>Map check under the spires. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_packbreak.jpg" alt="Pack break under an ancient whitebark pine" loading="lazy"><figcaption>Pack break at the old whitebark. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_dinner.jpg" alt="Group cooking dinner on lakeside granite at dusk" loading="lazy"><figcaption>Dinner on the slabs. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_meadow.jpg" alt="The group and two dogs crossing a meadow below a peak" loading="lazy"><figcaption>Meadow crossing, dogs included. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_sunrise.jpg" alt="Two hikers at a glassy lake under a smoky sunrise" loading="lazy"><figcaption>Smoky sunrise sendoff. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure id="y2020"><span class="yb">2020</span><img src="images/py_2020_logbridge.jpg" alt="Two backpackers crossing a log bridge below granite peaks" loading="lazy"><figcaption>The log bridge. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2020</span><img src="images/py_2020_lakeside.jpg" alt="Backpackers on a lakeside trail" loading="lazy"><figcaption>Lakeside singletrack. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2020</span><img src="images/py_2020_dusk.jpg" alt="A hiker overlooking a glassy lake at dusk" loading="lazy"><figcaption>Last light over the lake. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
+      <figure id="y2021"><span class="yb">2021</span><img src="images/py_2021_grins.jpg" alt="Two smiling backpackers on a granite bench" loading="lazy"><figcaption>Trailside grins. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_a.jpg" alt="Two backpackers with trekking poles in front of an alpine lake with jagged peaks behind" loading="lazy"><figcaption>Packs on, lake behind. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_logwalk.jpg" alt="Selfie of the crew crossing a long fallen log over talus" loading="lazy"><figcaption>The log route. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_b.jpg" alt="Two campers relaxing beside a tent while a deer walks through the trees behind them" loading="lazy"><figcaption>Deer crashed camp. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_morning.jpg" alt="Five backpackers on a sunny morning below granite peaks" loading="lazy"><figcaption>The morning five. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure id="y2022"><span class="yb">2022</span><img src="images/py_2022_meadow.jpg" alt="Two backpackers and a dog in a mountain meadow" loading="lazy"><figcaption>Meadow start. <span class="when">Aug 2022</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_sunrise_start.jpg" alt="Group selfie on the trail at golden sunrise" loading="lazy"><figcaption>Sunrise start. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_b.jpg" alt="Two hikers beside a shallow alpine pond with distant peaks on the horizon" loading="lazy"><figcaption>Pond stop, peaks ahead. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_filtering.jpg" alt="Three hikers filtering water from a still lake" loading="lazy"><figcaption>Water duty. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_a.jpg" alt="A hiker on a sandy trail next to a large granite slab in an open basin" loading="lazy"><figcaption>Granite and blue sky. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_granite.jpg" alt="Two hikers above a granite basin with high peaks behind" loading="lazy"><figcaption>Granite country. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_e.jpg" alt="Group selfie of five backpackers on a granite outcrop beside a lake" loading="lazy"><figcaption>Full crew, full packs. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_c.jpg" alt="Wide view of a rocky basin with a lake and hikers spread along the trail" loading="lazy"><figcaption>Strung out across the basin. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_d.jpg" alt="Two people on boulders at a clear lake, one holding a fly rod" loading="lazy"><figcaption>Casting from the rocks. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_f.jpg" alt="A hiker standing on a boulder in a field of house-sized granite blocks" loading="lazy"><figcaption>Dwarfed by the boulders. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_g.jpg" alt="A smiling hiker beside a cascading creek, throwing a shaka" loading="lazy"><figcaption>Shaka by the waterfall. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_cigars.jpg" alt="Two of the crew with cigars at a dusk lake" loading="lazy"><figcaption>Summit-night cigars. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_tailgate.jpg" alt="The whole crew at the trailhead after the hike out" loading="lazy"><figcaption>Tailgate finish. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure id="y2023"><span class="yb">2023</span><img src="images/py_2023_laketrio.jpg" alt="Three of the crew at an alpine lake below jagged peaks" loading="lazy"><figcaption>Three at the lake. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_trailsign.jpg" alt="Group selfie at the Hell Roaring trailhead sign" loading="lazy"><figcaption>Hell Roaring trailhead. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_b.jpg" alt="Four backpackers on a trail below a huge scree slope" loading="lazy"><figcaption>Small under the scree. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_slabs.jpg" alt="The group watching evening light from granite slabs" loading="lazy"><figcaption>The evening seats. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_a.jpg" alt="Three hikers in beanies on a granite slab watching sunlight hit the peaks" loading="lazy"><figcaption>Golden hour on the slab. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_naps.jpg" alt="A camp scene with a tarp shelter and someone napping" loading="lazy"><figcaption>Aggressive napping. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_c.jpg" alt="Four people on a rocky overlook at dusk facing a sunlit spire" loading="lazy"><figcaption>Best seats in the range. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_d.jpg" alt="A lone angler fly fishing at a glassy lake mirroring the mountains" loading="lazy"><figcaption>Last cast at dusk. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_alpenglow.jpg" alt="The crew descending granite slabs at dusk with alpenglow on the peaks" loading="lazy"><figcaption>Alpenglow descent. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure id="y2024"><span class="yb">2024</span><img src="images/py_2024_f.jpg" alt="Three hikers filling and filtering water at the grassy edge of a pond" loading="lazy"><figcaption>Filtering the daily gallons. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_q.jpg" alt="Five hikers shoulder to shoulder on a rocky viewpoint under a clear sky" loading="lazy"><figcaption>Crew photo, bluebird day. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_b.jpg" alt="Two backpackers taking a selfie with rugged peaks behind" loading="lazy"><figcaption>Trail buddies, big grins. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_g.jpg" alt="Backpackers stopped with packs off on a rocky sunlit slope" loading="lazy"><figcaption>Pack break on the climb. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_h.jpg" alt="Two hikers studying a paper map under a pine with a rocky summit behind" loading="lazy"><figcaption>Consulting the paper map. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_i.jpg" alt="A hiker in a red puffy eating breakfast on a boulder near camp" loading="lazy"><figcaption>Granola with a view. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_a.jpg" alt="Two hikers studying a topo map spread across a boulder" loading="lazy"><figcaption>Map out, plan pending. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_l.jpg" alt="A tent pitched on a rocky bench high above an alpine lake ringed by peaks" loading="lazy"><figcaption>Best tent site going. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_m.jpg" alt="Hikers pausing on a rock to look over a lake ringed by granite walls" loading="lazy"><figcaption>Everybody stops here. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_n.jpg" alt="A hiker sitting on a boulder in a shallow clear lake beneath a rock wall" loading="lazy"><figcaption>Perched mid lake. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_k.jpg" alt="Two hikers on a boulder looking at a glaciated range of spires" loading="lazy"><figcaption>Stopped for the skyline. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_d.jpg" alt="Group on a rocky slope above a lake at sunset" loading="lazy"><figcaption>Peace signs at sunset. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_e.jpg" alt="Three people in puffies on a slab overlooking a lake at dusk" loading="lazy"><figcaption>Three seats, one view. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_o.jpg" alt="A tent silhouetted at dusk on a rocky point above a lake" loading="lazy"><figcaption>Tent glow, last light. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_c.jpg" alt="Three backpackers hiking a rocky trail by headlamp at dusk" loading="lazy"><figcaption>Headlamps before dark. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_p.jpg" alt="A trail winding through a rocky basin under orange sunset clouds" loading="lazy"><figcaption>Orange sky, empty trail. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">?</span><img src="images/py_unknown_b.jpg" alt="Large group selfie of backpackers at a wooden wilderness trailhead sign" loading="lazy"><figcaption>Trailhead grins, day one. <span class="when">Year debated</span></figcaption></figure>
+      <figure><span class="yb">?</span><img src="images/py_unknown_trailnap.jpg" alt="One of the crew lying on a trailside rock while the others watch" loading="lazy"><figcaption>Trail nap, year contested. <span class="when">Date lost to history</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="checklist">
+  <div class="kicker">Before you fly</div>
+  <h2>Your checklist</h2>
+  <div class="card" style="margin-top: 16px;">
+    <ul class="check">
+      <li>Book flights: into SLC Wednesday Sept 16, out of BZN Monday Sept 21 at 1:30 pm or later (or Tuesday for zero stress).</li>
+      <li>Sleeping bag rated 20°F and a pad with R-value 4+. This is the one gear item that can't slide.</li>
+      <li>Bear spray is waiting in Montana; fuel gets bought in Pocatello. Neither can fly with you.</li>
+      <li><a href="2026_montanya_backpacking.gpx" download>Grab the group GPX</a>, load it on your phone, and download offline maps before we leave cell service on US-191.</li>
+      <li>Break in your footwear now, not on the flat first mile.</li>
+      <li>Send your food preferences for the group meal plan.</li>
+      <li>Leave the itinerary with someone at home; there's no cell service for four days and the group carries a satellite messenger.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span class="pb">PATH BEATERS <span>'26</span></span> · Spanish Peaks Loop, Lee Metcalf Wilderness, Montana · September 16–21, 2026.<br>
+  Route photos: USDA Forest Service (public domain) and <a href="https://commons.wikimedia.org/wiki/User:Mike_Cline">Mike Cline</a>
+  (<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>) via Wikimedia Commons; archive photos are ours.
+  Campsites from the Forest Service's Spanish Peaks campsite inventory.
+  Map tiles © <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA), data © OpenStreetMap contributors.
+</footer>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const ROUTE = {"fri":[[45.44793,-111.37767],[45.44827,-111.37792],[45.44849,-111.37838],[45.44793,-111.37911],[45.44736,-111.37939],[45.44613,-111.38075],[45.44471,-111.38188],[45.44429,-111.3825],[45.44337,-111.38262],[45.44272,-111.38299],[45.44205,-111.38373],[45.44034,-111.38452],[45.43955,-111.38506],[45.4393,-111.38546],[45.43863,-111.38588],[45.43853,-111.38633],[45.43822,-111.38655],[45.43783,-111.38665],[45.43779,-111.3864],[45.43757,-111.3864],[45.43589,-111.38728],[45.43494,-111.38804],[45.43366,-111.38818],[45.4333,-111.38844],[45.43262,-111.38951],[45.43164,-111.39027],[45.43114,-111.39086],[45.43023,-111.39144],[45.42838,-111.39363],[45.42792,-111.39472],[45.42713,-111.39548],[45.42673,-111.39561],[45.42631,-111.39617],[45.42523,-111.39647],[45.42503,-111.39632],[45.42356,-111.39723],[45.42237,-111.39847],[45.42106,-111.39914],[45.42017,-111.39933],[45.41911,-111.40016],[45.41855,-111.40039],[45.4173,-111.40043],[45.41635,-111.40013],[45.41599,-111.40066],[45.41583,-111.40044],[45.4138,-111.40002],[45.41312,-111.40007],[45.41263,-111.40046],[45.41205,-111.40046],[45.41089,-111.39997],[45.40923,-111.4002],[45.40885,-111.40004],[45.40712,-111.40085],[45.40573,-111.40249],[45.4039,-111.40396],[45.40292,-111.40495],[45.40227,-111.40618],[45.4017,-111.40684],[45.40058,-111.40669],[45.39953,-111.40697],[45.39888,-111.40781],[45.3986,-111.40848],[45.39696,-111.41028],[45.39634,-111.41061],[45.39568,-111.41138],[45.3953,-111.41156],[45.39465,-111.41153],[45.39449,-111.41202],[45.39466,-111.41225],[45.39485,-111.41331],[45.39536,-111.41365],[45.39536,-111.41441],[45.39516,-111.41492],[45.39521,-111.41541],[45.3946,-111.41605],[45.39344,-111.41795],[45.39278,-111.4183],[45.39195,-111.41934],[45.39123,-111.41971],[45.39043,-111.41971],[45.38944,-111.42004],[45.38861,-111.41998],[45.38798,-111.42034],[45.38806,-111.42004],[45.38795,-111.41977],[45.38727,-111.41964],[45.38702,-111.42001],[45.38693,-111.42054],[45.38675,-111.42046],[45.38667,-111.42067],[45.38539,-111.42146],[45.38397,-111.42206],[45.38373,-111.42245],[45.38292,-111.42319],[45.38245,-111.42393],[45.38206,-111.42416],[45.38146,-111.42504],[45.38075,-111.42552],[45.38087,-111.42573],[45.3808,-111.42588],[45.38067,-111.42595],[45.38028,-111.42565],[45.38046,-111.42529],[45.38037,-111.42516],[45.37955,-111.42529],[45.37833,-111.42628],[45.37778,-111.42704],[45.37704,-111.42726],[45.37606,-111.42712],[45.37412,-111.42753],[45.37341,-111.42827],[45.37288,-111.42791],[45.37165,-111.42811],[45.37107,-111.42789],[45.37077,-111.42758],[45.3696,-111.42716],[45.36893,-111.42763],[45.36868,-111.42766],[45.36827,-111.42732],[45.36763,-111.4274],[45.36734,-111.42772],[45.3656,-111.42755],[45.36542,-111.4284],[45.3648,-111.42877],[45.36382,-111.42847],[45.36373,-111.42827],[45.36248,-111.42733]],
+"sat":[[45.36248,-111.42733],[45.36282,-111.42769],[45.36357,-111.42823],[45.36428,-111.42871],[45.36499,-111.4287],[45.36547,-111.42811],[45.3656,-111.42755],[45.36548,-111.42791],[45.36529,-111.42851],[45.36477,-111.42876],[45.3652,-111.42907],[45.36585,-111.42935],[45.36623,-111.42955],[45.36696,-111.42941],[45.36693,-111.42878],[45.36752,-111.42847],[45.36806,-111.42851],[45.36877,-111.42844],[45.36906,-111.42878],[45.36924,-111.4292],[45.3696,-111.43025],[45.36982,-111.43058],[45.36991,-111.43099],[45.36999,-111.43142],[45.37016,-111.43229],[45.36977,-111.43265],[45.36968,-111.4332],[45.36987,-111.43358],[45.37014,-111.43365],[45.37038,-111.43478],[45.37061,-111.43555],[45.3707,-111.43586],[45.37122,-111.4359],[45.37143,-111.43613],[45.37181,-111.43662],[45.37188,-111.43696],[45.37193,-111.43729],[45.37203,-111.43712],[45.37223,-111.43707],[45.37253,-111.43669],[45.37295,-111.43686],[45.37297,-111.43732],[45.37289,-111.43783],[45.37291,-111.43824],[45.37292,-111.4385],[45.37302,-111.43857],[45.37279,-111.43886],[45.37269,-111.43918],[45.373,-111.43916],[45.37339,-111.43923],[45.37363,-111.43907],[45.37397,-111.43894],[45.37423,-111.43891],[45.37441,-111.43926],[45.37441,-111.44079],[45.37437,-111.44147],[45.37419,-111.44191],[45.37399,-111.4432],[45.3737,-111.44373],[45.37355,-111.44444],[45.37321,-111.44544],[45.37325,-111.44677],[45.37348,-111.44675],[45.37401,-111.44554],[45.37479,-111.44484],[45.37516,-111.44504],[45.37531,-111.44516],[45.37585,-111.44529],[45.37638,-111.4451],[45.37693,-111.44512],[45.3771,-111.44561],[45.37684,-111.44587],[45.37696,-111.44661],[45.37698,-111.44708],[45.37763,-111.44741],[45.37814,-111.44812],[45.37852,-111.44824],[45.37886,-111.44848],[45.3792,-111.44897],[45.37962,-111.44915],[45.37998,-111.4497],[45.38048,-111.44944],[45.38101,-111.44959],[45.38129,-111.45013],[45.38165,-111.45031],[45.38209,-111.45047],[45.38253,-111.4505],[45.38292,-111.45073],[45.38344,-111.4509],[45.38382,-111.4516],[45.38414,-111.45219],[45.38504,-111.45268],[45.38576,-111.45305],[45.38673,-111.45297],[45.3872,-111.45279],[45.38751,-111.45292],[45.38844,-111.45317],[45.38937,-111.45324],[45.38951,-111.45365],[45.38918,-111.45406],[45.3892,-111.45469],[45.38939,-111.45528],[45.38985,-111.45582],[45.38972,-111.4563],[45.38962,-111.45668],[45.38993,-111.45703],[45.39096,-111.45717],[45.39147,-111.45741],[45.39205,-111.45804],[45.39249,-111.45871],[45.39246,-111.45912],[45.3927,-111.45927],[45.3927,-111.46021],[45.39281,-111.46032],[45.39267,-111.46064],[45.39297,-111.46118],[45.39309,-111.46187],[45.39314,-111.46245],[45.39326,-111.46334],[45.39346,-111.46374],[45.39335,-111.46413],[45.39354,-111.46466],[45.39392,-111.46511],[45.3945,-111.46558]],
+"sun":[[45.39458,-111.46574],[45.3945,-111.46558],[45.39419,-111.46549],[45.39337,-111.46437],[45.39346,-111.46374],[45.39326,-111.46357],[45.39329,-111.46309],[45.39303,-111.46129],[45.39268,-111.46078],[45.39281,-111.46032],[45.3927,-111.46021],[45.3928,-111.4596],[45.39333,-111.45926],[45.39372,-111.45842],[45.39425,-111.45777],[45.39484,-111.45666],[45.39509,-111.45574],[45.39559,-111.45548],[45.39594,-111.45505],[45.39629,-111.45502],[45.39661,-111.45532],[45.39811,-111.45465],[45.39877,-111.45346],[45.3995,-111.45341],[45.39965,-111.45302],[45.39985,-111.45319],[45.40004,-111.45275],[45.40033,-111.45282],[45.40089,-111.45243],[45.40087,-111.45217],[45.40128,-111.4518],[45.40122,-111.45148],[45.40194,-111.44885],[45.40221,-111.44865],[45.40255,-111.44884],[45.40283,-111.44962],[45.40332,-111.44887],[45.4035,-111.44884],[45.40378,-111.44786],[45.40383,-111.44725],[45.40353,-111.44571],[45.4037,-111.44527],[45.40408,-111.44492],[45.40403,-111.44432],[45.40427,-111.44359],[45.40418,-111.44034],[45.40438,-111.43979],[45.40537,-111.43786],[45.40556,-111.43713],[45.40588,-111.43667],[45.40822,-111.43535],[45.40884,-111.4344],[45.40952,-111.43204],[45.4105,-111.4315],[45.41099,-111.43158],[45.41115,-111.43141],[45.41118,-111.4311],[45.41107,-111.43133],[45.41095,-111.43132],[45.41053,-111.43096],[45.41068,-111.43096],[45.41054,-111.4308],[45.41054,-111.43058],[45.41033,-111.4304],[45.41049,-111.43019],[45.41037,-111.43005],[45.41064,-111.42986],[45.41087,-111.42891],[45.41112,-111.42856],[45.41136,-111.42768],[45.41187,-111.4267],[45.41232,-111.42273],[45.41318,-111.4205],[45.41333,-111.42044],[45.41412,-111.41912],[45.41489,-111.41878],[45.41514,-111.41832]],
+"mon":[[45.41514,-111.41832],[45.41561,-111.41617],[45.41614,-111.41528],[45.41695,-111.41449],[45.41723,-111.41395],[45.41709,-111.41305],[45.41739,-111.41196],[45.41731,-111.41096],[45.41668,-111.40836],[45.41681,-111.40782],[45.41716,-111.40742],[45.41684,-111.40725],[45.41649,-111.40678],[45.41592,-111.40742],[45.41577,-111.40741],[45.41613,-111.40604],[45.41639,-111.40572],[45.41606,-111.40566],[45.41616,-111.40534],[45.41593,-111.40533],[45.41617,-111.40477],[45.41598,-111.40429],[45.41615,-111.40407],[45.41608,-111.40379],[45.41686,-111.40338],[45.41637,-111.40264],[45.41681,-111.40235],[45.41855,-111.40039],[45.41911,-111.40016],[45.42017,-111.39933],[45.42106,-111.39914],[45.42237,-111.39847],[45.42356,-111.39723],[45.42503,-111.39632],[45.42523,-111.39647],[45.42631,-111.39617],[45.42673,-111.39561],[45.42713,-111.39548],[45.42792,-111.39472],[45.42838,-111.39363],[45.43023,-111.39144],[45.43114,-111.39086],[45.43164,-111.39027],[45.43262,-111.38951],[45.4333,-111.38844],[45.43366,-111.38818],[45.43494,-111.38804],[45.43589,-111.38728],[45.43757,-111.3864],[45.43779,-111.3864],[45.43783,-111.38665],[45.43822,-111.38655],[45.43853,-111.38633],[45.43863,-111.38588],[45.4393,-111.38546],[45.43955,-111.38506],[45.44034,-111.38452],[45.44205,-111.38373],[45.44272,-111.38299],[45.44337,-111.38262],[45.44429,-111.3825],[45.44471,-111.38188],[45.44613,-111.38075],[45.44681,-111.37989],[45.44736,-111.37939],[45.44793,-111.37911],[45.44849,-111.37838],[45.44878,-111.37822]]};
+
+const PROF = {"fri":[[0.0,6099],[0.11,6114],[0.26,6112],[0.37,6120],[0.41,6122],[0.52,6122],[0.63,6146],[0.71,6142],[0.84,6147],[0.92,6158],[1.07,6157],[1.13,6161],[1.23,6176],[1.33,6184],[1.41,6194],[1.52,6216],[1.63,6236],[1.7,6255],[1.82,6297],[1.96,6307],[2.09,6327],[2.11,6335],[2.29,6372],[2.35,6374],[2.43,6412],[2.56,6427],[2.61,6425],[2.71,6440],[2.82,6461],[2.9,6491],[3.03,6513],[3.12,6553],[3.25,6593],[3.33,6609],[3.42,6665],[3.57,6695],[3.61,6711],[3.73,6760],[3.82,6765],[3.93,6801],[4.03,6831],[4.17,6898],[4.22,6926],[4.3,6965],[4.42,6964],[4.5,6964],[4.63,7034],[4.75,7099],[4.82,7143],[4.91,7205],[5.04,7309],[5.1,7361],[5.21,7484],[5.3,7591],[5.42,7714],[5.51,7795],[5.6,7835],[5.72,7841],[5.81,7873],[5.91,7934],[6.02,8041],[6.11,8130],[6.21,8138],[6.31,8189],[6.41,8270],[6.51,8322],[6.61,8399],[6.7,8461],[6.81,8521],[6.91,8563],[7.01,8621],[7.12,8701],[7.22,8804],[7.27,8828]],
+"sat":[[0.0,8828],[0.11,8750],[0.22,8648],[0.33,8648],[0.44,8619],[0.54,8611],[0.64,8523],[0.74,8485],[0.84,8611],[0.96,8714],[1.06,8795],[1.16,8863],[1.27,8979],[1.37,9042],[1.48,9270],[1.58,9379],[1.69,9403],[1.79,9381],[1.91,9394],[2.02,9409],[2.14,9267],[2.25,9082],[2.35,8934],[2.46,8927],[2.57,8900],[2.67,8903],[2.78,8874],[2.88,8797],[2.98,8827],[3.09,8814],[3.2,8868],[3.3,8915],[3.4,8899],[3.5,8814],[3.61,8763],[3.72,8783],[3.83,8777],[3.93,8705],[4.04,8721],[4.15,8764],[4.25,8844],[4.35,8826]],
+"sun":[[0.0,8824],[0.11,8844],[0.22,8764],[0.31,8724],[0.4,8665],[0.52,8594],[0.6,8544],[0.71,8465],[0.8,8387],[0.92,8305],[1.01,8235],[1.11,8134],[1.2,8064],[1.31,8026],[1.4,7977],[1.51,7904],[1.62,7858],[1.7,7823],[1.81,7765],[1.91,7759],[2.01,7749],[2.11,7723],[2.21,7698],[2.32,7692],[2.43,7710],[2.51,7672],[2.6,7659],[2.7,7588],[2.81,7488],[2.92,7382],[3.0,7349],[3.11,7287],[3.23,7203],[3.3,7157],[3.44,7148],[3.48,7157]],
+"mon":[[0.0,7157],[0.11,7079],[0.21,7103],[0.31,7077],[0.42,7050],[0.52,6984],[0.6,6952],[0.7,6898],[0.8,6808],[0.91,6736],[1.0,6606],[1.12,6532],[1.27,6425],[1.31,6412],[1.46,6372],[1.56,6357],[1.63,6335],[1.75,6305],[1.86,6312],[1.93,6297],[2.04,6255],[2.11,6236],[2.22,6216],[2.34,6194],[2.41,6184],[2.51,6176],[2.6,6166],[2.8,6152],[2.82,6152],[2.9,6147],[3.04,6142],[3.11,6146],[3.22,6122],[3.31,6121],[3.49,6112],[3.55,6107],[3.61,6109],[3.71,6119]]};
+
+const DAY = {
+  fri: { color: "#2a78d6", label: "Fri" },
+  sat: { color: "#eb6834", label: "Sat" },
+  sun: { color: "#1baf7a", label: "Sun" },
+  mon: { color: "#eda100", label: "Mon" }
+};
+const ORDER = ["fri", "sat", "sun", "mon"];
+
+const WAYPOINTS = [
+  { ll: [45.44793, -111.37767], name: "Spanish Creek Trailhead", elev: "6,100 ft", note: "Start and finish. Water, vault toilet, van parking." },
+  { ll: [45.41855, -111.40039], name: "Falls Creek junction", elev: "~6,400 ft", note: "Mile 3. The loop closes here Monday." },
+  { ll: [45.37433, -111.43892], name: "The divide", elev: "9,435 ft", note: "Saturday, mile 1.7. High point of the trip, best view of the range." },
+  { ll: [45.41514, -111.41832], name: "Camp 3 · lower Falls Creek", elev: "~7,150 ft", note: "Sunday night in the timber. Warmest camp, two hours from the van." },
+  { ll: [45.41716, -111.40742], name: "Pioneer Falls", elev: "~6,950 ft", note: "40-ft falls in a narrow gorge, right on the Monday exit." }
+];
+
+const CAMPSITES = [
+  { ll: [45.36250, -111.42585], name: "Site 56 · Camp 1", cap: "fits 15+", note: "The big one: 6,000 sq ft on the NW shore of the west Spanish Lake." },
+  { ll: [45.36096, -111.42611], name: "Site 66 · backup", cap: "fits 15+", note: "Second choice at Spanish Lakes, 250 ft back from the water." },
+  { ll: [45.36146, -111.42575], name: "Site 61 · backup", cap: "fits 11–15", note: "Third option along the west shore." },
+  { ll: [45.36244, -111.42454], name: "Site 52 · backup", cap: "fits 7–10", note: "Small, quiet, right off the trail." },
+  { ll: [45.37753, -111.44458], name: "Site 29 · Lake Solitude", cap: "fits 11–15", note: "Big site at Saturday's lunch lake; early-stop option." },
+  { ll: [45.37718, -111.44466], name: "Site 31 · Lake Solitude", cap: "fits 11–15", note: "The sheltered one, tucked in real trees." },
+  { ll: [45.39176, -111.45373], name: "Site 25 · Upper Falls Creek Lake", cap: "fits 7–10", note: "Quiet basin 0.6 mi before camp 2." },
+  { ll: [45.39288, -111.46166], name: "Site 18 · Camp 2", cap: "fits 7–10", note: "Lakeside at the upper Jerome Rock Lake, right on the trail." },
+  { ll: [45.39256, -111.46128], name: "Site 15 · overflow", cap: "fits 3–6", note: "Sheltered overflow spot in the trees near Site 18." },
+  { ll: [45.39122, -111.46093], name: "Site 22 · backup", cap: "fits 11–15", note: "The roomy fallback by the creek, 200 ft off the trail." }
+];
+
+/* ---------- year chips ---------- */
+document.querySelectorAll(".yearchip").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".yearchip").forEach(x => x.classList.remove("is-active"));
+    b.classList.add("is-active");
+    const el = document.getElementById(b.dataset.year);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  });
+});
+
+/* ---------- map ---------- */
+(function () {
+  if (typeof L === "undefined") {
+    document.getElementById("map-fallback").style.display = "block";
+    return;
+  }
+  const map = L.map("map", { scrollWheelZoom: false });
+  const tiles = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+    maxZoom: 15,
+    attribution: 'Map © <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA) · Data © OpenStreetMap contributors'
+  });
+  tiles.on("tileerror", () => { document.getElementById("map-fallback").style.display = "block"; });
+  tiles.addTo(map);
+
+  let all = [];
+  ORDER.forEach(k => {
+    L.polyline(ROUTE[k], { color: DAY[k].color, weight: 4, opacity: 0.9 }).addTo(map)
+      .bindPopup('<span class="pn">' + DAY[k].label + " leg</span>");
+    all = all.concat(ROUTE[k]);
+  });
+  map.fitBounds(L.latLngBounds(all).pad(0.07));
+
+  CAMPSITES.forEach(s => {
+    L.circleMarker(s.ll, {
+      radius: 5.5, color: "#4a3aa7", weight: 2, fillColor: "#fcfcfb", fillOpacity: 1
+    }).addTo(map).bindPopup(
+      '<span class="pn">' + s.name + "</span><br>" +
+      '<span class="pe">' + s.cap + "</span><br>" + s.note
+    );
+  });
+
+  WAYPOINTS.forEach(w => {
+    L.circleMarker(w.ll, {
+      radius: 7, color: "#0b0b0b", weight: 2, fillColor: "#fcfcfb", fillOpacity: 1
+    }).addTo(map).bindPopup(
+      '<span class="pn">' + w.name + "</span><br>" +
+      '<span class="pe">' + w.elev + "</span><br>" + w.note
+    );
+  });
+})();
+
+/* ---------- elevation profile ---------- */
+(function () {
+  const svg = document.getElementById("profile");
+  const NS = "http://www.w3.org/2000/svg";
+  const W = 980, H = 330, mL = 58, mR = 16, mT = 26, mB = 40;
+  const pw = W - mL - mR, ph = H - mT - mB;
+  const yMin = 6000, yMax = 9600;
+
+  let offset = 0, series = [], legSpans = [];
+  ORDER.forEach(k => {
+    const pts = PROF[k].map(p => ({ x: offset + p[0], mi: p[0], ft: p[1], day: k }));
+    series = series.concat(pts);
+    legSpans.push({ day: k, x0: offset, x1: offset + PROF[k][PROF[k].length - 1][0] });
+    offset = legSpans[legSpans.length - 1].x1;
+  });
+  const xMax = offset;
+  const X = v => mL + (v / xMax) * pw;
+  const Y = v => mT + (1 - (v - yMin) / (yMax - yMin)) * ph;
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const a in attrs) e.setAttribute(a, attrs[a]);
+    (parent || svg).appendChild(e); return e;
+  };
+  const txt = (x, y, s, attrs) => {
+    const t = el("text", Object.assign({ x: x, y: y, "font-size": 11.5, fill: "#898781", "font-family": "Inter, system-ui, sans-serif" }, attrs || {}));
+    t.textContent = s; return t;
+  };
+
+  for (let ft = 6000; ft <= 9500; ft += 500) {
+    el("line", { x1: mL, x2: W - mR, y1: Y(ft), y2: Y(ft), stroke: "#e1e0d9", "stroke-width": 1 });
+    if (ft > 6000) txt(mL - 8, Y(ft) + 4, ft.toLocaleString(), { "text-anchor": "end" });
+  }
+  for (let mi = 0; mi <= 18; mi += 2) {
+    txt(X(mi), H - mB + 16, mi + " mi", { "text-anchor": "middle" });
+    el("line", { x1: X(mi), x2: X(mi), y1: mT + ph, y2: mT + ph + 4, stroke: "#c3c2b7", "stroke-width": 1 });
+  }
+  el("line", { x1: mL, x2: W - mR, y1: mT + ph, y2: mT + ph, stroke: "#c3c2b7", "stroke-width": 1 });
+
+  legSpans.forEach(sp => {
+    const pts = series.filter(p => p.day === sp.day);
+    el("polyline", {
+      points: pts.map(p => X(p.x).toFixed(1) + "," + Y(p.ft).toFixed(1)).join(" "),
+      fill: "none", stroke: DAY[sp.day].color, "stroke-width": 2.5,
+      "stroke-linejoin": "round", "stroke-linecap": "round"
+    });
+    const frac = sp.day === "sat" ? 0.9 : 0.5;
+    const lx = sp.x0 + frac * (sp.x1 - sp.x0);
+    let anchor = pts[0];
+    for (const p of pts) if (Math.abs(p.x - lx) < Math.abs(anchor.x - lx)) anchor = p;
+    const labelDy = sp.day === "sat" ? 30 : -14;
+    txt(X(lx), Y(anchor.ft) + labelDy, DAY[sp.day].label,
+        { "text-anchor": "middle", fill: "#52514e", "font-size": 12, "font-weight": "600" });
+  });
+
+  const MARKS = [
+    { x: 0, ft: 6099, label: "TH 6,100", dy: -10, anchor: "start" },
+    { x: 7.27, ft: 8828, label: "Camp 1", dy: -10, anchor: "middle" },
+    { x: 7.27 + 1.69, ft: 9435, label: "Divide · 9,435", dy: -10, anchor: "end", dx: -8 },
+    { x: 7.27 + 2.5, ft: 8900, label: "L. Solitude", dy: 20, anchor: "middle" },
+    { x: 11.62, ft: 8826, label: "Camp 2", dy: -10, anchor: "middle" },
+    { x: 15.10, ft: 7157, label: "Camp 3", dy: 20, anchor: "end", dx: -4 },
+    { x: 15.10 + 0.62, ft: 6950, label: "Pioneer Falls", dy: -10, anchor: "start", dx: 4 },
+    { x: 18.81, ft: 6119, label: "TH", dy: -10, anchor: "end" }
+  ];
+  MARKS.forEach(m => {
+    el("circle", { cx: X(m.x), cy: Y(m.ft), r: 4, fill: "#fcfcfb", stroke: "#0b0b0b", "stroke-width": 1.6 });
+    txt(X(m.x) + (m.dx || 0), Y(m.ft) + m.dy, m.label, { "text-anchor": m.anchor, fill: "#0b0b0b", "font-size": 11.5 });
+  });
+
+  const tip = document.getElementById("tip");
+  const cross = el("line", { y1: mT, y2: mT + ph, stroke: "#c3c2b7", "stroke-width": 1, "stroke-dasharray": "3,3", visibility: "hidden" });
+  const dot = el("circle", { r: 4.5, fill: "#fcfcfb", "stroke-width": 2, visibility: "hidden" });
+  function showAt(clientX) {
+    const r = svg.getBoundingClientRect();
+    const xm = ((clientX - r.left) / r.width) * W;
+    if (xm < mL || xm > W - mR) { hide(); return; }
+    const target = ((xm - mL) / pw) * xMax;
+    let best = series[0];
+    for (const p of series) if (Math.abs(p.x - target) < Math.abs(best.x - target)) best = p;
+    cross.setAttribute("x1", X(best.x)); cross.setAttribute("x2", X(best.x));
+    cross.setAttribute("visibility", "visible");
+    dot.setAttribute("cx", X(best.x)); dot.setAttribute("cy", Y(best.ft));
+    dot.setAttribute("stroke", DAY[best.day].color); dot.setAttribute("visibility", "visible");
+    tip.style.display = "block";
+    tip.innerHTML = DAY[best.day].label + ' · mi <span class="num">' + best.mi.toFixed(1) +
+      '</span> of day<br><span class="td">' + best.ft.toLocaleString() + " ft</span>";
+    const box = svg.closest(".profile-box").getBoundingClientRect();
+    const bx = (X(best.x) / W) * r.width + (r.left - box.left);
+    const by = (Y(best.ft) / H) * r.height + (r.top - box.top);
+    tip.style.left = Math.min(bx + 14, box.width - 132) + "px";
+    tip.style.top = Math.max(by - 48, 4) + "px";
+  }
+  svg.addEventListener("mousemove", ev => showAt(ev.clientX));
+  svg.addEventListener("touchstart", ev => { if (ev.touches[0]) showAt(ev.touches[0].clientX); }, { passive: true });
+  svg.addEventListener("touchmove", ev => { if (ev.touches[0]) showAt(ev.touches[0].clientX); }, { passive: true });
+  svg.addEventListener("mouseleave", hide);
+  svg.addEventListener("touchend", hide);
+  function hide() {
+    cross.setAttribute("visibility", "hidden");
+    dot.setAttribute("visibility", "hidden");
+    tip.style.display = "none";
+  }
+})();
+</script>
+</body>
+</html>
