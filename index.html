@@ -821,27 +821,16 @@
 </section>
 
 
-<section id="gear" class="hidden">
+<section id="gear">
   <div class="kicker">Group gear</div>
   <h2>Shared loads</h2>
-  <p class="sub">The stuff one person carries for everyone. Claim an item so we don't summit with four stoves and zero
-  filters. Looking for heroes: stoves + fuel, water filters, bear canisters, the first-aid kit, the satellite
-  messenger, a group tarp, and the coffee kit.</p>
-  <div class="card" style="margin-top: 16px;">
-    <form class="rform" id="gear-form">
-      <div><label for="g-item">Item *</label><input id="g-item" name="item" required maxlength="60" placeholder="e.g. Water filter"></div>
-      <div><label for="g-who">Who's bringing it *</label><input id="g-who" name="who" required maxlength="60" placeholder="Your name"></div>
-      <div class="full"><label for="g-note">Note</label><input id="g-note" name="note" maxlength="120" placeholder="Fits 2 canisters, grabbing fuel in Pocatello, etc."></div>
-      <div class="full"><button type="submit" class="rbtn" id="g-submit">Claim it</button><span class="rmsg" id="g-msg"></span></div>
-      <div class="full" style="font-size: 12.5px; color: var(--muted);">Same item + same name updates your entry; a different name adds a second one of that item.</div>
-    </form>
+  <p class="sub">One shared list, editable by everyone: put your name next to what you're bringing, add rows for
+  anything missing, fix anything that's wrong. It's a plain spreadsheet; treat it kindly.</p>
+  <p style="margin-top: 14px;"><a class="rbtn" style="display: inline-block; text-decoration: none;" href="https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/edit" target="_blank" rel="noopener">Open the gear list</a></p>
+  <div class="card" style="margin-top: 14px; padding: 0; overflow: hidden;">
+    <iframe src="https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/edit?rm=minimal&amp;widget=true&amp;headers=false" title="Shared group gear list" style="width: 100%; height: 480px; border: none; display: block;" loading="lazy"></iframe>
   </div>
-  <div class="tbl" style="margin-top: 16px;">
-    <table id="gear-table">
-      <thead><tr><th>Item</th><th>Who</th><th>Note</th></tr></thead>
-      <tbody><tr><td colspan="3" style="color: var(--muted);">Loading the gear list…</td></tr></tbody>
-    </table>
-  </div>
+  <p class="sub" style="margin-top: 10px; font-size: 12.5px; color: var(--muted);">If the embed asks for access, use the button above; on phones the Sheets app is the smoother way to edit.</p>
 </section>
 
 <section id="checklist">
@@ -916,7 +905,6 @@ const ROSTER_API = "https://script.google.com/macros/s/AKfycbyGodBjDmekcTNwcjrZ7
 (function () {
   if (!ROSTER_API) return;
   document.getElementById("roster").classList.remove("hidden");
-  document.getElementById("gear").classList.remove("hidden");
 
   function jsonp(params) {
     return new Promise((resolve, reject) => {
@@ -946,15 +934,9 @@ const ROSTER_API = "https://script.google.com/macros/s/AKfycbyGodBjDmekcTNwcjrZ7
     });
   }
   const rosterMsg = "Nobody yet. Be first.";
-  const gearMsg = "Nothing claimed yet. The coffee kit is right there.";
 
   jsonp({ list: "roster" }).then(d => render("#roster-table", 5, unpack(d).rows, rosterMsg))
     .catch(() => render("#roster-table", 5, [], "Couldn't reach the roster. Refresh to retry."));
-  jsonp({ list: "gear" }).then(d => {
-    const u = unpack(d);
-    if (u.v >= 2) render("#gear-table", 3, u.rows, gearMsg);
-    else render("#gear-table", 3, [], "Gear list wakes up after the next backend update.");
-  }).catch(() => render("#gear-table", 3, [], "Couldn't reach the gear list. Refresh to retry."));
 
   document.getElementById("rsvp-form").addEventListener("submit", ev => {
     ev.preventDefault();
@@ -969,17 +951,6 @@ const ROSTER_API = "https://script.google.com/macros/s/AKfycbyGodBjDmekcTNwcjrZ7
       .catch(() => { btn.disabled = false; msg.textContent = "That didn't go through; try again."; });
   });
 
-  document.getElementById("gear-form").addEventListener("submit", ev => {
-    ev.preventDefault();
-    const f = ev.target, btn = document.getElementById("g-submit"), msg = document.getElementById("g-msg");
-    if (!f.item.value.trim() || !f.who.value.trim()) return;
-    btn.disabled = true; msg.textContent = "Claiming…";
-    jsonp({ list: "gear", action: "add", item: f.item.value.trim(), who: f.who.value.trim(), note: f.note.value.trim() })
-      .then(d => { render("#gear-table", 3, unpack(d).rows, gearMsg);
-                   btn.disabled = false; btn.textContent = "Claimed"; msg.textContent = "";
-                   setTimeout(() => { btn.textContent = "Claim it"; }, 2500); f.reset(); })
-      .catch(() => { btn.disabled = false; msg.textContent = "That didn't go through; try again."; });
-  });
 })();
 
 /* ---------- year chips ---------- */
