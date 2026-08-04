@@ -827,10 +827,13 @@
   <p class="sub">One shared list, editable by everyone: put your name next to what you're bringing, add rows for
   anything missing, fix anything that's wrong. It's a plain spreadsheet; treat it kindly.</p>
   <p style="margin-top: 14px;"><a class="rbtn" style="display: inline-block; text-decoration: none;" href="https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/edit" target="_blank" rel="noopener">Open the gear list</a></p>
-  <div class="card" style="margin-top: 14px; padding: 0; overflow: hidden;">
-    <iframe src="https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/edit?rm=minimal&amp;widget=true&amp;headers=false" title="Shared group gear list" style="width: 100%; height: 480px; border: none; display: block;" loading="lazy"></iframe>
+  <div class="tbl" style="margin-top: 14px;">
+    <table id="gear-table">
+      <thead><tr><th>Item</th><th>Who's bringing it</th><th>Notes</th></tr></thead>
+      <tbody><tr><td colspan="3" style="color: var(--muted);">Loading the gear list…</td></tr></tbody>
+    </table>
   </div>
-  <p class="sub" style="margin-top: 10px; font-size: 12.5px; color: var(--muted);">If the embed asks for access, use the button above; on phones the Sheets app is the smoother way to edit.</p>
+  <p class="sub" style="margin-top: 10px; font-size: 12.5px; color: var(--muted);">This view is read-only; use the button to claim or edit, then come back and it updates on refresh.</p>
 </section>
 
 <section id="checklist">
@@ -937,6 +940,36 @@ const ROSTER_API = "https://script.google.com/macros/s/AKfycbyGodBjDmekcTNwcjrZ7
 
   jsonp({ list: "roster" }).then(d => render("#roster-table", 5, unpack(d).rows, rosterMsg))
     .catch(() => render("#roster-table", 5, [], "Couldn't reach the roster. Refresh to retry."));
+
+  const GEAR_CSV = "https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/gviz/tq?tqx=out:csv";
+  function parseCsv(text) {
+    const rows = []; let row = [], field = "", inQ = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQ) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
+        else field += c;
+      } else if (c === '"') inQ = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(field); field = "";
+        if (row.some(v => v.trim())) rows.push(row);
+        row = [];
+      } else field += c;
+    }
+    row.push(field);
+    if (row.some(v => v.trim())) rows.push(row);
+    return rows;
+  }
+  fetch(GEAR_CSV)
+    .then(r => { if (!r.ok) throw 0; return r.text(); })
+    .then(csv => {
+      const rows = parseCsv(csv);
+      if (rows.length && /^item$/i.test((rows[0][0] || "").trim())) rows.shift();
+      render("#gear-table", 3, rows.map(r => [r[0] || "", r[1] || "", r[2] || ""]), "The list is empty; open it and add the first item.");
+    })
+    .catch(() => render("#gear-table", 3, [], "Couldn't load the list here (is sharing on?). Use the button above to open it."));
 
   document.getElementById("rsvp-form").addEventListener("submit", ev => {
     ev.preventDefault();
