@@ -12,99 +12,138 @@
   :root {
     color-scheme: light;
     --paper: #f3f1ec; --surface: #fbfaf7; --ink: #1c1b18; --ink-2: #57544c; --muted: #8b877c;
-    --rule: #dcd8ce; --rule-2: #ebe8e0; --accent: #a0522d; --accent-ink: #7c3f22;
+    --rule: #dcd8ce; --rule-2: #ebe8e0; --accent: #a0522d; --accent-ink: #7c3f22; --accent-bg: #f7efe9;
     --p1: #e9eef4; --p2: #d3dfeb; --p3: #b3c8dd; --p4: #8aa9c8; --p5: #5f88ad;
+    --ok: #2f7a4f; --tight: #a8731a; --dark: #a0522d;
     --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--paper); color: var(--ink); line-height: 1.5; font-size: 15px; -webkit-text-size-adjust: 100%; }
-  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px 80px; }
-  h1 { font-size: clamp(28px, 4.6vw, 40px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
-  h2 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
-  h3 { font-size: 15px; font-weight: 600; }
-  section { margin-top: 56px; scroll-margin-top: 60px; }
+  body { font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--paper); color: var(--ink); line-height: 1.45; font-size: 15px; -webkit-text-size-adjust: 100%; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 0 16px 72px; }
+  @media (min-width: 760px) { .wrap { padding: 0 24px 80px; } }
+  h1 { font-size: clamp(30px, 4.6vw, 40px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.08; }
+  section { margin-top: 32px; scroll-margin-top: 60px; }
+  @media (min-width: 760px) { section { margin-top: 44px; } }
   .kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .sub { color: var(--ink-2); max-width: 80ch; }
   a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
-  a:hover { text-decoration-color: var(--ink); }
-  .mono { font-family: var(--mono); font-size: 13px; }
+  button, select, input { font: inherit; }
+  .mono { font-family: var(--mono); }
 
-  nav.top { position: sticky; top: 0; z-index: 500; background: rgba(243,241,236,0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
-  nav.top .inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 18px; padding: 11px 20px; overflow-x: auto; scrollbar-width: none; }
-  nav.top .inner::-webkit-scrollbar { display: none; }
+  nav.top { position: sticky; top: 0; z-index: 500; background: rgba(243,241,236,0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+  nav.top .inner { max-width: 1360px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 11px 16px; }
   nav.top .brand { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; white-space: nowrap; color: var(--ink); margin-right: auto; }
   nav.top a.lnk { font-size: 13.5px; color: var(--ink-2); white-space: nowrap; text-decoration: none; }
-  nav.top a.lnk:hover { color: var(--ink); }
 
-  header { padding: 48px 0 0; border-bottom: 1px solid var(--rule); padding-bottom: 28px; }
-  header p { color: var(--ink-2); max-width: 78ch; margin-top: 14px; font-size: 15.5px; }
-  .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 22px; }
+  header { padding: 28px 0 18px; }
+  @media (min-width: 760px) { header { padding: 40px 0 20px; } }
+  header p { color: var(--ink-2); max-width: 70ch; margin-top: 10px; font-size: 15px; }
+  .meta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 12px; display: flex; flex-wrap: wrap; gap: 4px 18px; }
   .meta b { color: var(--ink); font-weight: 500; }
 
-  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 16px; font-size: 13px; color: var(--ink-2); }
-  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--surface); }
-  .seg button { font: inherit; font-size: 12.5px; padding: 5px 11px; border: none; background: transparent; cursor: pointer; color: var(--ink-2); border-right: 1px solid var(--rule); }
+  /* ----- controls ----- */
+  .controls { display: grid; gap: 8px; margin-top: 4px; padding: 12px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  @media (min-width: 760px) { .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; } }
+  .crow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+  .seg button { font-size: 13px; padding: 7px 11px; border: none; background: transparent; cursor: pointer; color: var(--ink-2); border-right: 1px solid var(--rule); min-height: 36px; white-space: nowrap; }
   .seg button:last-child { border-right: none; }
   .seg button.on { background: var(--ink); color: var(--paper); }
-  .legend { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .legend i { display: inline-block; width: 22px; height: 12px; border-radius: 2px; }
+  .scrollx { overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .scrollx::-webkit-scrollbar { display: none; }
+  @media (min-width: 760px) { .scrollx { overflow: visible; margin: 0; padding: 0; } }
+  select.sortsel, input.tm { font-size: 13px; padding: 7px 9px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); min-height: 36px; }
+  .ghost { font-size: 13px; padding: 7px 11px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink-2); cursor: pointer; min-height: 36px; }
+  .ico { font-size: 14px; }
+  .q0 { background: transparent; } .q1 { background: var(--p1); } .q2 { background: var(--p2); } .q3 { background: var(--p3); } .q4 { background: var(--p4); color: #fff; } .q5 { background: var(--p5); color: #fff; }
+  .arr-ok { color: var(--ok); } .arr-tight { color: var(--tight); } .arr-dark { color: var(--dark); }
 
-  .tblwrap { border: 1px solid var(--rule); border-radius: 6px; overflow-x: auto; background: var(--surface); margin-top: 12px; }
+  /* ----- desktop table ----- */
+  .tblwrap { display: none; border: 1px solid var(--rule); border-radius: 6px; overflow-x: auto; background: var(--surface); margin-top: 14px; }
+  @media (min-width: 760px) { .tblwrap { display: block; } }
   table { border-collapse: collapse; width: 100%; font-size: 13px; }
-  th, td { padding: 8px 9px; border-bottom: 1px solid var(--rule-2); vertical-align: top; white-space: nowrap; text-align: left; }
+  th, td { padding: 8px 8px; border-bottom: 1px solid var(--rule-2); vertical-align: middle; white-space: nowrap; text-align: left; }
   th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--surface); position: sticky; top: 0; z-index: 2; border-bottom: 1px solid var(--rule); }
   th.sortable { cursor: pointer; user-select: none; }
-  th.sortable:hover { color: var(--ink); }
-  th.sorted { color: var(--ink); }
-  th.sorted::after { content: " ↓"; }
-  th.sorted.asc::after { content: " ↑"; }
+  th.sortable:hover, th.sorted { color: var(--ink); }
+  th.sorted::after { content: " ↓"; } th.sorted.asc::after { content: " ↑"; }
   th.grp { text-align: center; border-left: 1px solid var(--rule-2); }
-  td.num, th.num { font-family: var(--mono); font-size: 12.5px; text-align: right; }
-  th.num { text-align: right; }
-  td.name { white-space: normal; min-width: 230px; font-weight: 500; }
-  td.name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 1px; }
-  td.name .wu { font-size: 11.5px; color: var(--ink-2); }
-  td.wx { text-align: center; padding: 6px 4px; font-family: var(--mono); font-size: 12px; border-left: 1px solid var(--rule-2); line-height: 1.2; }
-  td.wx:first-of-type { border-left: 1px solid var(--rule-2); }
-  td.wx .c { display: block; border-radius: 3px; padding: 3px 4px; min-width: 46px; }
-  td.wx .c small { display: block; font-size: 10.5px; opacity: 0.8; }
+  th.num, td.num { font-family: var(--mono); font-size: 12.5px; text-align: right; }
+  td.name { white-space: normal; min-width: 200px; max-width: 280px; font-weight: 500; }
+  td.name small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+  td.chev { width: 24px; color: var(--muted); font-family: var(--mono); }
+  tr.row { cursor: pointer; }
+  tr.row:hover td { background: #f6f4ef; }
+  tr.row.open td { border-bottom-color: transparent; }
+  td.wx { text-align: center; padding: 5px 3px; font-family: var(--mono); font-size: 12px; border-left: 1px solid var(--rule-2); line-height: 1.2; }
+  td.wx .c { display: block; border-radius: 3px; padding: 3px 4px; min-width: 42px; }
+  td.wx .c small { display: block; font-size: 10.5px; opacity: 0.85; }
   td.avg { border-left: 1px solid var(--rule-2); }
-  .q0 { background: transparent; } .q1 { background: var(--p1); } .q2 { background: var(--p2); } .q3 { background: var(--p3); } .q4 { background: var(--p4); color: #fff; } .q5 { background: var(--p5); color: #fff; }
-  .q4 small, .q5 small { opacity: 0.9; }
-  tr.baseline td { background: #f7efe9; border-bottom: 2px solid var(--accent); }
-  tr.baseline td.name::before { content: "PLAN A"; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--accent-ink); display: block; margin-bottom: 2px; }
-  tr.hidden { display: none; }
-  td.links a { display: block; font-size: 12px; color: var(--ink-2); }
-  td.wrapok { white-space: normal; min-width: 150px; font-size: 12px; color: var(--ink-2); }
-  .snow { color: var(--accent-ink); font-family: var(--mono); font-size: 10.5px; }
   td.fit { font-weight: 600; }
+  tr.baseline td { background: var(--accent-bg); }
+  tr.baseline.row:hover td { background: #f2e7de; }
+  tr.baseline td.name::before, .card.baseline .name::before { content: "PLAN A"; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--accent-ink); display: block; margin-bottom: 1px; }
+  tr.detail td { white-space: normal; padding: 0 14px 14px 34px; background: var(--surface); }
+  tr.baseline + tr.detail td { background: var(--accent-bg); border-bottom: 2px solid var(--accent); }
+  tr.hidden { display: none; }
 
-  .routes { display: grid; gap: 12px; margin-top: 14px; }
-  .route { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px; }
-  .route.baseline { border-color: var(--accent); }
-  .route .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
-  .route .head .n { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 26px; }
-  .route h3 { font-size: 16.5px; }
-  .route .head .tags { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
-  .route .facts { font-size: 12.5px; color: var(--ink-2); margin: 6px 0 12px; line-height: 1.6; }
-  .route .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
-  @media (max-width: 720px) { .route .cols { grid-template-columns: 1fr; } }
-  .route ul { margin-left: 16px; color: var(--ink-2); font-size: 14px; }
-  .route li { margin-bottom: 3px; }
-  .route .lab { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .route .shape { font-size: 14px; color: var(--ink-2); margin-top: 12px; }
-  .route .fc { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(92px, 1fr); gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-top: 6px; }
-  .route .fc .c { border-radius: 3px; padding: 6px 7px; font-size: 11px; line-height: 1.3; font-family: var(--mono); }
-  .route .fc .c b { display: block; font-size: 14px; font-weight: 500; }
-  .route .links { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; }
-  .route .links a { color: var(--ink-2); }
-  .route.hidden { display: none; }
+  /* ----- detail (shared) ----- */
+  .det { max-width: min(960px, calc(100vw - 90px)); min-width: 0; font-size: 14px; }
+  .card .det { max-width: 100%; }
+  .kv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; font-size: 13px; color: var(--ink-2); }
+  @media (min-width: 720px) { .kv { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .kv div { display: flex; gap: 8px; align-items: flex-start; min-width: 0; }
+  .kv .ico { flex: none; width: 18px; text-align: center; }
+  .kv b { color: var(--ink); font-weight: 500; }
+  .det .lab { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 14px 0 5px; }
+  .pm { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px 22px; }
+  @media (min-width: 720px) { .pm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .pm ul { list-style: none; color: var(--ink-2); font-size: 13.5px; }
+  .pm li { padding-left: 20px; position: relative; margin-bottom: 4px; }
+  .pm li::before { position: absolute; left: 0; top: 0; }
+  .pm .plus li::before { content: "＋"; color: var(--ok); }
+  .pm .minus li::before { content: "－"; color: var(--dark); }
+  .plan { font-family: var(--mono); font-size: 12px; color: var(--ink-2); line-height: 1.6; }
+  .plan span { display: block; }
+  .plan b { color: var(--ink); font-weight: 500; display: inline-block; width: 34px; }
+  .det .fc { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+  @media (max-width: 719px) { .det .fc { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .det .fc .c { border-radius: 4px; padding: 7px 4px; font-size: 11px; line-height: 1.3; font-family: var(--mono); text-align: center; border: 1px solid var(--rule-2); }
+  .det .fc .c b { display: block; font-size: 13px; font-weight: 500; }
+  .det .fc .c em { display: block; font-style: normal; font-size: 18px; line-height: 1.2; margin: 2px 0; }
+  .det .fc .c i { display: block; font-style: normal; font-size: 9.5px; opacity: 0.8; }
+  .det .links { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px; }
+  .det .links a { color: var(--ink-2); font-size: 12.5px; text-decoration: none; border: 1px solid var(--rule); border-radius: 999px; padding: 6px 11px; background: var(--surface); white-space: nowrap; }
+  .det .links a.primary { color: var(--paper); background: var(--ink); border-color: var(--ink); }
 
-  .method { border-top: 1px solid var(--rule); padding-top: 18px; color: var(--ink-2); font-size: 14px; max-width: 86ch; }
-  .method ul { margin-left: 18px; margin-top: 8px; }
+  /* ----- mobile cards ----- */
+  .cards { display: grid; margin-top: 12px; gap: 8px; }
+  @media (min-width: 760px) { .cards { display: none; } }
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 13px 10px; min-width: 0; overflow: hidden; }
+  .card.baseline { border-color: var(--accent); background: var(--accent-bg); }
+  .card.hidden { display: none; }
+  .card .top { display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 34px; }
+  .card .rank { font-family: var(--mono); font-size: 11px; color: var(--muted); min-width: 22px; }
+  .card .name { font-weight: 600; flex: 1; font-size: 16px; line-height: 1.2; min-width: 0; }
+  .card .name small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+  .card .fitbig { font-family: var(--mono); font-size: 20px; font-weight: 500; line-height: 1; text-align: right; }
+  .card .fitbig small { display: block; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 400; margin-top: 3px; }
+  .card .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 10px; font-family: var(--mono); font-size: 12.5px; }
+  .card .stats div { display: flex; align-items: center; gap: 5px; min-width: 0; white-space: nowrap; overflow: hidden; }
+  .card .stats .ico { font-size: 13px; flex: none; }
+  .card .strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; margin-top: 10px; font-family: var(--mono); font-size: 11px; text-align: center; }
+  .card .strip .c { border-radius: 4px; padding: 4px 0 3px; line-height: 1.2; min-width: 0; }
+  .card .strip .c small { display: block; font-size: 9px; opacity: 0.85; }
+  .card .strip .c em { display: block; font-style: normal; font-size: 8.5px; color: var(--muted); margin-bottom: 1px; }
+  .card .strip .c.q4 em, .card .strip .c.q5 em { color: rgba(255,255,255,0.85); }
+  .card .more { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 11px; color: var(--muted); cursor: pointer; display: flex; justify-content: space-between; }
+  .card .det { display: none; margin-top: 8px; }
+  .card.open .det { display: block; }
+
+  .method { border-top: 1px solid var(--rule); padding-top: 16px; color: var(--ink-2); font-size: 13.5px; max-width: 86ch; }
+  .method ul { margin-left: 18px; margin-top: 6px; }
   .method li { margin-bottom: 4px; }
-  footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+  footer { margin-top: 48px; padding-top: 14px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.7; }
   footer a { color: var(--muted); }
 </style>
 </head>
@@ -113,61 +152,59 @@
 <nav class="top">
   <div class="inner">
     <span class="brand">PATH BEATERS '26 / PLAN B</span>
-    <a class="lnk" href="#board">Board</a>
-    <a class="lnk" href="#routes">Routes</a>
     <a class="lnk" href="#method">Method</a>
-    <a class="lnk" href="../">Spanish Peaks site</a>
+    <a class="lnk" href="../">Plan A site</a>
   </div>
 </nav>
 
 <div class="wrap">
 
 <header>
-  <div class="kicker">Sept 16–21, 2026 · staged out of Salt Lake · Thursday 6 pm at whichever trailhead</div>
+  <div class="kicker">Sept 17–21 · leaving Pocatello or SLC around noon Thursday</div>
   <h1>Plan B board</h1>
-  <p>The Spanish Peaks loop is the trip on the books, and its forecast is the worst on this page. Below it are twenty alternatives within
-  roughly five hours of SLC, with the same stats and the same National Weather Service trip-day forecast for each, so the comparison is
-  apples to apples. Sort any column, filter by region, and use the 10-day links when you want the longer view.</p>
+  <p>Spanish Peaks has the worst forecast on the page. Twenty alternatives below, same stats, same NWS forecast. Tap a route for detail.</p>
   <div class="meta">
-    <span>forecast <b id="st-updated">snapshot</b></span>
-    <span>driest weekend <b id="st-driest">—</b></span>
-    <span>best fit today <b id="st-fit">—</b></span>
-    <span>routes <b>21</b></span>
+    <span>🛰 <b id="st-updated">snapshot</b></span>
+    <span>☀ driest <b id="st-driest">—</b></span>
+    <span>★ best fit <b id="st-fit">—</b></span>
   </div>
 </header>
 
 <section id="board">
-  <div class="kicker">The board</div>
-  <h2>Stats and trip-day forecast, one table</h2>
-  <p class="sub">Forecast cells are high or low temperature over chance of precipitation, Thursday through Sunday night; hover a cell for the
-  wording and wind. The Spanish Peaks row stays pinned at the top as the baseline. Fit is 40% epicness, 30% forecast, 20% logistics, 10% novelty.</p>
   <div class="controls">
-    <span class="seg" id="ptseg"><button class="on" data-pt="hp">Forecast at high point</button><button data-pt="th">at trailhead</button></span>
-    <span class="seg" id="regionseg"><button class="on" data-r="all">All</button><button data-r="mt">MT</button><button data-r="wy">WY</button><button data-r="id">ID</button><button data-r="utm">UT mtns</button><button data-r="ut">UT desert</button></span>
-    <span class="legend">precip <i class="q1"></i><i class="q2"></i><i class="q3"></i><i class="q4"></i><i class="q5"></i> 15 → 65%+</span>
+    <div class="crow"><span class="ico" title="Leaving from">🚗</span><span class="seg" id="fromseg"><button class="on" data-from="poc">Pocatello</button><button data-from="slc">SLC</button></span><input class="tm" type="time" id="depart" value="12:00" step="900" title="Departure time Thursday"></div>
+    <div class="crow"><span class="ico" title="Forecast location">🌤</span><span class="seg" id="ptseg"><button class="on" data-pt="hp">High point</button><button data-pt="th">Trailhead</button></span></div>
+    <div class="scrollx"><span class="seg" id="regionseg"><button class="on" data-r="all">All</button><button data-r="mt">MT</button><button data-r="wy">WY</button><button data-r="id">ID</button><button data-r="utm">UT mtns</button><button data-r="ut">UT desert</button></span></div>
+    <div class="crow">
+      <select class="sortsel" id="sortsel" aria-label="Sort by">
+        <option value="fit:-1">★ Fit</option>
+        <option value="wxs:-1">☀ Driest</option>
+        <option value="epic:-1">🔥 Most epic</option>
+        <option value="arrive:1">🕕 Earliest arrival</option>
+        <option value="miles:-1">📏 Longest</option>
+        <option value="gain:-1">📈 Most climbing</option>
+        <option value="high:-1">⛰ Highest</option>
+      </select>
+      <button class="ghost" id="expandall">Expand all</button>
+    </div>
   </div>
   <div class="tblwrap"><table id="board-table"></table></div>
-</section>
-
-<section id="routes">
-  <div class="kicker">Routes</div>
-  <h2>Each one in detail</h2>
-  <p class="sub">Ordered by fit, Spanish Peaks first. What it is, why, why not, how it fits a Thursday-evening arrival, the forecast at the high point, and the links.</p>
-  <div class="routes" id="routes"></div>
+  <div class="cards" id="cards"></div>
 </section>
 
 <section id="method" class="method">
   <div class="kicker">Method</div>
   <ul>
-    <li><strong>Forecast</strong>: NWS point forecasts for the trailhead and for a grid cell near the route's high point, pulled live when this page loads; the baked-in snapshot is from Sept 14. The weather score uses Friday through Sunday night at the high point: average chance of precip, a penalty for any period at or above 65%, and small penalties for lows under 28°F or a snow mention.</li>
-    <li><strong>Epicness</strong>: a 1–10 gut rating for scenery, objective, and the "we did that" factor. <strong>Logistics</strong>: drive time, permits, shuttles, how cleanly it fits a Thursday 6 pm arrival and a Monday flight. <strong>Novelty</strong>: we've done the Sawtooths four times and the Winds twice.</li>
-    <li><strong>Stats</strong> are rounded from AllTrails or the linked guide; drive times are highway estimates from SLC airport and skip the dirt at the end. Weather Underground links open the nearest town's 10-day page.</li>
-    <li><strong>Permits</strong>: Grand Teton, Zion, Canyonlands, Cedar Mesa, Paria, and Buckskin cap groups and need reservations or walk-ins. Slot canyons are off the table on any day with storms in the forecast.</li>
+    <li><strong>Cells</strong>: high or low temperature over chance of precipitation, Thursday through Sunday night, NWS point forecast at the trailhead or a grid cell near the high point. Refreshed live on load; snapshot from Sept 14.</li>
+    <li><strong>Arrive</strong>: departure plus drive, no stops. 🟢 before 6 pm, time to walk in · 🟡 by sunset (7:30), headlamps · 🔴 after dark.</li>
+    <li><strong>Fit</strong> = 40% epicness (1–10 gut call) + 30% weather score (Fri–Sun precip at the high point, penalties for storms, hard freezes, snow) + 20% logistics + 10% novelty.</li>
+    <li><strong>Drive</strong>: highway estimates, dirt not included. Southern Utah is 6–8.5 h from Pocatello: leave from SLC for those.</li>
+    <li><strong>Permits</strong>: 🎫 required means a cap and a reservation or walk-in (Tetons, Zion, Canyonlands, Cedar Mesa, Paria, Buckskin). No slot canyons on a stormy day.</li>
   </ul>
 </section>
 
 <footer>
-  Built Sept 14, 2026 · forecasts <a href="https://www.weather.gov/">NWS</a> via api.weather.gov · 10-day links <a href="https://www.wunderground.com/">Weather Underground</a> · stats <a href="https://www.alltrails.com">AllTrails</a> and linked guides · main trip site <a href="../">one level up</a>
+  Sept 14, 2026 · <a href="https://www.weather.gov/">NWS</a> · <a href="https://www.wunderground.com/">Weather Underground</a> · <a href="https://www.alltrails.com">AllTrails</a> · <a href="../">Plan A site</a>
 </footer>
 
 </div>
@@ -175,15 +212,20 @@
 <script src="routes.js"></script>
 <script src="wx.js"></script>
 <script>
-const REGION_NAME = { mt: "Montana", wy: "Wyoming", id: "Idaho", utm: "Utah mountains", ut: "Utah desert" };
-const SLC = "Salt+Lake+City+International+Airport";
-const dirLink = r => { const p = WX[r.id].th; return `https://www.google.com/maps/dir/?api=1&origin=${SLC}&destination=${p.lat},${p.lon}`; };
+const REGION_NAME = { mt: "Montana", wy: "Wyoming", id: "Idaho", utm: "Utah mtns", ut: "Utah desert" };
+const ORIGIN = { poc: { label: "Pocatello", maps: "Pocatello,+ID", key: "drivePoc" }, slc: { label: "SLC", maps: "Salt+Lake+City+International+Airport", key: "drive" } };
+const dirLink = (r, o) => { const p = WX[r.id].th; return `https://www.google.com/maps/dir/?api=1&origin=${ORIGIN[o].maps}&destination=${p.lat},${p.lon}`; };
 const wuLink = r => `https://www.wunderground.com/forecast/us/${r.wu}`;
 const wuTown = r => r.wu.split("/")[1].split("-").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
 const nwsLink = pt => `https://forecast.weather.gov/MapClick.php?lat=${pt.lat}&lon=${pt.lon}`;
 const short = r => SHORT[r.id] || r.name;
 const PERIODS = ["Thursday", "Thursday Night", "Friday", "Friday Night", "Saturday", "Saturday Night", "Sunday", "Sunday Night"];
-const PLABEL = ["Thu", "Thu nt", "Fri", "Fri nt", "Sat", "Sat nt", "Sun", "Sun nt"];
+const PLABEL = ["Thu", "Thu·n", "Fri", "Fri·n", "Sat", "Sat·n", "Sun", "Sun·n"];
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+const wxIcon = (s, day) => /thunder|t-storm/i.test(s) ? "⛈" : /snow/i.test(s) ? "🌨" : /rain|shower/i.test(s) ? "🌧" : /partly|mostly sunny|mostly clear/i.test(s) ? (day ? "⛅" : "🌙") : /cloud/i.test(s) ? "☁" : (day ? "☀" : "🌙");
+const permIcon = r => /^none/i.test(r.permits) ? "✓ none" : /free|self/i.test(r.permits) ? "✓ free" : "🎫 required";
+const bearIcon = r => /grizzly/i.test(r.bears) ? "🐻 grizzly" : /black/i.test(r.bears) ? "🐻 black bear" : "· no bears";
+const kmi = n => (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
 
 function wxScore(periods) {
   const ps = periods.filter(p => !/^Thursday/.test(p.n));
@@ -201,80 +243,117 @@ function wxScore(periods) {
 const q = p => p < 15 ? "q0" : p < 30 ? "q1" : p < 45 ? "q2" : p < 65 ? "q3" : p < 80 ? "q4" : "q5";
 const hpScore = r => wxScore(WX[r.id].hp.periods);
 const fit = r => 0.4 * r.epic + 0.3 * hpScore(r).score + 0.2 * r.logistics + 0.1 * r.novelty;
-const permitShort = r => /^none/i.test(r.permits) ? "none" : /free|self/i.test(r.permits) ? "free, self-issue" : "required";
+
+let FROM = "poc", DEPART = 12 * 60;
+const driveHrs = r => r[ORIGIN[FROM].key];
+const arriveMin = r => DEPART + driveHrs(r) * 60;
+function fmtTime(m) { m = Math.round(m / 5) * 5; const h = Math.floor(m / 60) % 24, mm = m % 60; return `${h % 12 || 12}:${String(mm).padStart(2, "0")}${h < 12 ? "a" : "p"}`; }
+const SUNSET = 19 * 60 + 30;
+const arrClass = m => m <= 18 * 60 ? "arr-ok" : m <= SUNSET ? "arr-tight" : "arr-dark";
+const arrDot = m => m <= 18 * 60 ? "🟢" : m <= SUNSET ? "🟡" : "🔴";
+const arrNote = m => m <= 18 * 60 ? "time to walk in" : m <= SUNSET ? "headlamps" : "after dark";
 
 let PT = "hp", REGION = "all", SORT = { key: "fit", dir: -1 };
-const COLS = [
-  ["name", "Route", r => r.name, false, ""],
-  ["drive", "Drive", r => r.drive, true, "num"],
-  ["miles", "Miles", r => r.miles, true, "num"],
-  ["gain", "Gain ft", r => r.gain, true, "num"],
-  ["high", "High ft", r => r.high, true, "num"],
-];
-const TAIL = [
-  ["avg", "Fri–Sun precip", r => hpScore(r).avg, true, "num avg"],
-  ["wxs", "Wx score", r => hpScore(r).score, true, "num"],
-  ["epic", "Epic", r => r.epic, true, "num"],
-  ["fit", "Fit", r => fit(r), true, "num fit"],
-  ["permits", "Permits", r => permitShort(r), false, "wrapok"],
-  ["links", "Links", r => "", false, "links"],
-];
+const OPEN = new Set();
+const GET = { name: r => r.name, drive: r => r.drive, drivePoc: r => r.drivePoc, arrive: r => arriveMin(r), miles: r => r.miles, gain: r => r.gain, high: r => r.high,
+  avg: r => hpScore(r).avg, wxs: r => hpScore(r).score, epic: r => r.epic, fit: r => fit(r) };
+function ordered() {
+  const get = GET[SORT.key];
+  const rows = ROUTES.filter(r => r.id !== "spanish").sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; });
+  return [ROUTES.find(r => r.id === "spanish"), ...rows];
+}
+const shown = r => r.id === "spanish" || REGION === "all" || r.region === REGION;
+const rankOf = r => ROUTES.slice().sort((a, b) => fit(b) - fit(a)).indexOf(r) + 1;
 
+/* ----- detail (shared) ----- */
+function detailHTML(r) {
+  const hp = WX[r.id].hp, th = WX[r.id].th, pt = WX[r.id][PT], ws = hpScore(r), am = arriveMin(r);
+  const li = a => a.map(s => `<li>${s}</li>`).join("");
+  const plan = r.shape.split(" · ").map(seg => { const m = seg.match(/^(Thu|Fri|Sat|Sun|Mon)\s*(.*)$/); return m ? `<span><b>${m[1]}</b>${esc(m[2])}</span>` : `<span>${esc(seg)}</span>`; }).join("");
+  return `<div class="det">
+    <div class="kv">
+      <div><span class="ico">📍</span><span><b>${esc(r.th)}</b><br>${esc(r.where)}</span></div>
+      <div><span class="ico">🚗</span><span><b class="${arrClass(am)}">${fmtTime(am)}</b> ${arrNote(am)}<br>${driveHrs(r)} h from ${ORIGIN[FROM].label} · ${esc(r.driveNote)}</span></div>
+      <div><span class="ico">✈</span><span><b>${esc(r.fly)}</b></span></div>
+      <div><span class="ico">📏</span><span><b>${r.miles} mi · +${r.gain.toLocaleString()} ft · ${r.high.toLocaleString()} ft</b><br>${esc(r.nights)}</span></div>
+      <div><span class="ico">🎫</span><span><b>${permIcon(r).replace(/^[✓🎫] /, "")}</b><br>${esc(r.permits)}</span></div>
+      <div><span class="ico">🐻</span><span>${esc(r.bears)}</span></div>
+      <div><span class="ico">👣</span><span>${esc(r.done)}</span></div>
+      <div><span class="ico">★</span><span><b>fit ${fit(r).toFixed(1)}</b> · #${rankOf(r)} of ${ROUTES.length}<br>epic ${r.epic} · wx ${ws.score.toFixed(1)} · logistics ${r.logistics} · new ${r.novelty}</span></div>
+    </div>
+    <div class="lab">Why / why not</div>
+    <div class="pm"><ul class="plus">${li(r.why)}</ul><ul class="minus">${li(r.whynot)}</ul></div>
+    <div class="lab">Plan</div>
+    <div class="plan">${plan}</div>
+    <div class="lab">${wxIcon("", true)} ${PT === "hp" ? "high point" : "trailhead"} · ${pt.elev_ft.toLocaleString()} ft · Fri–Sun ${Math.round(ws.avg)}% · low ${ws.minT}°${ws.snow ? " · ❄" : ""}</div>
+    <div class="fc">${pt.periods.map(p => `<div class="c ${q(p.p)}" title="${esc(p.s)} · ${esc(p.w)}"><i>${p.n.replace(" Night", " nt")}</i><em>${wxIcon(p.s, p.d)}</em><b>${p.t}°</b><i>${p.p}%</i></div>`).join("")}</div>
+    <div class="links"><a class="primary" href="${wuLink(r)}" target="_blank" rel="noopener">10-day · ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}<a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">🗺 from ${ORIGIN[FROM].label}</a></div>
+  </div>`;
+}
+function toggle(id) { if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id); render(); }
+
+/* ----- desktop table ----- */
+const HEAD = [["name", "Route", ""], ["drive", "SLC h", "num"], ["drivePoc", "Poc h", "num"], ["arrive", "Arrive", "num"], ["miles", "Mi", "num"], ["gain", "Gain", "num"], ["high", "High", "num"]];
+const TAIL = [["avg", "Fri–Sun", "num"], ["wxs", "Wx", "num"], ["epic", "Epic", "num"], ["fit", "Fit", "num"]];
 function renderBoard() {
   const t = document.getElementById("board-table"); t.textContent = "";
-  const thead = document.createElement("thead");
-  const hr = document.createElement("tr");
-  const mkTh = ([k, label, , sortable, cl]) => {
-    const th = document.createElement("th"); th.textContent = label; if (cl) th.className = cl.split(" ")[0] === "num" ? "num" : "";
-    if (sortable) { th.classList.add("sortable"); th.addEventListener("click", () => { SORT = { key: k, dir: SORT.key === k ? -SORT.dir : (k === "drive" || k === "avg" ? 1 : -1) }; renderBoard(); }); }
+  const thead = document.createElement("thead"), hr = document.createElement("tr");
+  const mkTh = ([k, label, cl]) => {
+    const th = document.createElement("th"); th.textContent = label; if (cl) th.className = cl;
+    th.classList.add("sortable");
+    th.addEventListener("click", () => { SORT = { key: k, dir: SORT.key === k ? -SORT.dir : (["name", "drive", "drivePoc", "arrive", "avg"].includes(k) ? 1 : -1) }; syncSel(); render(); });
     if (SORT.key === k) { th.classList.add("sorted"); if (SORT.dir === 1) th.classList.add("asc"); }
+    if (k === "arrive") th.title = "Leaving " + ORIGIN[FROM].label + " at " + fmtTime(DEPART) + ", no stops";
     return th;
   };
-  COLS.forEach(c => hr.appendChild(mkTh(c)));
+  hr.appendChild(document.createElement("th"));
+  HEAD.forEach(c => hr.appendChild(mkTh(c)));
   PLABEL.forEach((l, i) => { const th = document.createElement("th"); th.className = "grp"; th.textContent = l; th.title = PERIODS[i]; hr.appendChild(th); });
   TAIL.forEach(c => hr.appendChild(mkTh(c)));
   thead.appendChild(hr); t.appendChild(thead);
-
-  const all = [...COLS, ...TAIL]; const get = all.find(c => c[0] === SORT.key)[2];
-  const rows = ROUTES.filter(r => r.id !== "spanish").sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; });
-  rows.unshift(ROUTES.find(r => r.id === "spanish"));
   const tb = document.createElement("tbody");
-  rows.forEach(r => {
-    const pt = WX[r.id][PT], ws = hpScore(r), f = fit(r);
-    const tr = document.createElement("tr");
-    if (r.id === "spanish") tr.className = "baseline"; else if (REGION !== "all" && r.region !== REGION) tr.className = "hidden";
-    let h = `<td class="name">${r.name}<small>${REGION_NAME[r.region]} · ${r.where}</small><a class="wu" href="${wuLink(r)}" target="_blank" rel="noopener">10-day · ${wuTown(r)}</a></td>
-      <td class="num">${r.drive} h</td><td class="num">${r.miles}</td><td class="num">${r.gain.toLocaleString()}</td><td class="num">${r.high.toLocaleString()}</td>`;
+  ordered().forEach(r => {
+    const pt = WX[r.id][PT], ws = hpScore(r), f = fit(r), open = OPEN.has(r.id), am = arriveMin(r);
+    const tr = document.createElement("tr"); tr.className = "row" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
+    tr.tabIndex = 0; tr.setAttribute("role", "button"); tr.setAttribute("aria-expanded", open);
+    let h = `<td class="chev">${open ? "▾" : "▸"}</td><td class="name">${esc(r.name)}<small>${REGION_NAME[r.region]}</small></td>
+      <td class="num">${r.drive}</td><td class="num">${r.drivePoc}</td><td class="num ${arrClass(am)}" title="${arrNote(am)}">${fmtTime(am)}</td><td class="num">${r.miles}</td><td class="num">${r.gain.toLocaleString()}</td><td class="num">${r.high.toLocaleString()}</td>`;
     PERIODS.forEach(n => {
       const p = pt.periods.find(x => x.n === n);
-      h += p ? `<td class="wx"><span class="c ${q(p.p)}" title="${p.s.replace(/"/g, "")} · ${p.w} · ${PT === "hp" ? "high point" : "trailhead"} grid ${pt.elev_ft.toLocaleString()} ft">${p.t}°<small>${p.p}%</small></span></td>` : `<td class="wx">—</td>`;
+      h += p ? `<td class="wx"><span class="c ${q(p.p)}" title="${esc(p.s)} · ${esc(p.w)}">${p.t}°<small>${p.p}%</small></span></td>` : `<td class="wx">—</td>`;
     });
-    h += `<td class="num avg">${Math.round(ws.avg)}%${ws.snow ? '<br><span class="snow">snow</span>' : ""}</td>
-      <td class="num">${ws.score.toFixed(1)}</td><td class="num">${r.epic}</td><td class="num fit">${f.toFixed(1)}</td>
-      <td class="wrapok" title="${r.permits.replace(/"/g, "")}">${permitShort(r)}</td>
-      <td class="links">${r.links.slice(0, 1).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join("")}<a href="${dirLink(r)}" target="_blank" rel="noopener">directions</a><a href="${nwsLink(pt)}" target="_blank" rel="noopener">NWS</a></td>`;
-    tr.innerHTML = h; tb.appendChild(tr);
+    h += `<td class="num avg">${Math.round(ws.avg)}%${ws.snow ? " ❄" : ""}</td><td class="num">${ws.score.toFixed(1)}</td><td class="num">${r.epic}</td><td class="num fit">${f.toFixed(1)}</td>`;
+    tr.innerHTML = h;
+    tr.addEventListener("click", e => { if (e.target.closest("a")) return; toggle(r.id); });
+    tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(r.id); } });
+    tb.appendChild(tr);
+    if (open) {
+      const d = document.createElement("tr"); d.className = "detail" + (shown(r) ? "" : " hidden");
+      d.innerHTML = `<td colspan="${HEAD.length + TAIL.length + PERIODS.length + 1}">${detailHTML(r)}</td>`;
+      tb.appendChild(d);
+    }
   });
   t.appendChild(tb);
 }
 
-function renderRoutes() {
-  const box = document.getElementById("routes"); box.textContent = "";
-  const ranked = ROUTES.slice().sort((a, b) => fit(b) - fit(a));
-  const ordered = [ROUTES.find(r => r.id === "spanish"), ...ranked.filter(r => r.id !== "spanish")];
-  ordered.forEach(r => {
-    const hp = WX[r.id].hp, ws = hpScore(r), f = fit(r), rank = ranked.indexOf(r) + 1;
-    const el = document.createElement("div"); el.className = "route" + (r.id === "spanish" ? " baseline" : "");
-    if (r.id !== "spanish" && REGION !== "all" && r.region !== REGION) el.classList.add("hidden");
-    const li = a => a.map(s => `<li>${s}</li>`).join("");
-    el.innerHTML = `
-      <div class="head"><span class="n">${r.id === "spanish" ? "plan A" : "#" + rank}</span><h3>${r.name}</h3><span class="tags">fit ${f.toFixed(1)} · epic ${r.epic} · wx ${ws.score.toFixed(1)} · ${REGION_NAME[r.region]}${r.id === "spanish" ? " · ranked " + rank + " of " + ranked.length + " on fit" : ""}</span></div>
-      <div class="facts">${r.where} · ${r.th} · ${r.miles} mi · +${r.gain.toLocaleString()} ft · high point ${r.high.toLocaleString()} ft · ${r.nights} · ~${r.drive} hr from SLC (${r.driveNote}) · fly home: ${r.fly}<br>permits: ${r.permits} · bears: ${r.bears} · been there: ${r.done}</div>
-      <div class="cols"><div><div class="lab">Why</div><ul>${li(r.why)}</ul></div><div><div class="lab">Why not</div><ul>${li(r.whynot)}</ul></div></div>
-      <div class="shape"><div class="lab">Thursday-evening shape</div>${r.shape}</div>
-      <div style="margin-top: 12px;"><div class="lab">Forecast, NWS grid near the high point (${hp.elev_ft.toLocaleString()} ft) · Fri–Sun avg ${Math.round(ws.avg)}% · coldest low ${ws.minT}°${ws.snow ? " · snow in the forecast" : ""}</div>
-        <div class="fc">${hp.periods.map(p => `<div class="c ${q(p.p)}"><b>${p.t}° · ${p.p}%</b>${p.n.replace(" Night", " night")}<br>${p.s}</div>`).join("")}</div></div>
-      <div class="links"><a href="${wuLink(r)}" target="_blank" rel="noopener">Weather Underground 10-day, ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS high point</a><a href="${nwsLink(WX[r.id].th)}" target="_blank" rel="noopener">NWS trailhead</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join("")}<a href="${dirLink(r)}" target="_blank" rel="noopener">Directions from SLC</a></div>`;
+/* ----- mobile cards ----- */
+function renderCards() {
+  const box = document.getElementById("cards"); box.textContent = "";
+  ordered().forEach(r => {
+    const pt = WX[r.id][PT], ws = hpScore(r), f = fit(r), open = OPEN.has(r.id), am = arriveMin(r);
+    const el = document.createElement("div"); el.className = "card" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
+    const strip = PERIODS.map((n, i) => { const p = pt.periods.find(x => x.n === n); return p ? `<div class="c ${q(p.p)}"><em>${PLABEL[i]}</em>${p.t}°<small>${p.p}%</small></div>` : `<div class="c">—</div>`; }).join("");
+    el.innerHTML = `<div class="top"><div class="rank">${r.id === "spanish" ? "A" : "#" + rankOf(r)}</div><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]}</small></div><div class="fitbig">${f.toFixed(1)}<small>fit</small></div></div>
+      <div class="stats">
+        <div title="Arrive Thursday, ${driveHrs(r)} h from ${ORIGIN[FROM].label}"><span class="ico">${arrDot(am)}</span><span class="${arrClass(am)}">${fmtTime(am)}</span></div>
+        <div title="${r.miles} mi, +${r.gain.toLocaleString()} ft, high point ${r.high.toLocaleString()} ft"><span class="ico">📏</span>${r.miles}mi·${kmi(r.gain)}</div>
+        <div title="Fri–Sun average chance of precip"><span class="ico">🌧</span>${Math.round(ws.avg)}%${ws.snow ? "❄" : ""}</div>
+        <div title="Epicness"><span class="ico">🔥</span>${r.epic}/10</div>
+      </div>
+      <div class="strip">${strip}</div>
+      <div class="more"><span>${open ? "▾ less" : "▸ more"}</span><span>${permIcon(r)} · ${driveHrs(r)}h</span></div>${detailHTML(r)}`;
+    el.querySelector(".top").addEventListener("click", () => toggle(r.id));
+    el.querySelector(".more").addEventListener("click", () => toggle(r.id));
     box.appendChild(el);
   });
 }
@@ -282,19 +361,30 @@ function renderRoutes() {
 function renderMeta() {
   const ranked = ROUTES.slice().sort((a, b) => fit(b) - fit(a));
   const driest = ROUTES.slice().sort((a, b) => hpScore(a).avg - hpScore(b).avg)[0];
-  document.getElementById("st-driest").textContent = short(driest) + " (" + Math.round(hpScore(driest).avg) + "%)";
-  document.getElementById("st-fit").textContent = short(ranked[0]) + " (" + fit(ranked[0]).toFixed(1) + ")";
+  document.getElementById("st-driest").textContent = short(driest);
+  document.getElementById("st-fit").textContent = short(ranked[0]);
 }
-function renderAll() { renderMeta(); renderBoard(); renderRoutes(); }
-
-document.querySelectorAll("#ptseg button").forEach(b => b.addEventListener("click", () => { document.querySelectorAll("#ptseg button").forEach(x => x.classList.remove("on")); b.classList.add("on"); PT = b.dataset.pt; renderBoard(); }));
-document.querySelectorAll("#regionseg button").forEach(b => b.addEventListener("click", () => { document.querySelectorAll("#regionseg button").forEach(x => x.classList.remove("on")); b.classList.add("on"); REGION = b.dataset.r; renderBoard(); renderRoutes(); }));
+function render() { renderBoard(); renderCards(); }
+function renderAll() { renderMeta(); render(); }
+function syncSel() { const s = document.getElementById("sortsel"); const v = SORT.key + ":" + SORT.dir; if ([...s.options].some(o => o.value === v)) s.value = v; }
+const segs = (id, fn) => document.querySelectorAll("#" + id + " button").forEach(b => b.addEventListener("click", () => { document.querySelectorAll("#" + id + " button").forEach(x => x.classList.remove("on")); b.classList.add("on"); fn(b); render(); }));
+segs("fromseg", b => { FROM = b.dataset.from; });
+segs("ptseg", b => { PT = b.dataset.pt; });
+segs("regionseg", b => { REGION = b.dataset.r; });
+document.getElementById("depart").addEventListener("change", e => { const [h, m] = e.target.value.split(":").map(Number); if (!isNaN(h)) { DEPART = h * 60 + (m || 0); render(); } });
+document.getElementById("sortsel").addEventListener("change", e => { const [k, d] = e.target.value.split(":"); SORT = { key: k, dir: +d }; render(); });
+document.getElementById("expandall").addEventListener("click", e => {
+  if (OPEN.size >= ROUTES.length) { OPEN.clear(); e.target.textContent = "Expand all"; } else { ROUTES.forEach(r => OPEN.add(r.id)); e.target.textContent = "Collapse all"; }
+  render();
+});
 
 renderAll();
+if (location.hash && ROUTES.some(r => r.id === location.hash.slice(1))) { OPEN.add(location.hash.slice(1)); render(); }
+
 (function () {
   const stamp = (iso, live) => {
     const s = new Date(iso).toLocaleString("en-US", { timeZone: "America/Denver", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
-    document.getElementById("st-updated").textContent = (live ? "live, NWS updated " : "offline snapshot, ") + s + " MT";
+    document.getElementById("st-updated").textContent = (live ? "live " : "snapshot ") + s;
   };
   stamp(WX.spanish.hp.updated, false);
   const jobs = [];
