@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
   :root {
     color-scheme: light;
@@ -40,6 +41,16 @@
   header p { color: var(--ink-2); max-width: 70ch; margin-top: 10px; font-size: 15px; }
   .meta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 12px; display: flex; flex-wrap: wrap; gap: 4px 18px; }
   .meta b { color: var(--ink); font-weight: 500; }
+
+  /* ----- map ----- */
+  #map { height: 300px; border: 1px solid var(--rule); border-radius: 10px; margin-top: 16px; background: #e9e7e0; z-index: 1; }
+  @media (min-width: 760px) { #map { height: 420px; } }
+  .leaflet-container { font-family: var(--mono); font-size: 11px; }
+  .leaflet-tooltip { background: var(--ink); color: var(--paper); border: none; border-radius: 4px; padding: 4px 8px; font-family: var(--mono); font-size: 11px; box-shadow: none; }
+  .leaflet-tooltip::before { display: none; }
+  .leaflet-tooltip.origin { background: var(--surface); color: var(--ink-2); border: 1px solid var(--rule); }
+  .leaflet-control-attribution { font-family: system-ui, sans-serif; font-size: 9px; background: rgba(251,250,247,0.8) !important; }
+  .leaflet-bar a { color: var(--ink); }
 
   /* ----- controls ----- */
   .controls { display: grid; gap: 8px; margin-top: 4px; padding: 12px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
@@ -171,6 +182,7 @@
 </header>
 
 <section id="board">
+  <div id="map" aria-label="Map of trailheads"></div>
   <div class="controls">
     <div class="crow"><span class="ico" title="Leaving from">🚗</span><span class="seg" id="fromseg"><button class="on" data-from="poc">Pocatello</button><button data-from="slc">SLC</button></span><input class="tm" type="time" id="depart" value="12:00" step="900" title="Departure time Thursday"></div>
     <div class="crow"><span class="ico" title="Forecast location">🌤</span><span class="seg" id="ptseg"><button class="on" data-pt="hp">High point</button><button data-pt="th">Trailhead</button></span></div>
@@ -209,6 +221,7 @@
 
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="routes.js"></script>
 <script src="wx.js"></script>
 <script>
@@ -259,8 +272,7 @@ const GET = { name: r => r.name, drive: r => r.drive, drivePoc: r => r.drivePoc,
   avg: r => hpScore(r).avg, wxs: r => hpScore(r).score, epic: r => r.epic, fit: r => fit(r) };
 function ordered() {
   const get = GET[SORT.key];
-  const rows = ROUTES.filter(r => r.id !== "spanish").sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; });
-  return [ROUTES.find(r => r.id === "spanish"), ...rows];
+  return ROUTES.slice().sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; });
 }
 const shown = r => r.id === "spanish" || REGION === "all" || r.region === REGION;
 const rankOf = r => ROUTES.slice().sort((a, b) => fit(b) - fit(a)).indexOf(r) + 1;
@@ -315,7 +327,7 @@ function renderBoard() {
   ordered().forEach(r => {
     const pt = WX[r.id][PT], ws = hpScore(r), f = fit(r), open = OPEN.has(r.id), am = arriveMin(r);
     const tr = document.createElement("tr"); tr.className = "row" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
-    tr.tabIndex = 0; tr.setAttribute("role", "button"); tr.setAttribute("aria-expanded", open);
+    tr.dataset.id = r.id; tr.tabIndex = 0; tr.setAttribute("role", "button"); tr.setAttribute("aria-expanded", open);
     let h = `<td class="chev">${open ? "▾" : "▸"}</td><td class="name">${esc(r.name)}<small>${REGION_NAME[r.region]}</small></td>
       <td class="num">${r.drive}</td><td class="num">${r.drivePoc}</td><td class="num ${arrClass(am)}" title="${arrNote(am)}">${fmtTime(am)}</td><td class="num">${r.miles}</td><td class="num">${r.gain.toLocaleString()}</td><td class="num">${r.high.toLocaleString()}</td>`;
     PERIODS.forEach(n => {
@@ -341,9 +353,9 @@ function renderCards() {
   const box = document.getElementById("cards"); box.textContent = "";
   ordered().forEach(r => {
     const pt = WX[r.id][PT], ws = hpScore(r), f = fit(r), open = OPEN.has(r.id), am = arriveMin(r);
-    const el = document.createElement("div"); el.className = "card" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
+    const el = document.createElement("div"); el.dataset.id = r.id; el.className = "card" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
     const strip = PERIODS.map((n, i) => { const p = pt.periods.find(x => x.n === n); return p ? `<div class="c ${q(p.p)}"><em>${PLABEL[i]}</em>${p.t}°<small>${p.p}%</small></div>` : `<div class="c">—</div>`; }).join("");
-    el.innerHTML = `<div class="top"><div class="rank">${r.id === "spanish" ? "A" : "#" + rankOf(r)}</div><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]}</small></div><div class="fitbig">${f.toFixed(1)}<small>fit</small></div></div>
+    el.innerHTML = `<div class="top"><div class="rank">#${rankOf(r)}</div><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]}</small></div><div class="fitbig">${f.toFixed(1)}<small>fit</small></div></div>
       <div class="stats">
         <div title="Arrive Thursday, ${driveHrs(r)} h from ${ORIGIN[FROM].label}"><span class="ico">${arrDot(am)}</span><span class="${arrClass(am)}">${fmtTime(am)}</span></div>
         <div title="${r.miles} mi, +${r.gain.toLocaleString()} ft, high point ${r.high.toLocaleString()} ft"><span class="ico">📏</span>${r.miles}mi·${kmi(r.gain)}</div>
@@ -377,6 +389,31 @@ document.getElementById("expandall").addEventListener("click", e => {
   if (OPEN.size >= ROUTES.length) { OPEN.clear(); e.target.textContent = "Expand all"; } else { ROUTES.forEach(r => OPEN.add(r.id)); e.target.textContent = "Collapse all"; }
   render();
 });
+
+/* ----- map ----- */
+const MARK = {};
+(function () {
+  if (typeof L === "undefined") { document.getElementById("map").style.display = "none"; return; }
+  const map = L.map("map", { scrollWheelZoom: false, zoomSnap: 0.25 });
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxZoom: 13, attribution: 'Esri, HERE, Garmin, OpenStreetMap contributors' }).addTo(map);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 13, pane: "shadowPane" }).addTo(map);
+  const pts = [];
+  ROUTES.forEach(r => {
+    const th = WX[r.id].th, base = r.id === "spanish";
+    const m = L.circleMarker([th.lat, th.lon], { radius: base ? 9 : 7, color: base ? "#a0522d" : "#1c1b18", weight: 1.5, fillColor: base ? "#a0522d" : "#fbfaf7", fillOpacity: base ? 0.9 : 0.95 }).addTo(map);
+    m.bindTooltip(short(r), { direction: "top", offset: [0, -8] });
+    m.on("click", () => { OPEN.add(r.id); render(); const el = document.querySelector(`[data-id="${r.id}"]:not(.hidden)`); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    m.on("mouseover", () => m.setStyle({ fillColor: base ? "#7c3f22" : "#1c1b18", fillOpacity: 1 }));
+    m.on("mouseout", () => m.setStyle({ fillColor: base ? "#a0522d" : "#fbfaf7", fillOpacity: base ? 0.9 : 0.95 }));
+    MARK[r.id] = m; pts.push([th.lat, th.lon]);
+  });
+  [["Pocatello", 42.8713, -112.4455], ["SLC", 40.7884, -111.9778]].forEach(([n, la, lo]) => {
+    L.circleMarker([la, lo], { radius: 4, color: "#8b877c", weight: 1, fillColor: "#8b877c", fillOpacity: 1 }).addTo(map)
+      .bindTooltip(n, { permanent: true, direction: "right", offset: [6, 0], className: "origin" });
+    pts.push([la, lo]);
+  });
+  map.fitBounds(pts, { padding: [24, 24] });
+})();
 
 renderAll();
 if (location.hash && ROUTES.some(r => r.id === location.hash.slice(1))) { OPEN.add(location.hash.slice(1)); render(); }
