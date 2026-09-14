@@ -10,13 +10,19 @@
   </metadata>
   <wpt lat="45.44793" lon="-111.37767">
     <name><![CDATA[Spanish Creek TH]]></name>
-    <desc><![CDATA[Start/finish. Water, vault toilet, parking.]]></desc>
+    <desc><![CDATA[Start/finish. Water, vault toilet, parking. Thu Sept 17: arrive ~6 pm. Option A = sleep here in the Sprinter and the Tacoma.]]></desc>
     <sym>Trail Head</sym>
   </wpt>
   <wpt lat="45.41855" lon="-111.40039">
     <name><![CDATA[Falls Ck 410 Jct (approx)]]></name>
     <desc><![CDATA[Loop closes here, ~3 mi from TH. Position estimated from track mileage.]]></desc>
     <sym>Junction</sym>
+  </wpt>
+  <wpt lat="45.42017" lon="-111.39933">
+    <ele>1966</ele>
+    <name><![CDATA[C0 Thu hike-in (option B, approx)]]></name>
+    <desc><![CDATA[Thursday-night option B: walk ~3 flat mi from the TH after a ~6 pm arrival (sunset 7:30). Dispersed camp in the timbered creek bottom just before the Falls Creek junction, ~6,450 ft. Take the first good flat bench 200 ft off the water; nothing established here in the USFS inventory. Position estimated from track mileage. Cuts Friday to ~5 mi.]]></desc>
+    <sym>Campground</sym>
   </wpt>
   <wpt lat="45.3625" lon="-111.42585">
     <name><![CDATA[C1 Site 56 cap 15+]]></name>

@@ -271,25 +271,19 @@
   .rail figcaption { padding: 9px 13px 11px; font-size: 12.5px; color: var(--ink-2); }
   .rail figcaption .when { color: var(--muted); }
 
-  /* roster */
-  #roster.hidden { display: none; }
-  .rform { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
-  @media (max-width: 640px) { .rform { grid-template-columns: 1fr; } }
-  .rform label { display: block; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 5px; }
-  .rform input, .rform textarea {
-    width: 100%; font: inherit; font-size: 14px; color: var(--ink);
-    background: var(--page); border: 1px solid var(--border); border-radius: 9px; padding: 9px 12px;
-  }
-  .rform input:focus, .rform textarea:focus { outline: 2px solid var(--sat); outline-offset: 0; border-color: transparent; }
-  .rform .full { grid-column: 1 / -1; }
-  .rbtn {
-    font: inherit; font-weight: 600; font-size: 14px; color: #fff; background: var(--sat);
-    border: none; border-radius: 999px; padding: 11px 26px; cursor: pointer;
-  }
-  .rbtn:hover { filter: brightness(0.95); }
-  .rbtn:disabled { background: var(--baseline); cursor: default; }
-  .rmsg { font-size: 13px; color: var(--ink-2); margin-left: 12px; }
-  #roster-table td { font-size: 13.5px; }
+  /* forecast */
+  .fc-block { margin-top: 18px; }
+  .fc-block h3 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .fc-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .fc { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(148px, 1fr); gap: 10px; }
+  .fc .card { padding: 12px 14px; }
+  .fc .n { font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; }
+  .fc .t { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin-top: 4px; }
+  .fc .t small { font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 4px; }
+  .fc .s { font-size: 13px; color: var(--ink); margin-top: 4px; line-height: 1.35; }
+  .fc .m { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+  .fc .wet { color: var(--fri); font-weight: 600; }
+  .fc .night { background: var(--neutral-tint); }
   .check { list-style: none; margin-left: 0 !important; }
   .check li { padding-left: 26px; position: relative; margin-bottom: 6px; color: var(--ink-2); }
   .check li::before {
@@ -307,7 +301,7 @@
 <nav class="top">
   <div class="inner">
     <span class="brand">PATH BEATERS <span>'26</span></span>
-    <a class="lnk" href="#tradition">The tradition</a>
+    <a class="lnk" href="#forecast">Forecast</a>
     <a class="lnk" href="#plan">This year</a>
     <a class="lnk" href="#map-sec">Map</a>
     <a class="lnk" href="#camps">Camps</a>
@@ -316,9 +310,8 @@
     <a class="lnk" href="#days">Day by day</a>
     <a class="lnk" href="#summits">Summits</a>
     <a class="lnk" href="#files">Files</a>
-    <a class="lnk" href="#roster">Who's in</a>
-    <a class="lnk" href="#gear">Gear</a>
     <a class="lnk" href="#checklist">Checklist</a>
+    <a class="lnk" href="#tradition">The tradition</a>
   </div>
 </nav>
 
@@ -341,90 +334,44 @@
   <div class="stat"><div class="v num">~20 mi</div><div class="l">loop · no shuttle</div></div>
   <div class="stat"><div class="v num">+5,500 ft</div><div class="l">total climb</div></div>
   <div class="stat"><div class="v num">9,435 ft</div><div class="l">high point</div></div>
-  <div class="stat"><div class="v num">3</div><div class="l">nights on trail</div></div>
+  <div class="stat"><div class="v num">3–4</div><div class="l">nights out</div></div>
   <div class="stat"><div class="v">None</div><div class="l">permits needed</div></div>
   <div class="stat"><div class="v">Grizzly</div><div class="l">spray + canister</div></div>
 </div>
 
-<section id="tradition">
-  <div class="kicker">The tradition</div>
-  <h2>Since we were lighter and our packs were heavier</h2>
-  <p class="sub">Off and on for quite a while now, usually around Labor Day: mostly the Sawtooths, twice the
-  Wind Rivers, and in 2026 the Spanish Peaks join the list. Scroll the archive; every card carries its year.</p>
-  <div class="years">
-    <button class="yearchip" data-year="y2017">2017 <span>· Sept · Sawtooths, ID</span></button>
-    <button class="yearchip" data-year="y2020">2020 <span>· Sept · Sawtooths, ID</span></button>
-    <button class="yearchip" data-year="y2021">2021 <span>· Aug · Sawtooths, ID</span></button>
-    <button class="yearchip" data-year="y2022">2022 <span>· Sept · Wind Rivers, WY</span></button>
-    <button class="yearchip" data-year="y2023">2023 <span>· Aug · Sawtooths, ID</span></button>
-    <button class="yearchip" data-year="y2024">2024 <span>· Sept · Wind Rivers, WY</span></button>
+<section id="forecast">
+  <div class="kicker">Forecast</div>
+  <h2>The weather, as of now</h2>
+  <p class="sub">Live National Weather Service forecast for the trailhead and for the high basins, trip days only.
+  It refreshes every time you open this page; <span id="fc-updated">the snapshot below was read Sept 14</span>.</p>
+
+  <div class="card fb" style="margin-top: 16px;"><strong>What it means for Thursday night (read Sept 14):</strong>
+  Showers and thunderstorms are likely Thursday night and Friday at both elevations, with Friday night still wet
+  and Saturday drying out. If that holds, sleeping in the rigs at the trailhead Thursday is the comfortable call and
+  we start Friday dry; if the forecast improves by Wednesday, the hike-in option is back on. Either way: rain shell
+  on top of the pack, tents pitched for weather, and cross the divide Saturday morning.</div>
+
+  <div class="fc-block">
+    <h3>Spanish Creek Trailhead <span class="cap">~6,200 ft</span></h3>
+    <div class="fc-scroll"><div class="fc" id="fc-th"></div></div>
   </div>
-  <div class="rail-wrap">
-    <div class="rail" id="rail">
-      <figure id="y2017"><span class="yb">2017</span><img src="images/py_2017_trail.jpg" alt="Two hikers heading into a mountain valley" loading="lazy"><figcaption>Into the high country. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2017</span><img src="images/py_2017_mapcheck.jpg" alt="Map check beside a lake under rock spires" loading="lazy"><figcaption>Map check under the spires. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2017</span><img src="images/py_2017_packbreak.jpg" alt="Pack break under an ancient whitebark pine" loading="lazy"><figcaption>Pack break at the old whitebark. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2017</span><img src="images/py_2017_dinner.jpg" alt="Group cooking dinner on lakeside granite at dusk" loading="lazy"><figcaption>Dinner on the slabs. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2017</span><img src="images/py_2017_meadow.jpg" alt="The group and two dogs crossing a meadow below a peak" loading="lazy"><figcaption>Meadow crossing, dogs included. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2017</span><img src="images/py_2017_sunrise.jpg" alt="Two hikers at a glassy lake under a smoky sunrise" loading="lazy"><figcaption>Smoky sunrise sendoff. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
-      <figure id="y2020"><span class="yb">2020</span><img src="images/py_2020_logbridge.jpg" alt="Two backpackers crossing a log bridge below granite peaks" loading="lazy"><figcaption>The log bridge. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2020</span><img src="images/py_2020_lakeside.jpg" alt="Backpackers on a lakeside trail" loading="lazy"><figcaption>Lakeside singletrack. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2020</span><img src="images/py_2020_dusk.jpg" alt="A hiker overlooking a glassy lake at dusk" loading="lazy"><figcaption>Last light over the lake. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
-      <figure id="y2021"><span class="yb">2021</span><img src="images/py_2021_grins.jpg" alt="Two smiling backpackers on a granite bench" loading="lazy"><figcaption>Trailside grins. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2021</span><img src="images/py_2021_a.jpg" alt="Two backpackers with trekking poles in front of an alpine lake with jagged peaks behind" loading="lazy"><figcaption>Packs on, lake behind. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2021</span><img src="images/py_2021_logwalk.jpg" alt="Selfie of the crew crossing a long fallen log over talus" loading="lazy"><figcaption>The log route. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2021</span><img src="images/py_2021_b.jpg" alt="Two campers relaxing beside a tent while a deer walks through the trees behind them" loading="lazy"><figcaption>Deer crashed camp. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2021</span><img src="images/py_2021_morning.jpg" alt="Five backpackers on a sunny morning below granite peaks" loading="lazy"><figcaption>The morning five. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2021</span><img src="images/py_2021_c.jpg" alt="One of the crew lying on a trailside rock while the others watch" loading="lazy"><figcaption>Trail nap, fully earned. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
-      <figure id="y2022"><span class="yb">2022</span><img src="images/py_2022_meadow.jpg" alt="Two backpackers and a dog in a mountain meadow" loading="lazy"><figcaption>Meadow start. <span class="when">Aug 2022</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_sunrise_start.jpg" alt="Group selfie on the trail at golden sunrise" loading="lazy"><figcaption>Sunrise start. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_b.jpg" alt="Two hikers beside a shallow alpine pond with distant peaks on the horizon" loading="lazy"><figcaption>Pond stop, peaks ahead. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_filtering.jpg" alt="Three hikers filtering water from a still lake" loading="lazy"><figcaption>Water duty. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_a.jpg" alt="A hiker on a sandy trail next to a large granite slab in an open basin" loading="lazy"><figcaption>Granite and blue sky. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_granite.jpg" alt="Two hikers above a granite basin with high peaks behind" loading="lazy"><figcaption>Granite country. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_e.jpg" alt="Group selfie of five backpackers on a granite outcrop beside a lake" loading="lazy"><figcaption>Full crew, full packs. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_c.jpg" alt="Wide view of a rocky basin with a lake and hikers spread along the trail" loading="lazy"><figcaption>Strung out across the basin. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_d.jpg" alt="Two people on boulders at a clear lake, one holding a fly rod" loading="lazy"><figcaption>Casting from the rocks. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_f.jpg" alt="A hiker standing on a boulder in a field of house-sized granite blocks" loading="lazy"><figcaption>Dwarfed by the boulders. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_g.jpg" alt="A smiling hiker beside a cascading creek, throwing a shaka" loading="lazy"><figcaption>Shaka by the waterfall. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_cigars.jpg" alt="Two of the crew with cigars at a dusk lake" loading="lazy"><figcaption>Summit-night cigars. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2022</span><img src="images/py_2022_tailgate.jpg" alt="The whole crew at the trailhead after the hike out" loading="lazy"><figcaption>Tailgate finish. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
-      <figure id="y2023"><span class="yb">2023</span><img src="images/py_2023_laketrio.jpg" alt="Three of the crew at an alpine lake below jagged peaks" loading="lazy"><figcaption>Three at the lake. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_trailsign.jpg" alt="Group selfie at the Hell Roaring trailhead sign" loading="lazy"><figcaption>Hell Roaring trailhead. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_b.jpg" alt="Four backpackers on a trail below a huge scree slope" loading="lazy"><figcaption>Small under the scree. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_slabs.jpg" alt="The group watching evening light from granite slabs" loading="lazy"><figcaption>The evening seats. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_a.jpg" alt="Three hikers in beanies on a granite slab watching sunlight hit the peaks" loading="lazy"><figcaption>Golden hour on the slab. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_naps.jpg" alt="A camp scene with a tarp shelter and someone napping" loading="lazy"><figcaption>Aggressive napping. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_c.jpg" alt="Four people on a rocky overlook at dusk facing a sunlit spire" loading="lazy"><figcaption>Best seats in the range. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_d.jpg" alt="A lone angler fly fishing at a glassy lake mirroring the mountains" loading="lazy"><figcaption>Last cast at dusk. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure><span class="yb">2023</span><img src="images/py_2023_alpenglow.jpg" alt="The crew descending granite slabs at dusk with alpenglow on the peaks" loading="lazy"><figcaption>Alpenglow descent. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
-      <figure id="y2024"><span class="yb">2024</span><img src="images/py_2024_r.jpg" alt="Large group selfie of backpackers at a wooden wilderness trailhead sign" loading="lazy"><figcaption>Trailhead grins, day one. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_f.jpg" alt="Three hikers filling and filtering water at the grassy edge of a pond" loading="lazy"><figcaption>Filtering the daily gallons. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_q.jpg" alt="Five hikers shoulder to shoulder on a rocky viewpoint under a clear sky" loading="lazy"><figcaption>Crew photo, bluebird day. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_b.jpg" alt="Two backpackers taking a selfie with rugged peaks behind" loading="lazy"><figcaption>Trail buddies, big grins. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_g.jpg" alt="Backpackers stopped with packs off on a rocky sunlit slope" loading="lazy"><figcaption>Pack break on the climb. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_h.jpg" alt="Two hikers studying a paper map under a pine with a rocky summit behind" loading="lazy"><figcaption>Consulting the paper map. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_i.jpg" alt="A hiker in a red puffy eating breakfast on a boulder near camp" loading="lazy"><figcaption>Granola with a view. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_a.jpg" alt="Two hikers studying a topo map spread across a boulder" loading="lazy"><figcaption>Map out, plan pending. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_l.jpg" alt="A tent pitched on a rocky bench high above an alpine lake ringed by peaks" loading="lazy"><figcaption>Best tent site going. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_m.jpg" alt="Hikers pausing on a rock to look over a lake ringed by granite walls" loading="lazy"><figcaption>Everybody stops here. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_n.jpg" alt="A hiker sitting on a boulder in a shallow clear lake beneath a rock wall" loading="lazy"><figcaption>Perched mid lake. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_k.jpg" alt="Two hikers on a boulder looking at a glaciated range of spires" loading="lazy"><figcaption>Stopped for the skyline. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_d.jpg" alt="Group on a rocky slope above a lake at sunset" loading="lazy"><figcaption>Peace signs at sunset. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_e.jpg" alt="Three people in puffies on a slab overlooking a lake at dusk" loading="lazy"><figcaption>Three seats, one view. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_o.jpg" alt="A tent silhouetted at dusk on a rocky point above a lake" loading="lazy"><figcaption>Tent glow, last light. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_c.jpg" alt="Three backpackers hiking a rocky trail by headlamp at dusk" loading="lazy"><figcaption>Headlamps before dark. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-      <figure><span class="yb">2024</span><img src="images/py_2024_p.jpg" alt="A trail winding through a rocky basin under orange sunset clouds" loading="lazy"><figcaption>Orange sky, empty trail. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
-    </div>
+  <div class="fc-block">
+    <h3>Spanish Lakes &amp; the high camps <span class="cap">NWS grid ~9,600 ft</span></h3>
+    <div class="fc-scroll"><div class="fc" id="fc-hi"></div></div>
   </div>
+  <p class="sub" style="margin-top: 10px; font-size: 12.5px; color: var(--muted);">Source: api.weather.gov, Great Falls office.
+  Mountain forecasts drift; treat anything past three days out as a trend, not a promise.</p>
 </section>
+
 
 <section id="plan">
   <div class="kicker">This year</div>
   <h2>2026: six days, door to door</h2>
   <p class="sub">Fly into Salt Lake, stage at Dad's in Pocatello, drive up Thursday, and walk a lake-to-lake loop
   through the Spanish Peaks with three camps: the Spanish Lakes, the Jerome Rock Lakes, and a warm last night
-  on lower Falls Creek that turns Monday into a short stroll to the rigs and an afternoon flight out of Bozeman.</p>
+  on lower Falls Creek that turns Monday into a short stroll to the rigs and an afternoon flight out of Bozeman.
+  New this year: we reach the trailhead around 6 pm Thursday, and decide on the spot whether to sleep in the rigs
+  or walk the first flat miles in that evening.</p>
 
   <div class="scroll-hint" style="margin-top: 18px;">
   <div class="cal-scroll">
@@ -435,8 +382,8 @@
     <div class="cal-row">
       <div>13</div><div>14</div><div>15</div>
       <div class="trip t-neutral">16<span class="tag">Fly into SLC · drive to Pocatello · gear night</span></div>
-      <div class="trip t-neutral">17<span class="tag">Drive to Spanish Creek TH · sleep at trailhead</span></div>
-      <div class="trip t-fri">18<span class="tag">Hike to Spanish Lakes · camp 1</span></div>
+      <div class="trip t-neutral">17<span class="tag">Drive to Spanish Creek TH · arrive ~6 pm · rigs or a short hike in</span></div>
+      <div class="trip t-fri">18<span class="tag">Hike to Spanish Lakes · camp 1 (5–8 mi)</span></div>
       <div class="trip t-sat">19<span class="tag">Divide + Lake Solitude · camp 2</span></div>
     </div>
     <div class="cal-row">
@@ -456,13 +403,14 @@
       <div class="sleep">Sleep: Pocatello (beds)</div>
     </div>
     <div class="tcard">
-      <div class="dt">Thu Sept 17</div><div class="d">Drive to trailhead</div>
-      <p>Pocatello → Spanish Creek TH (~4.5–5 hr) via Butte and Bozeman. Register, pack check, water top-off.</p>
-      <div class="sleep">Sleep: trailhead (rigs / cabin)</div>
+      <div class="dt">Thu Sept 17</div><div class="d">Drive up, arrive ~6 pm</div>
+      <p>Pocatello → Spanish Creek TH (~4.5–5 hr) via Butte and Bozeman, lunch on the road. At the trailhead by 6:
+      sleep in the Sprinter and the Tacoma, or shoulder packs and walk ~3 flat miles to a creek camp before dark.</p>
+      <div class="sleep">Sleep: rigs at the TH, or ~3 mi in at ~6,450 ft</div>
     </div>
     <div class="tcard c-fri">
       <div class="dt">Fri Sept 18</div><div class="d">Hike in</div>
-      <p>~8 mi, +2,900 ft. Flat first 3 mi along the creek, then the climb. Camp on the west Spanish Lake.</p>
+      <p>~8 mi and +2,900 ft from the trailhead, or ~5 mi if we slept at the creek. Either way the climb is the back half. Camp on the west Spanish Lake.</p>
       <div class="sleep">Camp 1 · Spanish Lakes · 8,830 ft</div>
     </div>
     <div class="tcard c-sat">
@@ -487,7 +435,7 @@
   <div class="kicker">Route</div>
   <h2>The map: four legs, three camps</h2>
   <p class="sub" style="margin-bottom: 16px;">Tap any marker for details. Purple dots are the campsites we're aiming for,
-  loaded as waypoints in the group GPX along with the divide, the junction, and Pioneer Falls.</p>
+  loaded as waypoints in the group GPX along with the divide, the junction, Pioneer Falls, and the Thursday hike-in camp option.</p>
   <div id="map"><div id="map-fallback">Map tiles need an internet connection. All coordinates live in the GPX.</div></div>
   <div class="legend">
     <span class="item"><span class="chip" style="background:var(--fri)"></span>Fri · hike in</span>
@@ -515,8 +463,9 @@
 <section id="camps">
   <div class="kicker">Camps</div>
   <h2>Where we sleep</h2>
-  <p class="sub">Three camps, each picked for group-of-six-plus space. The first two are big established lakeside sites
-  (site numbers match the waypoints in the GPX); the last is a warm, sheltered night in the timber that sets up the easy exit.</p>
+  <p class="sub">A Thursday-night decision, then three camps on the loop, each picked for group-of-six-plus space.
+  The lake camps are big established sites (site numbers match the waypoints in the GPX); the last is a warm,
+  sheltered night in the timber that sets up the easy exit.</p>
 
   <div class="photo-pair">
     <figure class="photo"><img src="images/spanish_lakes_camp.jpg" alt="Campers and tents at sunset in the Spanish Lakes basin" loading="lazy">
@@ -528,6 +477,22 @@
   </div>
 
   <div class="sites">
+    <div class="card site-card">
+      <h3>Thursday · option A: the trailhead <span class="cap">Sprinter + Tacoma · 6,100 ft</span></h3>
+      <div class="meta">Vault toilet · creek water · parking for both rigs · ~1 hr from Bozeman</div>
+      <p>Roll in around 6 pm, cook at the tailgate, sleep in the van and the truck. Zero setup in the dark, dry beds
+      if the storms show, and an easy 8:30 start Friday. The default if the sky looks like the current forecast.</p>
+      <div class="fb"><strong>Cost:</strong> Friday is the full ~8 mi and +2,900 ft, with camp 1 around 3 pm.</div>
+    </div>
+    <div class="card site-card">
+      <h3>Thursday · option B: hike in ~3 mi <span class="cap">creek camp · ~6,450 ft</span></h3>
+      <div class="meta">Flat trail along South Fork Spanish Creek · +350 ft · ~1–1.25 hr · sunset 7:30, dark by 8</div>
+      <p>Packs on by 6:30 and walk the easy corridor to the timbered creek bottom just before the Falls Creek junction
+      (waypoint <em>C0 Thu hike-in</em> in the GPX; dispersed, so take the first good flat bench 200 ft off the water).
+      Headlamps for the last stretch and for pitching tents.</p>
+      <div class="fb"><strong>Payoff:</strong> Friday shrinks to ~5 mi, and we hit the big climb fresh in the morning.
+      <strong>Call it at the trailhead:</strong> if it's raining or lightning is in the forecast for the evening, that's a rig night.</div>
+    </div>
     <div class="card site-card">
       <h3>Friday · Spanish Lakes, west lake NW shore <span class="cap">Site 56 · fits 15+</span></h3>
       <div class="meta">6,000 sq ft of flat ground · open forest · 30 ft to the creek · 50 ft off the trail</div>
@@ -558,13 +523,12 @@
 <section id="weather">
   <div class="kicker">Conditions</div>
   <h2>What September gives us up there</h2>
-  <p class="sub">Mid-September in the Madison Range is the sweet spot: stable weather, no bugs, gold in the meadows.
-  It is also genuinely cold at night at 8,800 ft. Plan for summer days and winter nights.</p>
+  <p class="sub">The live numbers are at the top of the page; this is the standing advice. Mid-September in the Madison Range
+  is usually the sweet spot: stable weather, no bugs, gold in the meadows. It is also genuinely cold at night at 8,800 ft.
+  Plan for summer days and winter nights.</p>
   <div class="wx">
-    <div class="card"><div class="lab">Days</div><div class="big">45–60°F</div>
-      <p>Sunny hiking weather; T-shirt warm in the sun, chilly the second you stop in shade or wind.</p></div>
-    <div class="card"><div class="lab">Nights</div><div class="big">20s–30s</div>
-      <p>Hard freezes at both high camps. Water bottles ice up; camp shoes and a puffy are not optional.</p></div>
+    <div class="card"><div class="lab">Nights</div><div class="big">Freezing</div>
+      <p>Expect hard freezes at both high camps whatever the forecast says. Water bottles ice up; camp shoes and a puffy are not optional.</p></div>
     <div class="card"><div class="lab">Daylight</div><div class="big">12h 20m</div>
       <p>Sunrise 7:08, sunset 7:30. First usable light ~6:40 am, fully dark by 8 pm. Headlamps for dinner.</p></div>
     <div class="card"><div class="lab">Sky</div><div class="big">Watch PM</div>
@@ -642,11 +606,21 @@
   </div>
 
   <div class="days">
-    <div class="card day-card c-fri">
-      <h3>Friday: trailhead to Spanish Lakes</h3>
-      <div class="meta">~8 mi · +2,900 ft · 6,100 → 8,830 ft · 5–6.5 hr · on trail by 8:30</div>
+    <div class="card day-card">
+      <h3>Thursday evening: arrive, decide, maybe walk</h3>
+      <div class="meta">At the TH ~6 pm · option B is ~3 mi, +350 ft, ~1–1.25 hr · sunset 7:30</div>
       <ul>
-        <li>Three flat, fast miles along the creek to warm up; the Falls Creek junction we'll come back down Monday passes at mile 3.</li>
+        <li>Register, pack check, water top-off, bear spray on the hip belts. Look at the sky and the forecast card at the top of this page.</li>
+        <li><strong>Rig night:</strong> dinner at the tailgate, beds in the Sprinter and the Tacoma, alarm for a 7 am coffee and an 8:30 start.</li>
+        <li><strong>Hike in:</strong> packs on by 6:30, flat singletrack along the creek, camp in the timber just before the Falls Creek junction. Headlamps out for the last half mile and for camp chores.</li>
+        <li>Cold dinner or a quick stove meal either way; no one wants to cook at 8:30 pm in the dark on night one.</li>
+      </ul>
+    </div>
+    <div class="card day-card c-fri">
+      <h3>Friday: up to the Spanish Lakes</h3>
+      <div class="meta">~8 mi · +2,900 ft from the TH (or ~5 mi · +2,550 ft from the creek camp) · 6,100 → 8,830 ft · on trail by 8:30</div>
+      <ul>
+        <li>From the trailhead: three flat, fast miles along the creek to warm up; the Falls Creek junction we'll come back down Monday passes at mile 3. From the creek camp, the junction is ten minutes out.</li>
         <li>The climb is all in the back half: ~1,500 ft through miles 5–7. Steady pace, plenty of breaks.</li>
         <li>In camp by ~3 pm at Site 56. Fill bottles and cook before dark; the freeze comes fast once the sun drops.</li>
         <li>Evening option: walk up tomorrow's trail toward the divide for sunset on the crest, headlamps back down.</li>
@@ -768,8 +742,8 @@
     <div class="card plain">
       <h3>Downloads</h3>
       <ul>
-        <li><a href="2026_montanya_backpacking.gpx" download>Trail GPX</a>: the full loop plus 15 waypoints, including every campsite pick with its fallbacks, the divide, and Pioneer Falls. Load it in Gaia, CalTopo, onX, or any GPS.</li>
-        <li><a href="2026_montanya_backpacking.kml" download>Trail KML</a>: the same route for Google Earth (route line only).</li>
+        <li><a href="2026_montanya_backpacking.gpx" download>Trail GPX</a>: the full loop plus 16 waypoints, including the Thursday hike-in camp, every campsite pick with its fallbacks, the divide, and Pioneer Falls. Load it in Gaia, CalTopo, onX, or any GPS.</li>
+        <li><a href="2026_montanya_backpacking.kml" download>Trail KML</a>: the same route and waypoints for Google Earth.</li>
         <li>Paper map rides in the group kit; your phone with the GPX is the day-to-day map.</li>
       </ul>
     </div>
@@ -793,48 +767,6 @@
   </div>
 </section>
 
-<section id="roster" class="hidden">
-  <div class="kicker">The roster</div>
-  <h2>Who's in</h2>
-  <p class="sub">Add yourself so everyone can see who's coming, where they're rolling in from, and when they land.
-  Contact info is visible to anyone with this link, so share what you're comfortable with.</p>
-
-  <div class="card" style="margin-top: 16px;">
-    <form class="rform" id="rsvp-form">
-      <div><label for="r-name">Name *</label><input id="r-name" name="name" required maxlength="60" placeholder="Trail name accepted"></div>
-      <div><label for="r-from">Coming from</label><input id="r-from" name="from" maxlength="60" placeholder="City, state"></div>
-      <div><label for="r-arrives">Arriving</label><input id="r-arrives" name="arrives" maxlength="80" placeholder="e.g. Wed 9/16, 2:10 pm into SLC"></div>
-      <div><label for="r-contact">Phone / email</label><input id="r-contact" name="contact" maxlength="80" placeholder="How to reach you"></div>
-      <div class="full"><label for="r-note">Note</label><input id="r-note" name="note" maxlength="120" placeholder="Bringing the good coffee, need a canister, etc."></div>
-      <div class="full"><label for="r-emergency">Emergency contact (name + phone; goes to the organizer's sheet only, never shown on this page)</label><input id="r-emergency" name="emergency" maxlength="120" placeholder="e.g. Jane Doe, 555-123-4567"></div>
-      <div class="full"><button type="submit" class="rbtn" id="r-submit">Put me on the list</button><span class="rmsg" id="r-msg"></span></div>
-      <div class="full" style="font-size: 12.5px; color: var(--muted);">Plans changed? Submit again with the same name and your row updates instead of duplicating.</div>
-    </form>
-  </div>
-
-  <div class="tbl scroll-hint-wrap" style="margin-top: 16px;">
-    <table id="roster-table">
-      <thead><tr><th>Name</th><th>From</th><th>Arrives</th><th>Contact</th><th>Note</th></tr></thead>
-      <tbody><tr><td colspan="5" style="color: var(--muted);">Loading the roster…</td></tr></tbody>
-    </table>
-  </div>
-</section>
-
-
-<section id="gear">
-  <div class="kicker">Group gear</div>
-  <h2>Shared loads</h2>
-  <p class="sub">One shared list, editable by everyone: put your name next to what you're bringing, add rows for
-  anything missing, fix anything that's wrong. It's a plain spreadsheet; treat it kindly.</p>
-  <p style="margin-top: 14px;"><a class="rbtn" style="display: inline-block; text-decoration: none;" href="https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/edit" target="_blank" rel="noopener">Open the gear list</a></p>
-  <div class="tbl" style="margin-top: 14px;">
-    <table id="gear-table">
-      <thead><tr><th>Item</th><th>Who's bringing it</th><th>Notes</th></tr></thead>
-      <tbody><tr><td colspan="3" style="color: var(--muted);">Loading the gear list…</td></tr></tbody>
-    </table>
-  </div>
-  <p class="sub" style="margin-top: 10px; font-size: 12.5px; color: var(--muted);">This view is read-only; use the button to claim or edit, then come back and it updates on refresh.</p>
-</section>
 
 <section id="checklist">
   <div class="kicker">Before you fly</div>
@@ -846,9 +778,81 @@
       <li>Bear spray is waiting in Montana; fuel gets bought in Pocatello. Neither can fly with you.</li>
       <li><a href="2026_montanya_backpacking.gpx" download>Grab the group GPX</a>, load it on your phone, and download offline maps before we leave cell service on US-191.</li>
       <li>Break in your footwear now, not on the flat first mile.</li>
-      <li>Send your food preferences for the group meal plan.</li>
       <li>Leave the itinerary with someone at home; there's no cell service for four days and the group carries a satellite messenger.</li>
     </ul>
+  </div>
+</section>
+
+<section id="tradition">
+  <div class="kicker">The tradition</div>
+  <h2>Since we were lighter and our packs were heavier</h2>
+  <p class="sub">Off and on for quite a while now, usually around Labor Day: mostly the Sawtooths, twice the
+  Wind Rivers, and in 2026 the Spanish Peaks join the list. Scroll the archive; every card carries its year.</p>
+  <div class="years">
+    <button class="yearchip" data-year="y2017">2017 <span>· Sept · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2020">2020 <span>· Sept · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2021">2021 <span>· Aug · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2022">2022 <span>· Sept · Wind Rivers, WY</span></button>
+    <button class="yearchip" data-year="y2023">2023 <span>· Aug · Sawtooths, ID</span></button>
+    <button class="yearchip" data-year="y2024">2024 <span>· Sept · Wind Rivers, WY</span></button>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail" id="rail">
+      <figure id="y2017"><span class="yb">2017</span><img src="images/py_2017_trail.jpg" alt="Two hikers heading into a mountain valley" loading="lazy"><figcaption>Into the high country. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_mapcheck.jpg" alt="Map check beside a lake under rock spires" loading="lazy"><figcaption>Map check under the spires. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_packbreak.jpg" alt="Pack break under an ancient whitebark pine" loading="lazy"><figcaption>Pack break at the old whitebark. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_dinner.jpg" alt="Group cooking dinner on lakeside granite at dusk" loading="lazy"><figcaption>Dinner on the slabs. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_meadow.jpg" alt="The group and two dogs crossing a meadow below a peak" loading="lazy"><figcaption>Meadow crossing, dogs included. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2017</span><img src="images/py_2017_sunrise.jpg" alt="Two hikers at a glassy lake under a smoky sunrise" loading="lazy"><figcaption>Smoky sunrise sendoff. <span class="when">Sept 2017 · Sawtooths</span></figcaption></figure>
+      <figure id="y2020"><span class="yb">2020</span><img src="images/py_2020_logbridge.jpg" alt="Two backpackers crossing a log bridge below granite peaks" loading="lazy"><figcaption>The log bridge. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2020</span><img src="images/py_2020_lakeside.jpg" alt="Backpackers on a lakeside trail" loading="lazy"><figcaption>Lakeside singletrack. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2020</span><img src="images/py_2020_dusk.jpg" alt="A hiker overlooking a glassy lake at dusk" loading="lazy"><figcaption>Last light over the lake. <span class="when">Sept 2020 · Sawtooths</span></figcaption></figure>
+      <figure id="y2021"><span class="yb">2021</span><img src="images/py_2021_grins.jpg" alt="Two smiling backpackers on a granite bench" loading="lazy"><figcaption>Trailside grins. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_a.jpg" alt="Two backpackers with trekking poles in front of an alpine lake with jagged peaks behind" loading="lazy"><figcaption>Packs on, lake behind. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_logwalk.jpg" alt="Selfie of the crew crossing a long fallen log over talus" loading="lazy"><figcaption>The log route. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_b.jpg" alt="Two campers relaxing beside a tent while a deer walks through the trees behind them" loading="lazy"><figcaption>Deer crashed camp. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_morning.jpg" alt="Five backpackers on a sunny morning below granite peaks" loading="lazy"><figcaption>The morning five. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2021</span><img src="images/py_2021_c.jpg" alt="One of the crew lying on a trailside rock while the others watch" loading="lazy"><figcaption>Trail nap, fully earned. <span class="when">Aug 2021 · Sawtooths</span></figcaption></figure>
+      <figure id="y2022"><span class="yb">2022</span><img src="images/py_2022_meadow.jpg" alt="Two backpackers and a dog in a mountain meadow" loading="lazy"><figcaption>Meadow start. <span class="when">Aug 2022</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_sunrise_start.jpg" alt="Group selfie on the trail at golden sunrise" loading="lazy"><figcaption>Sunrise start. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_b.jpg" alt="Two hikers beside a shallow alpine pond with distant peaks on the horizon" loading="lazy"><figcaption>Pond stop, peaks ahead. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_filtering.jpg" alt="Three hikers filtering water from a still lake" loading="lazy"><figcaption>Water duty. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_a.jpg" alt="A hiker on a sandy trail next to a large granite slab in an open basin" loading="lazy"><figcaption>Granite and blue sky. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_granite.jpg" alt="Two hikers above a granite basin with high peaks behind" loading="lazy"><figcaption>Granite country. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_e.jpg" alt="Group selfie of five backpackers on a granite outcrop beside a lake" loading="lazy"><figcaption>Full crew, full packs. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_c.jpg" alt="Wide view of a rocky basin with a lake and hikers spread along the trail" loading="lazy"><figcaption>Strung out across the basin. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_d.jpg" alt="Two people on boulders at a clear lake, one holding a fly rod" loading="lazy"><figcaption>Casting from the rocks. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_f.jpg" alt="A hiker standing on a boulder in a field of house-sized granite blocks" loading="lazy"><figcaption>Dwarfed by the boulders. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_g.jpg" alt="A smiling hiker beside a cascading creek, throwing a shaka" loading="lazy"><figcaption>Shaka by the waterfall. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_cigars.jpg" alt="Two of the crew with cigars at a dusk lake" loading="lazy"><figcaption>Summit-night cigars. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2022</span><img src="images/py_2022_tailgate.jpg" alt="The whole crew at the trailhead after the hike out" loading="lazy"><figcaption>Tailgate finish. <span class="when">Sept 2022 · Wind Rivers</span></figcaption></figure>
+      <figure id="y2023"><span class="yb">2023</span><img src="images/py_2023_laketrio.jpg" alt="Three of the crew at an alpine lake below jagged peaks" loading="lazy"><figcaption>Three at the lake. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_trailsign.jpg" alt="Group selfie at the Hell Roaring trailhead sign" loading="lazy"><figcaption>Hell Roaring trailhead. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_b.jpg" alt="Four backpackers on a trail below a huge scree slope" loading="lazy"><figcaption>Small under the scree. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_slabs.jpg" alt="The group watching evening light from granite slabs" loading="lazy"><figcaption>The evening seats. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_a.jpg" alt="Three hikers in beanies on a granite slab watching sunlight hit the peaks" loading="lazy"><figcaption>Golden hour on the slab. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_naps.jpg" alt="A camp scene with a tarp shelter and someone napping" loading="lazy"><figcaption>Aggressive napping. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_c.jpg" alt="Four people on a rocky overlook at dusk facing a sunlit spire" loading="lazy"><figcaption>Best seats in the range. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_d.jpg" alt="A lone angler fly fishing at a glassy lake mirroring the mountains" loading="lazy"><figcaption>Last cast at dusk. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure><span class="yb">2023</span><img src="images/py_2023_alpenglow.jpg" alt="The crew descending granite slabs at dusk with alpenglow on the peaks" loading="lazy"><figcaption>Alpenglow descent. <span class="when">Aug 2023 · Sawtooths</span></figcaption></figure>
+      <figure id="y2024"><span class="yb">2024</span><img src="images/py_2024_r.jpg" alt="Large group selfie of backpackers at a wooden wilderness trailhead sign" loading="lazy"><figcaption>Trailhead grins, day one. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_f.jpg" alt="Three hikers filling and filtering water at the grassy edge of a pond" loading="lazy"><figcaption>Filtering the daily gallons. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_q.jpg" alt="Five hikers shoulder to shoulder on a rocky viewpoint under a clear sky" loading="lazy"><figcaption>Crew photo, bluebird day. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_b.jpg" alt="Two backpackers taking a selfie with rugged peaks behind" loading="lazy"><figcaption>Trail buddies, big grins. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_g.jpg" alt="Backpackers stopped with packs off on a rocky sunlit slope" loading="lazy"><figcaption>Pack break on the climb. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_h.jpg" alt="Two hikers studying a paper map under a pine with a rocky summit behind" loading="lazy"><figcaption>Consulting the paper map. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_i.jpg" alt="A hiker in a red puffy eating breakfast on a boulder near camp" loading="lazy"><figcaption>Granola with a view. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_a.jpg" alt="Two hikers studying a topo map spread across a boulder" loading="lazy"><figcaption>Map out, plan pending. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_l.jpg" alt="A tent pitched on a rocky bench high above an alpine lake ringed by peaks" loading="lazy"><figcaption>Best tent site going. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_m.jpg" alt="Hikers pausing on a rock to look over a lake ringed by granite walls" loading="lazy"><figcaption>Everybody stops here. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_n.jpg" alt="A hiker sitting on a boulder in a shallow clear lake beneath a rock wall" loading="lazy"><figcaption>Perched mid lake. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_k.jpg" alt="Two hikers on a boulder looking at a glaciated range of spires" loading="lazy"><figcaption>Stopped for the skyline. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_d.jpg" alt="Group on a rocky slope above a lake at sunset" loading="lazy"><figcaption>Peace signs at sunset. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_e.jpg" alt="Three people in puffies on a slab overlooking a lake at dusk" loading="lazy"><figcaption>Three seats, one view. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_o.jpg" alt="A tent silhouetted at dusk on a rocky point above a lake" loading="lazy"><figcaption>Tent glow, last light. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_c.jpg" alt="Three backpackers hiking a rocky trail by headlamp at dusk" loading="lazy"><figcaption>Headlamps before dark. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+      <figure><span class="yb">2024</span><img src="images/py_2024_p.jpg" alt="A trail winding through a rocky basin under orange sunset clouds" loading="lazy"><figcaption>Orange sky, empty trail. <span class="when">Sept 2024 · Wind Rivers</span></figcaption></figure>
+    </div>
   </div>
 </section>
 
@@ -883,7 +887,7 @@ const DAY = {
 const ORDER = ["fri", "sat", "sun", "mon"];
 
 const WAYPOINTS = [
-  { ll: [45.44793, -111.37767], name: "Spanish Creek Trailhead", elev: "6,100 ft", note: "Start and finish. Water, vault toilet, parking for both rigs." },
+  { ll: [45.44793, -111.37767], name: "Spanish Creek Trailhead", elev: "6,100 ft", note: "Start and finish. Water, vault toilet, parking for both rigs. Thursday option A: sleep here in the Sprinter and the Tacoma." },
   { ll: [45.41855, -111.40039], name: "Falls Creek junction", elev: "~6,400 ft", note: "Mile 3. The loop closes here Monday." },
   { ll: [45.37433, -111.43892], name: "The divide", elev: "9,435 ft", note: "Saturday, mile 1.7. High point of the trip, best view of the range." },
   { ll: [45.41514, -111.41832], name: "Camp 3 · lower Falls Creek", elev: "~7,150 ft", note: "Sunday night in the timber. Warmest camp, two hours from the rigs." },
@@ -891,6 +895,7 @@ const WAYPOINTS = [
 ];
 
 const CAMPSITES = [
+  { ll: [45.42017, -111.39933], name: "C0 · Thursday hike-in option", cap: "dispersed", note: "Option B: ~3 flat miles in Thursday evening, timber just before the Falls Creek junction, ~6,450 ft. Position approximate." },
   { ll: [45.36250, -111.42585], name: "Site 56 · Camp 1", cap: "fits 15+", note: "The big one: 6,000 sq ft on the NW shore of the west Spanish Lake." },
   { ll: [45.36096, -111.42611], name: "Site 66 · backup", cap: "fits 15+", note: "Second choice at Spanish Lakes, 250 ft back from the water." },
   { ll: [45.36146, -111.42575], name: "Site 61 · backup", cap: "fits 11–15", note: "Third option along the west shore." },
@@ -903,87 +908,55 @@ const CAMPSITES = [
   { ll: [45.39122, -111.46093], name: "Site 22 · backup", cap: "fits 11–15", note: "The roomy fallback by the creek, 200 ft off the trail." }
 ];
 
-/* ---------- roster + gear (Google Sheet via Apps Script) ---------- */
-const ROSTER_API = "https://script.google.com/macros/s/AKfycbyGodBjDmekcTNwcjrZ7Z4SqeclqJJDh6kICBiHrJZkiNbPfzm12bucWSwJU4kut5r7OA/exec";
+/* ---------- forecast (NWS, live with a baked-in snapshot) ---------- */
 (function () {
-  if (!ROSTER_API) return;
-  document.getElementById("roster").classList.remove("hidden");
+  const SNAP = {"updated":"2026-09-14T22:12:02+00:00","th":[{"n":"Thursday","t":70,"d":true,"p":45,"w":"5 mph SSW","s":"Mostly Sunny then Chance Showers And Thunderstorms"},{"n":"Thursday Night","t":50,"d":false,"p":67,"w":"6 mph S","s":"Showers And Thunderstorms Likely"},{"n":"Friday","t":65,"d":true,"p":69,"w":"5 mph WSW","s":"Showers And Thunderstorms Likely"},{"n":"Friday Night","t":45,"d":false,"p":53,"w":"3 mph SW","s":"Chance Showers And Thunderstorms"},{"n":"Saturday","t":63,"d":true,"p":39,"w":"5 mph WSW","s":"Chance Rain Showers"},{"n":"Saturday Night","t":45,"d":false,"p":21,"w":"3 mph SW","s":"Slight Chance Rain Showers then Partly Cloudy"},{"n":"Sunday","t":66,"d":true,"p":6,"w":"3 mph W","s":"Sunny"},{"n":"Sunday Night","t":45,"d":false,"p":2,"w":"5 mph S","s":"Mostly Clear"}],"hi":[{"n":"Thursday","t":56,"d":true,"p":46,"w":"7 to 10 mph S","s":"Partly Sunny then Chance Showers And Thunderstorms"},{"n":"Thursday Night","t":41,"d":false,"p":67,"w":"12 mph S","s":"Showers And Thunderstorms Likely"},{"n":"Friday","t":51,"d":true,"p":67,"w":"8 mph SW","s":"Showers And Thunderstorms Likely"},{"n":"Friday Night","t":37,"d":false,"p":47,"w":"7 mph WSW","s":"Chance Showers And Thunderstorms"},{"n":"Saturday","t":49,"d":true,"p":39,"w":"8 mph WSW","s":"Chance Rain Showers"},{"n":"Saturday Night","t":37,"d":false,"p":20,"w":"7 mph WSW","s":"Slight Chance Rain Showers then Partly Cloudy"},{"n":"Sunday","t":53,"d":true,"p":6,"w":"8 mph W","s":"Sunny"},{"n":"Sunday Night","t":37,"d":false,"p":2,"w":"6 to 9 mph SSW","s":"Mostly Clear"}]};
+  const FIRST = "2026-09-17", LAST = "2026-09-21";
+  const GRID = { th: "https://api.weather.gov/gridpoints/TFX/84,48/forecast",
+                 hi: "https://api.weather.gov/gridpoints/TFX/82,44/forecast" };
 
-  function jsonp(params) {
-    return new Promise((resolve, reject) => {
-      const cb = "sheetCb" + Math.floor(performance.now() * 1000);
-      const s = document.createElement("script");
-      window[cb] = data => { resolve(data); delete window[cb]; s.remove(); };
-      const q = new URLSearchParams(params); q.set("callback", cb);
-      s.src = ROSTER_API + "?" + q.toString();
-      s.onerror = () => { reject(); delete window[cb]; s.remove(); };
-      document.body.appendChild(s);
-    });
+  function card(p) {
+    const el = document.createElement("div");
+    el.className = "card" + (p.d ? "" : " night");
+    const wet = p.p >= 40 ? " wet" : "";
+    el.innerHTML = '<div class="n"></div><div class="t"><span></span><small></small></div><div class="s"></div><div class="m"></div>';
+    el.querySelector(".n").textContent = p.n;
+    el.querySelector(".t span").textContent = p.t + "°";
+    el.querySelector(".t small").textContent = p.d ? "high" : "low";
+    el.querySelector(".s").textContent = p.s;
+    const m = el.querySelector(".m");
+    m.innerHTML = '<span class="' + wet.trim() + '"></span> · <span></span>';
+    m.children[0].textContent = p.p + "% precip";
+    m.children[1].textContent = p.w;
+    return el;
   }
-  const unpack = d => Array.isArray(d) ? { v: 1, rows: d } : d;
-
-  function render(tableSel, nCols, rows, emptyMsg) {
-    const tbody = document.querySelector(tableSel + " tbody");
-    tbody.textContent = "";
-    if (!rows.length) {
-      const tr = document.createElement("tr"), td = document.createElement("td");
-      td.colSpan = nCols; td.style.color = "var(--muted)"; td.textContent = emptyMsg;
-      tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    rows.forEach(r => {
-      const tr = document.createElement("tr");
-      r.slice(0, nCols).forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
-      tbody.appendChild(tr);
-    });
+  function render(id, periods) {
+    const box = document.getElementById(id);
+    box.textContent = "";
+    periods.forEach(p => box.appendChild(card(p)));
   }
-  const rosterMsg = "Nobody yet. Be first.";
-
-  jsonp({ list: "roster" }).then(d => render("#roster-table", 5, unpack(d).rows, rosterMsg))
-    .catch(() => render("#roster-table", 5, [], "Couldn't reach the roster. Refresh to retry."));
-
-  const GEAR_CSV = "https://docs.google.com/spreadsheets/d/1F0Qw4ZCZxiJIbOn3S7bIwRluhKQG_7KYTgup1hX01zg/gviz/tq?tqx=out:csv";
-  function parseCsv(text) {
-    const rows = []; let row = [], field = "", inQ = false;
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i];
-      if (inQ) {
-        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
-        else field += c;
-      } else if (c === '"') inQ = true;
-      else if (c === ",") { row.push(field); field = ""; }
-      else if (c === "\n" || c === "\r") {
-        if (c === "\r" && text[i + 1] === "\n") i++;
-        row.push(field); field = "";
-        if (row.some(v => v.trim())) rows.push(row);
-        row = [];
-      } else field += c;
-    }
-    row.push(field);
-    if (row.some(v => v.trim())) rows.push(row);
-    return rows;
+  function trim(json) {
+    return json.properties.periods
+      .filter(p => { const d = p.startTime.slice(0, 10); return d >= FIRST && d <= LAST; })
+      .map(p => ({ n: p.name, t: p.temperature, d: p.isDaytime,
+                   p: (p.probabilityOfPrecipitation && p.probabilityOfPrecipitation.value) || 0,
+                   w: p.windSpeed + " " + p.windDirection, s: p.shortForecast }));
   }
-  fetch(GEAR_CSV)
-    .then(r => { if (!r.ok) throw 0; return r.text(); })
-    .then(csv => {
-      const rows = parseCsv(csv);
-      if (rows.length && /^item$/i.test((rows[0][0] || "").trim())) rows.shift();
-      render("#gear-table", 3, rows.map(r => [r[0] || "", r[1] || "", r[2] || ""]), "The list is empty; open it and add the first item.");
+  function stamp(iso, live) {
+    const d = new Date(iso);
+    const s = d.toLocaleString("en-US", { timeZone: "America/Denver", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    document.getElementById("fc-updated").textContent = (live ? "live, NWS updated " : "offline, showing the snapshot from ") + s + " MT";
+  }
+
+  render("fc-th", SNAP.th); render("fc-hi", SNAP.hi); stamp(SNAP.updated, false);
+
+  const opts = { headers: { "Accept": "application/geo+json" } };
+  Promise.all([fetch(GRID.th, opts).then(r => r.json()), fetch(GRID.hi, opts).then(r => r.json())])
+    .then(([a, b]) => {
+      const ta = trim(a), tb = trim(b);
+      if (ta.length && tb.length) { render("fc-th", ta); render("fc-hi", tb); stamp(a.properties.updateTime, true); }
     })
-    .catch(() => render("#gear-table", 3, [], "Couldn't load the list here (is sharing on?). Use the button above to open it."));
-
-  document.getElementById("rsvp-form").addEventListener("submit", ev => {
-    ev.preventDefault();
-    const f = ev.target, btn = document.getElementById("r-submit"), msg = document.getElementById("r-msg");
-    if (!f.name.value.trim()) return;
-    btn.disabled = true; msg.textContent = "Adding you…";
-    jsonp({ list: "roster", action: "add", name: f.name.value.trim(), from: f.from.value.trim(),
-            arrives: f.arrives.value.trim(), contact: f.contact.value.trim(),
-            note: f.note.value.trim(), emergency: f.emergency.value.trim() })
-      .then(d => { render("#roster-table", 5, unpack(d).rows, rosterMsg);
-                   btn.disabled = false; btn.textContent = "You're on the list"; msg.textContent = ""; })
-      .catch(() => { btn.disabled = false; msg.textContent = "That didn't go through; try again."; });
-  });
-
+    .catch(() => {});
 })();
 
 /* ---------- year chips ---------- */
