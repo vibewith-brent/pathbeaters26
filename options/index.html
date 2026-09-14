@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Path Beaters '26 · The Options Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --baseline: #c3c2b7; --border: rgba(11,11,11,0.10);
+    --blue: #2a78d6; --orange: #eb6834; --green: #1baf7a; --gold: #eda100; --purple: #4a3aa7; --red: #d63b3b;
+    --neutral-tint: rgba(11,11,11,0.045);
+    --dry: #e6f5ee; --dry-ink: #0f7a52; --iffy: #fdf2d6; --iffy-ink: #8a5a00; --wet: #e2ecfb; --wet-ink: #1d4f9a; --soak: #fbe3e3; --soak-ink: #9b2222;
+    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 4px 14px rgba(11,11,11,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--page); color: var(--ink); line-height: 1.55; font-size: 15px; -webkit-text-size-adjust: 100%; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px 72px; }
+  h1, h2, h3 { line-height: 1.2; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(32px, 6vw, 52px); font-weight: 700; letter-spacing: -0.025em; }
+  h2 { font-size: clamp(20px, 3.2vw, 26px); font-weight: 600; margin-bottom: 6px; }
+  h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  section { margin-top: clamp(44px, 7vw, 72px); scroll-margin-top: 64px; }
+  .kicker { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  .sub { color: var(--ink-2); max-width: 78ch; font-size: 15.5px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  nav.top { position: sticky; top: 0; z-index: 500; background: rgba(249,249,247,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--grid); }
+  nav.top .inner { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; gap: 6px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
+  nav.top .inner::-webkit-scrollbar { display: none; }
+  nav.top .brand { font-weight: 700; font-size: 13px; letter-spacing: 0.06em; white-space: nowrap; margin-right: 10px; color: var(--ink); }
+  nav.top .brand span { color: var(--orange); }
+  nav.top a.lnk { font-size: 13px; color: var(--ink-2); white-space: nowrap; padding: 5px 11px; border-radius: 999px; }
+  nav.top a.lnk:hover { background: var(--neutral-tint); text-decoration: none; color: var(--ink); }
+  @media (max-width: 640px) { nav.top .brand { display: none; } }
+
+  .hero { padding: clamp(36px, 7vw, 72px) 0 8px; }
+  .hero .badge { display: inline-block; background: var(--orange); color: #fff; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .hero .dates { color: var(--ink-2); font-size: 16px; margin-top: 10px; max-width: 72ch; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 22px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow); }
+  .stat .v { font-size: clamp(17px, 2.6vw, 22px); letter-spacing: -0.01em; font-weight: 600; }
+  .stat .l { font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 3px; }
+
+  .picks { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 18px; }
+  .pick { border-top: 4px solid var(--baseline); }
+  .pick.p1 { border-top-color: var(--green); } .pick.p2 { border-top-color: var(--blue); } .pick.p3 { border-top-color: var(--gold); } .pick.p4 { border-top-color: var(--purple); } .pick.p0 { border-top-color: var(--red); }
+  .pick .rank { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .pick h3 { font-size: 17px; margin-top: 4px; }
+  .pick p { color: var(--ink-2); font-size: 14px; margin-top: 8px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .chip { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; color: var(--ink-2); font: inherit; font-size: 12.5px; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .tblwrap { border: 1px solid var(--border); border-radius: 14px; overflow-x: auto; background: var(--surface); box-shadow: var(--shadow); margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { padding: 9px 11px; text-align: left; border-bottom: 1px solid var(--grid); vertical-align: top; white-space: nowrap; }
+  th { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--page); position: sticky; top: 0; z-index: 1; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--ink); }
+  th.sorted::after { content: " ▾"; }
+  tr:last-child td { border-bottom: none; }
+  td.name { font-weight: 600; white-space: normal; min-width: 220px; }
+  td.name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+  td.wrapok { white-space: normal; min-width: 170px; font-size: 12.5px; }
+  tr.baseline td { background: rgba(235,104,52,0.06); }
+  tr.hidden { display: none; }
+  .epic { display: inline-block; font-weight: 700; letter-spacing: -0.02em; }
+  .bar { display: inline-block; height: 7px; border-radius: 4px; background: var(--grid); width: 64px; vertical-align: middle; margin-left: 6px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--orange); }
+  .bar.fit i { background: var(--green); }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--neutral-tint); color: var(--ink-2); margin-right: 4px; white-space: nowrap; }
+  .tag.good { background: var(--dry); color: var(--dry-ink); }
+  .wu { font-size: 12px; white-space: nowrap; }
+  .wu::before { content: "☁ "; }
+
+  .wxgrid th, .wxgrid td { text-align: center; padding: 7px 6px; }
+  .wxgrid td.name, .wxgrid th.name { text-align: left; }
+  .wxgrid .cell { border-radius: 8px; padding: 5px 4px; min-width: 60px; line-height: 1.25; }
+  .wxgrid .cell b { font-size: 14px; display: block; }
+  .wxgrid .cell span { font-size: 11px; display: block; }
+  .dry { background: var(--dry); color: var(--dry-ink); } .iffy { background: var(--iffy); color: var(--iffy-ink); } .wet { background: var(--wet); color: var(--wet-ink); } .soak { background: var(--soak); color: var(--soak-ink); }
+  .wxkey { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12.5px; color: var(--ink-2); margin-top: 10px; align-items: center; }
+  .wxkey .sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 5px; }
+  .toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; background: var(--surface); margin-top: 14px; margin-right: 10px; }
+  .toggle button { font: inherit; font-size: 12.5px; padding: 6px 14px; border: none; background: transparent; cursor: pointer; color: var(--ink-2); }
+  .toggle button.on { background: var(--ink); color: #fff; }
+
+  .routes { display: grid; gap: 14px; margin-top: 18px; }
+  .route { border-left: 4px solid var(--baseline); }
+  .route.r-mt { border-left-color: var(--orange); } .route.r-wy { border-left-color: var(--blue); } .route.r-id { border-left-color: var(--green); } .route.r-ut { border-left-color: var(--gold); } .route.r-utm { border-left-color: var(--purple); }
+  .route .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+  .route h3 { font-size: 18px; margin: 0; }
+  .route .meta { font-size: 12.5px; color: var(--muted); margin: 4px 0 10px; }
+  .route .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
+  @media (max-width: 720px) { .route .cols { grid-template-columns: 1fr; } }
+  .route ul { margin-left: 18px; color: var(--ink-2); font-size: 14px; }
+  .route li { margin-bottom: 4px; }
+  .route .lab { font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .route .links { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .route .links a { font-size: 12.5px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--page); color: var(--ink-2); }
+  .route .links a:hover { text-decoration: none; color: var(--ink); background: var(--neutral-tint); }
+  .route .links a.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .route .fc { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(96px, 1fr); gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-top: 8px; }
+  .route .fc .cell { border-radius: 8px; padding: 6px 6px; font-size: 11px; line-height: 1.3; }
+  .route .fc .cell b { display: block; font-size: 14px; }
+  .route .score { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+  .route .score b { color: var(--ink); }
+  .route.hidden { display: none; }
+
+  footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--grid); font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="brand">PATH BEATERS <span>'26</span> · OPTIONS</span>
+    <a class="lnk" href="#verdict">The call</a>
+    <a class="lnk" href="#weather">Weather</a>
+    <a class="lnk" href="#compare">Compare</a>
+    <a class="lnk" href="#routes">Routes</a>
+    <a class="lnk" href="#how">How we scored</a>
+    <a class="lnk" href="../">Spanish Peaks site</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="badge">Plan B board</span>
+  <h1>Where do we actually go?</h1>
+  <p class="dates">Same dates, Sept 16–21, 2026. Same crew, same rigs, staged out of Salt Lake. The Spanish Peaks loop is the plan on
+  the books; this page puts it next to twenty other trips within roughly five hours of SLC, each with its live forecast, so we can
+  pick with our eyes open.</p>
+  <div class="stats">
+    <div class="stat"><div class="v num" id="st-count">21</div><div class="l">routes on the board</div></div>
+    <div class="stat"><div class="v num" id="st-driest">—</div><div class="l">driest forecast</div></div>
+    <div class="stat"><div class="v num" id="st-epic">—</div><div class="l">most epic</div></div>
+    <div class="stat"><div class="v num" id="st-fit">—</div><div class="l">best fit this week</div></div>
+    <div class="stat"><div class="v" id="st-updated" style="font-size: 14px;">snapshot</div><div class="l">forecast status</div></div>
+  </div>
+</header>
+
+<section id="verdict">
+  <div class="kicker">The call</div>
+  <h2>Four picks, and where the plan on the books lands</h2>
+  <p class="sub">Read with the forecast as of Sunday Sept 14. The whole Northern Rockies and canyon country gets a wet Thursday; the
+  question is who dries out fastest and who stays interesting after that. The cards re-rank themselves from the live forecast every
+  time this page loads.</p>
+  <div class="picks" id="picks"></div>
+</section>
+
+<section id="weather">
+  <div class="kicker">Weather</div>
+  <h2>Trip-day forecast, every route, side by side</h2>
+  <p class="sub">National Weather Service point forecasts for Thursday through Sunday night. Each cell is high or low temperature and
+  chance of precipitation; hover for the wording and wind. The high point is what your tent feels. The Weather Underground link on each
+  row opens that area's 10-day page.</p>
+  <div class="toggle"><button class="on" data-pt="hp">High point / camp</button><button data-pt="th">Trailhead</button></div>
+  <div class="toggle"><button class="on" data-sort="wx">Sort by weather</button><button data-sort="list">List order</button></div>
+  <div class="tblwrap"><table class="wxgrid" id="wxgrid"></table></div>
+  <div class="wxkey">
+    <span><span class="sw dry"></span>Under 20% precip</span>
+    <span><span class="sw iffy"></span>20–45%</span>
+    <span><span class="sw wet"></span>45–65%</span>
+    <span><span class="sw soak"></span>Over 65%</span>
+    <span id="wx-note" style="margin-left:auto;">Snapshot read Sept 14</span>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="kicker">Compare</div>
+  <h2>The board</h2>
+  <p class="sub">Click a column header to sort. Epicness is our 1–10 gut rating for a group of guys who signed up for the Spanish Peaks;
+  fit blends epicness with this week's forecast, drive time, permits, and whether it's new ground for us. Filter by region with the chips.</p>
+  <div class="chips" id="regionchips">
+    <button class="chip on" data-r="all">All</button>
+    <button class="chip" data-r="mt">Montana</button>
+    <button class="chip" data-r="wy">Wyoming</button>
+    <button class="chip" data-r="id">Idaho</button>
+    <button class="chip" data-r="utm">Utah mountains</button>
+    <button class="chip" data-r="ut">Utah desert</button>
+  </div>
+  <div class="tblwrap"><table id="board"></table></div>
+</section>
+
+<section id="routes">
+  <div class="kicker">Routes</div>
+  <h2>The long version</h2>
+  <p class="sub">What each one actually is, how it fits our Thursday-6-pm-arrival shape, and what would make us love or regret it.
+  Ordered by fit; the region filter above applies here too.</p>
+  <div class="routes" id="routes"></div>
+</section>
+
+<section id="how">
+  <div class="kicker">How we scored</div>
+  <h2>Fit = epicness × weather × logistics × novelty</h2>
+  <div class="card">
+    <ul style="margin-left: 18px; color: var(--ink-2);">
+      <li><strong>Epicness (40%)</strong>: gut call, 1–10, for scenery, summit or objective, and the "we did that" factor. Subjective and unapologetic.</li>
+      <li><strong>Weather (30%)</strong>: from the live NWS high-point forecast, Friday through Sunday night. Average chance of precip is the main term; any period at or above 65% costs extra, any low under 28°F or a snow mention costs a little.</li>
+      <li><strong>Logistics (20%)</strong>: drive time from SLC, permits or shuttles, and how cleanly it fits arriving Thursday at 6 pm and flying home Monday.</li>
+      <li><strong>Novelty (10%)</strong>: we've done the Sawtooths four times and the Winds twice; new ranges get the bump.</li>
+    </ul>
+    <p class="sub" style="margin-top: 12px; font-size: 13.5px;">Distances and gain are from AllTrails or the route's most cited guide and rounded;
+    drive times are highway estimates from SLC airport and don't include the dirt-road crawl at the end. Verify permits before committing;
+    Grand Teton, Zion, Canyonlands, Cedar Mesa, and Paria all cap groups and require reservations or walk-ins. Slot canyons are off the table on any
+    day with storms in the forecast, full stop.</p>
+  </div>
+</section>
+
+<footer>
+  <span style="font-weight:700; letter-spacing:0.06em; color: var(--ink-2);">PATH BEATERS <span style="color:var(--orange)">'26</span></span> · Options board built Sept 14, 2026.
+  Forecasts: <a href="https://www.weather.gov/">National Weather Service</a> via api.weather.gov, 10-day links to <a href="https://www.wunderground.com/">Weather Underground</a>.
+  Trail stats: <a href="https://www.alltrails.com">AllTrails</a> and linked guides. The main trip site is <a href="../">one level up</a>.
+</footer>
+
+</div>
+
+<script src="routes.js"></script>
+<script src="wx.js"></script>
+<script>
+const REGION_NAME = { mt: "Montana", wy: "Wyoming", id: "Idaho", utm: "Utah mountains", ut: "Utah desert" };
+const SLC = "Salt+Lake+City+International+Airport";
+const dirLink = r => { const p = WX[r.id].th; return `https://www.google.com/maps/dir/?api=1&origin=${SLC}&destination=${p.lat},${p.lon}`; };
+const wuLink = r => `https://www.wunderground.com/forecast/us/${r.wu}`;
+const wuTown = r => r.wu.split("/")[1].split("-").map(w => w[0].toUpperCase() + w.slice(1)).join(" ") + ", " + r.wu.split("/")[0].toUpperCase();
+const nwsLink = pt => `https://forecast.weather.gov/MapClick.php?lat=${pt.lat}&lon=${pt.lon}`;
+const short = r => SHORT[r.id] || r.name;
+
+/* ---------- weather scoring ---------- */
+function wxScore(periods) {
+  const ps = periods.filter(p => !/^Thursday/.test(p.n));   // Friday through Sunday night: the days we walk
+  if (!ps.length) return { score: 5, avg: 0, worst: 0, minT: 0, snow: false };
+  const avg = ps.reduce((a, p) => a + p.p, 0) / ps.length;
+  const worst = Math.max(...ps.map(p => p.p));
+  const minT = Math.min(...ps.map(p => p.t));
+  const snow = ps.some(p => /snow/i.test(p.s));
+  let s = 10 - avg / 8;
+  s -= ps.filter(p => p.p >= 65).length * 0.8;
+  if (minT < 28) s -= 0.5;
+  if (snow) s -= 0.7;
+  return { score: Math.max(0, Math.min(10, s)), avg, worst, minT, snow };
+}
+const cls = p => p < 20 ? "dry" : p < 45 ? "iffy" : p < 65 ? "wet" : "soak";
+const hpScore = r => wxScore(WX[r.id].hp.periods);
+const fit = r => 0.4 * r.epic + 0.3 * hpScore(r).score + 0.2 * r.logistics + 0.1 * r.novelty;
+
+/* ---------- picks ---------- */
+const REASONS = {
+  deathhollow: "Warm, nearly dry from Friday, free permits, and a canyon that is genuinely hard. The furthest thing from the Spanish Peaks, which is the point.",
+  whiteclouds: "The clear-by-Saturday Idaho forecast without repeating the Sawtooths. A loop around one huge peak with high camps and nobody around.",
+  cirque: "The skyline everyone wants. Wet Thursday, iffy Friday morning, then it clears for the passes. Worth it if the Friday trend improves.",
+  hyndman: "A 12,000-ft summit, a historic ski hut, a drying forecast, and a range none of us has touched.",
+  alice: "Cleanest weather north of Utah and an easy drive, but we've done this range four times.",
+  baron: "The Sawtooths' most dramatic corner with the same clearing forecast; costs a rig shuttle.",
+  titcomb: "Spectacular, but the highest camps on the board and the forecast has snow in it.",
+  teton: "The most dramatic miles of any option; permits for eight are the gamble.",
+  lizardhead: "The best walking in the Winds, but a plateau with no lightning cover and a 3.5-hour shuttle.",
+  kings: "Closest by hours, and a Sunday summit looks good, but Thursday and Friday are the worst weather on the board.",
+  redcastle: "Utah's best-looking mountain and a short drive; same wet start as Kings.",
+  naturalist: "Easiest logistics anywhere, and the least epic mountains on the list.",
+  tushar: "Three 12ers, no crowds, short drive; not a lake trip.",
+  grandgulch: "Warm, dry, and unlike anything we've done; needs a permit in hand and a taste for ruins over summits.",
+  coyote: "The desert postcard, warm and easy; the challenge factor is the catch.",
+  buckskin: "The world's longest slot, which is exactly why Thursday's storms matter. Permits are the other catch.",
+  paria: "Four days of deepening canyon; permits this week are close to impossible.",
+  zion: "Zion without the shuttle crowds, warm and drying; West Rim permits are the gate.",
+  needles: "Slickrock camps and the Joint Trail, warm and dry; two sites per night and no water are the work.",
+  darkcanyon: "The wildest option on the board; forty miles in four days and a long dirt approach.",
+  spanish: "The plan we have. Wettest forecast on the board through Saturday; still fine if the group wants to stick with it and hike in rain shells."
+};
+function renderPicks() {
+  const ranked = ROUTES.map(r => ({ r, f: fit(r), w: hpScore(r) })).sort((a, b) => b.f - a.f);
+  const box = document.getElementById("picks"); box.textContent = "";
+  const mk = (x, label, k) => {
+    const el = document.createElement("div"); el.className = "card pick " + k;
+    el.innerHTML = `<div class="rank">${label} · fit ${x.f.toFixed(1)} / 10</div><h3></h3><p></p>
+      <div style="margin-top:10px"><span class="tag ${cls(x.w.avg)}">${Math.round(x.w.avg)}% avg precip Fri–Sun</span><span class="tag">epic ${x.r.epic}/10</span><span class="tag">~${x.r.drive} hr drive</span>
+      <a class="wu" href="${wuLink(x.r)}" target="_blank" rel="noopener">10-day</a></div>`;
+    el.querySelector("h3").textContent = x.r.name; el.querySelector("p").textContent = REASONS[x.r.id] || x.r.why[0];
+    return el;
+  };
+  ranked.slice(0, 4).forEach((x, i) => box.appendChild(mk(x, "Pick " + (i + 1), "p" + (i + 1))));
+  const sp = ranked.find(x => x.r.id === "spanish");
+  box.appendChild(mk(sp, `The plan on the books · ranked ${ranked.indexOf(sp) + 1} of ${ranked.length}`, "p0"));
+
+  const driest = ranked.slice().sort((a, b) => a.w.avg - b.w.avg)[0];
+  const epic = ranked.slice().sort((a, b) => b.r.epic - a.r.epic || b.f - a.f)[0];
+  document.getElementById("st-driest").textContent = short(driest.r);
+  document.getElementById("st-epic").textContent = short(epic.r);
+  document.getElementById("st-fit").textContent = short(ranked[0].r);
+}
+
+/* ---------- weather grid ---------- */
+let PT = "hp", WXSORT = "wx";
+function renderWx() {
+  const names = ["Thursday", "Thursday Night", "Friday", "Friday Night", "Saturday", "Saturday Night", "Sunday", "Sunday Night"];
+  const t = document.getElementById("wxgrid"); t.textContent = "";
+  const thead = document.createElement("thead"); const hr = document.createElement("tr");
+  hr.innerHTML = '<th class="name">Route</th>' + names.map(n => `<th>${n.replace(" Night", "<br>night")}</th>`).join("") + '<th>Fri–Sun avg</th><th>Score</th><th>10-day</th>';
+  thead.appendChild(hr); t.appendChild(thead);
+  const tb = document.createElement("tbody");
+  const rows = ROUTES.slice(); if (WXSORT === "wx") rows.sort((a, b) => hpScore(b).score - hpScore(a).score);
+  rows.forEach(r => {
+    const pt = WX[r.id][PT]; const ws = hpScore(r);
+    const tr = document.createElement("tr"); if (r.id === "spanish") tr.className = "baseline";
+    let h = `<td class="name">${short(r)}<small>${PT === "hp" ? "high point" : "trailhead"} · ${pt.elev_ft.toLocaleString()} ft · ${REGION_NAME[r.region]}</small></td>`;
+    names.forEach(n => {
+      const p = pt.periods.find(x => x.n === n);
+      h += p ? `<td><div class="cell ${cls(p.p)}" title="${p.s.replace(/"/g, "")} · ${p.w}"><b>${p.t}°</b><span>${p.p}%</span></div></td>` : "<td>—</td>";
+    });
+    h += `<td><div class="cell ${cls(ws.avg)}"><b>${Math.round(ws.avg)}%</b><span>${ws.snow ? "snow mention" : "min " + ws.minT + "°"}</span></div></td>`;
+    h += `<td><b class="num">${ws.score.toFixed(1)}</b><span class="bar fit"><i style="width:${ws.score * 10}%"></i></span></td>`;
+    h += `<td><a class="wu" href="${wuLink(r)}" target="_blank" rel="noopener" title="Weather Underground 10-day for ${wuTown(r)}">${wuTown(r).split(",")[0]}</a></td>`;
+    tr.innerHTML = h; tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+}
+document.querySelectorAll(".toggle button[data-pt]").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".toggle button[data-pt]").forEach(x => x.classList.remove("on")); b.classList.add("on"); PT = b.dataset.pt; renderWx();
+}));
+document.querySelectorAll(".toggle button[data-sort]").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".toggle button[data-sort]").forEach(x => x.classList.remove("on")); b.classList.add("on"); WXSORT = b.dataset.sort; renderWx();
+}));
+
+/* ---------- board ---------- */
+let SORT = { key: "fit", dir: -1 }, REGION = "all";
+const COLS = [
+  ["name", "Route", r => r.name, true],
+  ["region", "Where", r => REGION_NAME[r.region], true],
+  ["drive", "Drive from SLC", r => r.drive, true],
+  ["miles", "Miles", r => r.miles, true],
+  ["gain", "Gain", r => r.gain, true],
+  ["high", "High point", r => r.high, true],
+  ["wx", "Weather", r => hpScore(r).score, true],
+  ["epic", "Epicness", r => r.epic, true],
+  ["fit", "Fit", r => fit(r), true],
+  ["permits", "Permits", r => r.permits, false],
+  ["done", "Been there?", r => r.done, false],
+  ["links", "Links", r => "", false],
+];
+function renderBoard() {
+  const t = document.getElementById("board"); t.textContent = "";
+  const thead = document.createElement("thead"); const hr = document.createElement("tr");
+  COLS.forEach(([k, label, , sortable]) => {
+    const th = document.createElement("th"); th.textContent = label;
+    if (sortable) { th.classList.add("sortable"); th.addEventListener("click", () => { SORT = { key: k, dir: SORT.key === k ? -SORT.dir : (["name", "region", "drive"].includes(k) ? 1 : -1) }; renderBoard(); }); }
+    if (SORT.key === k) th.classList.add("sorted");
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr); t.appendChild(thead);
+  const tb = document.createElement("tbody");
+  const get = COLS.find(c => c[0] === SORT.key)[2];
+  const rows = ROUTES.slice().sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; });
+  rows.forEach(r => {
+    const ws = hpScore(r), f = fit(r);
+    const tr = document.createElement("tr"); if (r.id === "spanish") tr.className = "baseline";
+    if (REGION !== "all" && r.region !== REGION) tr.classList.add("hidden");
+    tr.innerHTML = `
+      <td class="name">${r.name}<small>${r.where}</small></td>
+      <td>${REGION_NAME[r.region]}</td>
+      <td class="num">~${r.drive} hr<br><a href="${dirLink(r)}" target="_blank" rel="noopener" style="font-size:12px">directions</a></td>
+      <td class="num">${r.miles}</td>
+      <td class="num">+${r.gain.toLocaleString()} ft</td>
+      <td class="num">${r.high.toLocaleString()} ft</td>
+      <td><span class="tag ${cls(ws.avg)}">${Math.round(ws.avg)}% · ${ws.score.toFixed(1)}</span><br><a class="wu" href="${wuLink(r)}" target="_blank" rel="noopener">10-day</a></td>
+      <td><span class="epic">${r.epic}</span>/10<span class="bar"><i style="width:${r.epic * 10}%"></i></span></td>
+      <td><span class="epic">${f.toFixed(1)}</span><span class="bar fit"><i style="width:${f * 10}%"></i></span></td>
+      <td class="wrapok">${r.permits}</td>
+      <td class="wrapok">${r.done}</td>
+      <td>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join("<br>")}</td>`;
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+}
+document.querySelectorAll("#regionchips .chip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#regionchips .chip").forEach(x => x.classList.remove("on")); b.classList.add("on"); REGION = b.dataset.r; renderBoard(); renderRoutes();
+}));
+
+/* ---------- route cards ---------- */
+function renderRoutes() {
+  const box = document.getElementById("routes"); box.textContent = "";
+  ROUTES.slice().sort((a, b) => fit(b) - fit(a)).forEach((r, i) => {
+    const hp = WX[r.id].hp, ws = hpScore(r), f = fit(r);
+    const el = document.createElement("div"); el.className = "card route r-" + r.region;
+    if (REGION !== "all" && r.region !== REGION) el.classList.add("hidden");
+    const li = a => a.map(s => `<li>${s}</li>`).join("");
+    el.innerHTML = `
+      <div class="head"><h3>${i + 1}. ${r.name}</h3><span class="tag">${REGION_NAME[r.region]}</span><span class="tag">epic ${r.epic}/10</span><span class="tag good">fit ${f.toFixed(1)}</span></div>
+      <div class="meta">${r.where} · ${r.th} · ${r.miles} mi · +${r.gain.toLocaleString()} ft · high point ${r.high.toLocaleString()} ft · ${r.nights} · ~${r.drive} hr from SLC (${r.driveNote}) · fly home: ${r.fly}</div>
+      <div class="cols">
+        <div><div class="lab">Why</div><ul>${li(r.why)}</ul></div>
+        <div><div class="lab">Why not</div><ul>${li(r.whynot)}</ul></div>
+      </div>
+      <div style="margin-top: 12px;"><div class="lab">Thursday-6-pm shape</div><p style="font-size: 14px; color: var(--ink-2);">${r.shape}</p></div>
+      <div style="margin-top: 12px;"><div class="lab">Forecast at ${hp.elev_ft.toLocaleString()} ft (NWS grid near the high point)</div>
+        <div class="fc">${hp.periods.map(p => `<div class="cell ${cls(p.p)}"><b>${p.t}°</b>${p.n.replace(" Night", " night")}<br>${p.p}% · ${p.s}</div>`).join("")}</div>
+        <div class="score"><span>Fri–Sun avg precip <b>${Math.round(ws.avg)}%</b></span><span>worst period <b>${ws.worst}%</b></span><span>coldest low <b>${ws.minT}°</b></span>${ws.snow ? "<span><b>snow in the forecast</b></span>" : ""}<span>permits: <b>${r.permits}</b></span><span>bears: <b>${r.bears}</b></span></div>
+      </div>
+      <div class="links"><a class="primary" href="${wuLink(r)}" target="_blank" rel="noopener">Weather Underground 10-day · ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS high-point forecast</a><a href="${nwsLink(WX[r.id].th)}" target="_blank" rel="noopener">NWS trailhead forecast</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join("")}<a href="${dirLink(r)}" target="_blank" rel="noopener">Directions from SLC</a></div>`;
+    box.appendChild(el);
+  });
+}
+
+/* ---------- live refresh ---------- */
+function renderAll() { renderPicks(); renderWx(); renderBoard(); renderRoutes(); }
+renderAll();
+(function () {
+  const stamp = (iso, live) => {
+    const s = new Date(iso).toLocaleString("en-US", { timeZone: "America/Denver", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    document.getElementById("st-updated").textContent = (live ? "live · " : "snapshot · ") + s + " MT";
+    document.getElementById("wx-note").textContent = live ? "Live from NWS, updated " + s + " MT" : "Offline: snapshot from " + s + " MT";
+  };
+  stamp(WX.spanish.hp.updated, false);
+  const jobs = [];
+  ROUTES.forEach(r => ["th", "hp"].forEach(k => {
+    const pt = WX[r.id][k];
+    jobs.push(fetch(pt.url, { headers: { Accept: "application/geo+json" } }).then(x => x.json()).then(j => {
+      const periods = j.properties.periods.filter(p => { const d = p.startTime.slice(0, 10); return d >= "2026-09-17" && d <= "2026-09-21"; })
+        .map(p => ({ n: p.name, t: p.temperature, d: p.isDaytime, p: (p.probabilityOfPrecipitation && p.probabilityOfPrecipitation.value) || 0, w: p.windSpeed + " " + p.windDirection, s: p.shortForecast }));
+      if (periods.length) { pt.periods = periods; pt.updated = j.properties.updateTime; return true; }
+      return false;
+    }).catch(() => false));
+  }));
+  Promise.all(jobs).then(ok => { const n = ok.filter(Boolean).length; if (n) { renderAll(); stamp(WX.spanish.hp.updated, true); } });
+})();
+</script>
+</body>
+</html>
