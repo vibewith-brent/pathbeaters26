@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="pathbeaters26" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
   <metadata><name>Big Boulder Lakes via Walker Lake (east White Clouds)</name><desc>Thu-Mon plan; one trkseg per day leg (Fri, Sat, Sun, Mon). Track routed with BRouter hiking-mountain over OSM trails; elevations from the BRouter SRTM profile.</desc></metadata>
+  <wpt lat="44.11231" lon="-114.55844"><ele>2530</ele><name>Thu camp · Big Boulder Creek bench (~3 mi, approx.)</name><desc>Thursday hike-in camp if the weather holds: forested bench near the creek at the 3-mile mark. Position from the routed track, not a surveyed site.</desc><sym>Campground</sym></wpt>
+
   <wpt lat="44.131140" lon="-114.513280"><ele>2175.1</ele><name>Livingston Mill TH</name></wpt>
   <wpt lat="44.106900" lon="-114.597450"><ele>2817.7</ele><name>Fri camp · Walker Lake</name></wpt>
   <wpt lat="44.101250" lon="-114.608330"><ele>3001.4</ele><name>Sat + Sun camp · Cove Lake</name></wpt>

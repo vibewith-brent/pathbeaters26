@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Boulder Lakes · Path Beaters '26</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23a0522d%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #ebe8e0; --surface: #ffffff; --ink: #1c1b18; --ink-2: #57544c; --muted: #857f73;
+    --rule: #cfcabd; --rule-2: #e6e2d8; --accent: #a0522d; --accent-ink: #7c3f22; --accent-bg: #f7efe9;
+    --p1: #e9eef4; --p2: #d3dfeb; --p3: #b3c8dd; --p4: #8aa9c8; --p5: #5f88ad;
+    --ok: #2f7a4f; --tight: #a8731a; --dark: #a0522d;
+    --fri: #5f88ad; --sat: #a0522d; --sun: #2f7a4f; --mon: #857f73; --hike: #c98a3a;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--paper); color: var(--ink); line-height: 1.5; font-size: 15px; -webkit-text-size-adjust: 100%; }
+  a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+  button { font: inherit; }
+  .lab { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .num { font-family: var(--mono); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px 72px; }
+  @media (min-width: 760px) { .wrap { padding: 0 24px 96px; } }
+  section { margin-top: 40px; scroll-margin-top: 56px; }
+  @media (min-width: 760px) { section { margin-top: 64px; } }
+  h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.15; margin: 6px 0 14px; }
+  @media (min-width: 760px) { h2 { font-size: 26px; } }
+  h3 { font-size: 16px; font-weight: 600; }
+  p.lede { color: var(--ink-2); max-width: 64ch; font-size: 15.5px; }
+
+  nav.top { position: sticky; top: 0; z-index: 500; background: rgba(235,232,224,0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+  nav.top .inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding: 10px 16px; overflow-x: auto; scrollbar-width: none; }
+  nav.top .inner::-webkit-scrollbar { display: none; }
+  nav.top .brand { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; white-space: nowrap; color: var(--ink); margin-right: auto; }
+  nav.top a { font-size: 13.5px; color: var(--ink-2); white-space: nowrap; text-decoration: none; }
+
+  /* hero */
+  .hero { position: relative; margin: 0 -16px; overflow: hidden; background: #2a2a28; }
+  @media (min-width: 760px) { .hero { margin: 0 -24px; border-radius: 0 0 14px 14px; } }
+  .hero img { display: block; width: 100%; height: 52vh; min-height: 300px; max-height: 560px; object-fit: cover; opacity: 0.94; }
+  .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,20,18,0.05) 30%, rgba(20,20,18,0.72) 100%); }
+  .hero .text { position: absolute; left: 0; right: 0; bottom: 0; padding: 20px 20px 22px; color: #fff; }
+  @media (min-width: 760px) { .hero .text { padding: 28px 32px 30px; } }
+  .hero .kick { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; }
+  .hero h1 { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; margin-top: 6px; }
+  @media (min-width: 760px) { .hero h1 { font-size: 52px; } }
+  .hero .sub { margin-top: 8px; font-size: 15px; opacity: 0.92; max-width: 60ch; }
+  .hero .credit { position: absolute; right: 0; top: 0; font-family: var(--mono); font-size: 9.5px; color: #fff; background: rgba(0,0,0,0.4); padding: 3px 7px; border-bottom-left-radius: 4px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; margin-top: 14px; }
+  @media (min-width: 760px) { .stats { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  .stats div { background: var(--surface); padding: 12px 12px 10px; }
+  .stats b { display: block; font-family: var(--mono); font-size: 19px; font-weight: 500; letter-spacing: -0.01em; }
+  .stats small { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+
+  /* map */
+  #map { height: 62vh; min-height: 360px; max-height: 640px; border: 1px solid var(--rule); border-radius: 12px; background: #e4e1d9; z-index: 1; box-shadow: 0 1px 2px rgba(28,27,24,0.06); }
+  .leaflet-container { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 13px; }
+  .leaflet-tooltip { background: var(--ink); color: var(--paper); border: none; border-radius: 4px; padding: 3px 7px; font-family: var(--mono); font-size: 11px; box-shadow: none; }
+  .leaflet-tooltip::before { display: none; }
+  .leaflet-tooltip.plain { background: rgba(255,255,255,0.92); color: var(--ink); border: 1px solid var(--rule); font-size: 10.5px; padding: 2px 5px; }
+  .leaflet-popup-content-wrapper { border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.14); background: var(--surface); color: var(--ink); }
+  .leaflet-popup-content { margin: 12px 14px; line-height: 1.4; font-size: 13.5px; }
+  .leaflet-popup-content b { display: block; font-size: 14px; font-weight: 600; }
+  .leaflet-popup-content small { display: block; color: var(--muted); font-family: var(--mono); font-size: 11px; margin: 2px 0 6px; }
+  .leaflet-popup-content .pl { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .leaflet-popup-content .pl a { font-size: 12.5px; text-decoration: none; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; color: var(--ink-2); background: var(--paper); }
+  .leaflet-control-attribution { font-family: system-ui, sans-serif; font-size: 9px; background: rgba(251,250,247,0.85) !important; }
+  .leaflet-bar a { color: var(--ink); }
+  .mapctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+  .seg button { font-size: 13px; padding: 7px 11px; border: none; background: transparent; cursor: pointer; color: var(--ink-2); border-right: 1px solid var(--rule); min-height: 36px; }
+  .seg button:last-child { border-right: none; }
+  .seg button.on { background: var(--ink); color: var(--paper); }
+  .key { display: flex; flex-wrap: wrap; gap: 6px 14px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .key i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 5px; border-radius: 2px; }
+  .key i.dash { background: repeating-linear-gradient(90deg, var(--hike) 0 4px, transparent 4px 7px); }
+  .key s { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+
+  /* days */
+  .days { display: grid; gap: 12px; }
+  .day { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(28,27,24,0.05); border-left: 4px solid var(--rule); }
+  .day.fri { border-left-color: var(--fri); } .day.sat { border-left-color: var(--sat); } .day.sun { border-left-color: var(--sun); } .day.mon { border-left-color: var(--mon); } .day.thu { border-left-color: var(--rule); }
+  .day .head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .day .head .d { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); min-width: 64px; }
+  .day .head h3 { flex: 1; }
+  .day .head .n { font-family: var(--mono); font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+  .day .head .n b { color: var(--ink); font-weight: 500; }
+  .day p { color: var(--ink-2); margin-top: 8px; font-size: 14.5px; }
+  .day .alt { margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--accent); border-radius: 6px; font-size: 13.5px; color: var(--accent-ink); }
+  .day .alt b { font-family: var(--mono); font-weight: 500; }
+  .chart { margin-top: 12px; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  /* camps + hikes */
+  .cards { display: grid; gap: 12px; }
+  @media (min-width: 760px) { .cards.two { grid-template-columns: 1fr 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(28,27,24,0.05); }
+  .card .top { display: flex; align-items: baseline; gap: 10px; }
+  .card .top .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; background: var(--accent); border-radius: 4px; padding: 2px 6px; }
+  .card .top .tag.h { background: var(--hike); }
+  .card .top h3 { flex: 1; }
+  .card .top .n { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+  .card p { color: var(--ink-2); margin-top: 8px; font-size: 14px; }
+  .kv { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 5px 10px; margin-top: 10px; font-size: 13.5px; color: var(--ink-2); }
+  .kv dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+  .kv dd b { color: var(--ink); font-weight: 500; }
+  .card .links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill { font-size: 12.5px; text-decoration: none; border: 1px solid var(--rule); border-radius: 999px; padding: 5px 11px; color: var(--ink-2); background: var(--surface); white-space: nowrap; cursor: pointer; }
+  .pill.primary { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+  .rank { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  /* weather */
+  .wxblock { margin-top: 12px; }
+  .wxblock h3 { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .wxblock h3 small { font-family: var(--mono); font-size: 11px; color: var(--muted); font-weight: 400; }
+  .fc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  @media (min-width: 720px) { .fc { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+  .fc .c { border-radius: 6px; padding: 8px 4px; font-size: 11px; line-height: 1.3; font-family: var(--mono); text-align: center; border: 1px solid var(--rule-2); background: var(--surface); }
+  .fc .c b { display: block; font-size: 15px; font-weight: 500; }
+  .fc .c i { display: block; font-style: normal; font-size: 10px; opacity: 0.85; }
+  .q0 { background: var(--surface); } .q1 { background: var(--p1); } .q2 { background: var(--p2); } .q3 { background: var(--p3); } .q4 { background: var(--p4); color: #fff; } .q5 { background: var(--p5); color: #fff; }
+  .wxmeta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+
+  /* logistics */
+  .grid2 { display: grid; gap: 12px; }
+  @media (min-width: 760px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  .arrive { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .arrive div { border: 1px solid var(--rule-2); border-radius: 8px; padding: 10px 12px; }
+  .arrive b { display: block; font-family: var(--mono); font-size: 18px; font-weight: 500; }
+  .arrive small { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .arr-ok { color: var(--ok); } .arr-tight { color: var(--tight); } .arr-dark { color: var(--dark); }
+  ul.plain { margin-left: 18px; color: var(--ink-2); font-size: 14px; }
+  ul.plain li { margin-bottom: 5px; }
+  input.tm { font: inherit; font-size: 13px; padding: 6px 9px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); }
+
+  footer { margin-top: 56px; padding-top: 14px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.7; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="brand">PATH BEATERS '26 / BIG BOULDER</span>
+    <a href="#map-sec">Map</a><a href="#plan">Plan</a><a href="#camps">Camps</a><a href="#hikes">Day hikes</a><a href="#weather">Weather</a><a href="#logistics">Logistics</a><a href="../options/">Board</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero" id="hero">
+  <img id="hero-img" src="../options/img/bigboulder.jpg" alt="White Cloud Mountains, Idaho">
+  <div class="scrim"></div>
+  <div class="credit" id="hero-credit"></div>
+  <div class="text">
+    <div class="kick">Sept 17–21, 2026 · Cecil D. Andrus–White Clouds Wilderness, Idaho</div>
+    <h1>Big Boulder Lakes</h1>
+    <div class="sub">Up Big Boulder Creek to Walker Lake, then off-trail into the basin under D.O. Lee Peak: Cove, Sapphire, Cirque, and Hook lakes. Three nights, two of them at one high camp.</div>
+  </div>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<section id="map-sec">
+  <div class="lab">Map</div>
+  <h2>The route, camps, and day hikes</h2>
+  <div id="map"></div>
+  <div class="mapctl">
+    <span class="seg" id="baseseg"><button class="on" data-b="topo">Topo</button><button data-b="sat">Satellite</button></span>
+    <span class="seg" id="layerseg"><button class="on" data-l="hikes">Day hikes on</button><button data-l="nohikes">off</button></span>
+    <span class="key"><span><i style="background:var(--fri)"></i>Fri</span><span><i style="background:var(--sat)"></i>Sat</span><span><i style="background:var(--sun)"></i>Sun</span><span><i style="background:var(--mon)"></i>Mon</span><span><i class="dash"></i>day hike</span><span><s style="background:var(--accent)"></s>camp</span><span><s style="background:#fff;border:1.5px solid var(--ink)"></s>point</span></span>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="lab">Plan</div>
+  <h2>Day by day</h2>
+  <div class="days" id="days"></div>
+  <div class="card" style="margin-top:12px"><div class="lab">Whole trip</div><div class="chart" id="chart"></div></div>
+</section>
+
+<section id="camps">
+  <div class="lab">Camps</div>
+  <h2>Where we sleep</h2>
+  <div class="cards" id="camp-cards"></div>
+</section>
+
+<section id="hikes">
+  <div class="lab">Day hikes</div>
+  <h2>Sunday options from camp</h2>
+  <p class="lede">Ranked for a group that wants a full day. Anyone hiking out Sunday skips these and follows the early-exit line in the plan.</p>
+  <div class="cards two" id="hike-cards" style="margin-top:14px"></div>
+</section>
+
+<section id="weather">
+  <div class="lab">Weather</div>
+  <h2>Forecast</h2>
+  <div class="wxblock"><h3>Basin, near camp <small id="wx-hi-meta"></small></h3><div class="fc" id="wx-hi"></div></div>
+  <div class="wxblock"><h3>Trailhead <small id="wx-th-meta"></small></h3><div class="fc" id="wx-th"></div></div>
+  <div class="wxmeta" id="wx-status"></div>
+  <div class="card" style="margin-top:12px"><div class="links" id="wx-links"></div></div>
+</section>
+
+<section id="logistics">
+  <div class="lab">Logistics</div>
+  <h2>Getting there and living out there</h2>
+  <div class="grid2" id="logi"></div>
+</section>
+
+<footer id="foot"></footer>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../options/chart.js"></script>
+<script src="trip.js?v=4"></script>
+<script src="app.js?v=4"></script>
+</body>
+</html>
