@@ -10,6 +10,7 @@ const ROUTES = [
     whynot: ["The wettest forecast on the board: storms likely Thursday night and all Friday, still showery Saturday.", "Longest drive from SLC.", "The one summit that fits (Blaze) is an off-trail scramble; no signature objective on trail."],
     shape: "Thu 6 pm rigs at TH or 3 mi in · Fri Spanish Lakes · Sat over the divide to Jerome Rock Lakes · Sun low camp on Falls Creek · Mon out by 10, BZN by 11:30.",
     sunOut: "from Jerome Rock Lakes down Falls Creek to the rigs, ~8 mi, −3,000 ft; BZN by evening",
+    days: [["Thu", "rigs at the trailhead, or walk in to the creek camp", 3, 350], ["Fri", "up to the Spanish Lakes (5 mi if we slept at the creek)", 8, 2900], ["Sat", "over the divide, lunch at Lake Solitude, camp Jerome Rock Lakes", 4.5, 1200], ["Sun", "free morning, then down Falls Creek to the low camp", 3.5, 100], ["Mon", "past Pioneer Falls to the rigs, BZN by 11:30", 4, 0], ["Sun out", "Jerome Rock Lakes down Falls Creek to the rigs, 3,000 ft of descent", 8, 100]],
     links: [["Trip site", "../"], ["AllTrails area", "https://www.alltrails.com/parks/us/montana/lee-metcalf-wilderness"]] },
 
   { id: "cirque", region: "wy", name: "Cirque of the Towers → Fremont Trail Loop", where: "Bridger Wilderness, Wind River Range, WY", th: "Big Sandy TH (9,100 ft)",
@@ -20,6 +21,7 @@ const ROUTES = [
     whynot: ["Thursday is stormy at Big Sandy; Friday is the iffy one at the high point, then it clears.", "Big Sandy is famous for a reason: expect neighbors at Lonesome Lake on a weekend.", "We've been to the Winds twice already; the novelty is in the Cirque itself, not the range."],
     shape: "Thu 6 pm camp at Big Sandy TH (big, free, vault toilet) · Fri Big Sandy Lake → Jackass Pass → Lonesome Lake (9 mi) · Sat Texas Pass → Shadow Lake / Washakie Creek (7 mi) · Sun Fremont Trail → Dads or Marms Lake (6 mi) · Mon 6 mi out, drive home.",
     sunOut: "Shadow Lake → Fremont Trail → Big Sandy, ~12 mi, mostly gentle",
+    days: [["Thu", "camp at Big Sandy TH (big, free, vault toilet)", 0, 0], ["Fri", "Big Sandy Lake, Jackass Pass, camp Lonesome Lake", 9, 2000], ["Sat", "Texas Pass, camp Shadow Lake or Washakie Creek", 7, 1200], ["Sun", "Fremont Trail to Dads or Marms Lake", 6, 500], ["Mon", "out to Big Sandy, drive home", 6, 200], ["Sun out", "Shadow Lake, Fremont Trail, Big Sandy; mostly gentle", 12, 700]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/wyoming/cirque-of-the-towers-to-fremont-trail-loop"], ["Bearfoot Theory guide", "https://bearfoottheory.com/cirque-of-the-towers-backpacking-wyoming/"], ["Girl on a Hike report", "https://girlonahike.com/hiking-the-cirque-of-the-towers-to-fremont-trail-loop.html"]] },
 
   { id: "lizardhead", region: "wy", name: "Lizard Head Plateau → Cirque (Dickinson Park to Big Sandy)", where: "Popo Agie + Bridger Wilderness, Wind River Range, WY", th: "Bears Ears TH, Dickinson Park (9,300 ft) → Big Sandy TH",
@@ -30,6 +32,7 @@ const ROUTES = [
     whynot: ["Point-to-point: the rig shuttle between Dickinson Park and Big Sandy is 3.5 hours each way.", "The plateau has zero cover from lightning; Thursday and Friday storms make the timing tight.", "Longest and highest walking of the Wyoming options; Friday from Dickinson Park is 11 mi."],
     shape: "Thu 6 pm camp at Dickinson Park (drop one rig at Big Sandy on the way, or hire the Lander shuttle) · Fri Bears Ears Trail → Valentine Lake (10 mi) · Sat over the Lizard Head Plateau → Lonesome Lake (9 mi, weather-dependent) · Sun Jackass Pass → Big Sandy Lake or Deep Lake (5 mi) · Mon 6 mi out.",
     sunOut: "Lonesome Lake → Jackass Pass → Big Sandy, ~9 mi",
+    days: [["Thu", "camp at Dickinson Park (one rig left at Big Sandy)", 0, 0], ["Fri", "Bears Ears Trail to Valentine Lake", 10, 2300], ["Sat", "across the Lizard Head Plateau to Lonesome Lake (weather-dependent)", 9, 1800], ["Sun", "Jackass Pass to Big Sandy Lake or Deep Lake", 5, 700], ["Mon", "out to Big Sandy", 6, 200], ["Sun out", "Lonesome Lake, Jackass Pass, Big Sandy", 9, 700]],
     links: [["Hiking Walking guide", "https://www.hikingwalking.org/index.php/destinations/wy/wy_ww/big_sandy/wp_lh_ct/valentine_ct"], ["CMC 5-day loop version", "https://www.cmc.org/education-adventure/trips/routes-places/bpx-routes-places/bpx-5-day-washakie-pass-lizard-head-and-cirque-of-towers-loop"], ["Big Outside traverse", "https://thebigoutside.com/a-walk-in-the-winds-hiking-a-one-day-27-mile-traverse-of-wyomings-wind-river-range/"]] },
 
 
@@ -42,6 +45,7 @@ const ROUTES = [
     whynot: ["We've been to the Sawtooths four times; odds are somebody has done this exact loop.", "Only 19 miles and 3,000 ft: the lightest mountain challenge on the board.", "Pettit Lake is the busiest trailhead in the range on a nice September weekend."],
     shape: "Thu 6 pm camp at Pettit Lake CG · Fri 6 mi to Alice Lake · Sat over Snowyside Pass to Toxaway Lake (6 mi) · Sun Imogene Lake side trip, camp Farley/Edith · Mon 6 mi out, drive home.",
     sunOut: "Toxaway Lake → Farley Lake → Pettit Lake, ~7 mi",
+    days: [["Thu", "camp at Pettit Lake CG", 0, 0], ["Fri", "up to Alice Lake", 6, 1600], ["Sat", "Snowyside Pass, camp Toxaway Lake", 6, 900], ["Sun", "Imogene Lake side trip, camp Farley or Edith Lake", 6, 800], ["Mon", "out to Pettit Lake, drive home", 6, 100], ["Sun out", "Toxaway, Farley Lake, Pettit Lake", 7, 200]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/tin-cup-hiker"], ["Imogene extension", "https://www.alltrails.com/trail/us/idaho/imogene-lake-to-toxaway-lake-to-alice-lake-loop"]] },
 
 
@@ -55,6 +59,7 @@ const ROUTES = [
     whynot: ["Thursday and Friday are the worst-looking forecast on the board: 83% storms Thursday, likely Friday, snow showers possible Saturday above 12,000 ft.", "Big open windy basins; camps are exposed and the Uintas lack the granite drama of the Winds.", "Henrys Fork is the busiest Uinta trailhead."],
     shape: "Thu 6 pm hike 3 mi to Alligator Lake · Fri to Dollar Lake (6 mi) · Sat Gunsight → Anderson Pass → Kings Peak → back (12 mi RT) · Sun down to Henrys Fork Lake or all the way out · Mon short walk out, home by lunch.",
     sunOut: "Dollar Lake → Henrys Fork TH, ~7 mi, gentle",
+    days: [["Thu", "walk in to Alligator Lake", 3, 400], ["Fri", "to Dollar Lake", 6, 1100], ["Sat", "Gunsight Pass, Anderson Pass, Kings Peak, back to camp", 12, 3000], ["Sun", "down to the Henrys Fork Lake area", 5, 100], ["Mon", "out, home by lunch", 4, 0], ["Sun out", "Dollar Lake to Henrys Fork TH, gentle", 7, 100]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/utah/kings-peak-utah-highpoint-trail"], ["Highpoint guide", "https://highpoint.guide/ut/"]] },
 
   { id: "redcastle", region: "utm", name: "Red Castle Lakes (+ Smiths Fork Pass)", where: "High Uintas Wilderness, UT", th: "China Meadows TH (9,400 ft)",
@@ -65,6 +70,7 @@ const ROUTES = [
     whynot: ["Same Thursday/Friday storm forecast as Kings.", "Out-and-back unless we do the long loop.", "Popular with Wyoming horse packers; expect stock at the lower lake."],
     shape: "Thu 6 pm hike 2 mi to the wilderness boundary meadows · Fri 9 mi to Lower Red Castle Lake, camp · Sat day pack: Upper Red Castle, Smiths Fork Pass, maybe the Wilson Peak ridge · Sun 7 mi back to Broadbent Meadow · Mon 4 mi out, home for dinner.",
     sunOut: "Lower Red Castle → China Meadows, ~11 mi, gentle",
+    days: [["Thu", "walk in to the wilderness-boundary meadows", 2, 200], ["Fri", "to Lower Red Castle Lake", 9, 1700], ["Sat", "day pack: Upper Red Castle, Smiths Fork Pass", 8, 1500], ["Sun", "back to Broadbent Meadow", 7, 300], ["Mon", "out, home for dinner", 4, 0], ["Sun out", "Lower Red Castle to China Meadows, gentle", 11, 300]],
     links: [["AllTrails (loop w/ Kings Peak)", "https://www.alltrails.com/trail/us/utah/red-castle-lake-and-king-s-peak-loop-from-china-meadows"]] },
 
   { id: "naturalist", region: "utm", name: "Naturalist + Four Lakes + Grandaddy Basins (Highline loop)", where: "High Uintas Wilderness, UT", th: "Highline TH, Hayden Pass (10,300 ft)",
@@ -75,6 +81,7 @@ const ROUTES = [
     whynot: ["The Uintas are rolling and forested; less 'epic' per mile than anything in Wyoming or Idaho.", "Thursday and Friday look wet here too.", "Weekend crowds from SLC on the near lakes."],
     shape: "Thu 6 pm hike 3 mi to Scudder Lake · Fri Naturalist Basin, Blue Lake, camp Jordan Lake (7 mi) · Sat Rocky Sea Pass → Four Lakes Basin (8 mi) · Sun Grandaddy Basin → Pinto Lake (8 mi) · Mon 5 mi out via the Highline.",
     sunOut: "Four Lakes Basin → Rocky Sea Pass → Highline TH, ~9 mi",
+    days: [["Thu", "walk in to Scudder Lake", 3, 300], ["Fri", "Naturalist Basin, Blue Lake, camp Jordan Lake", 7, 1300], ["Sat", "Rocky Sea Pass to Four Lakes Basin", 8, 1500], ["Sun", "Grandaddy Basin to Pinto Lake", 8, 800], ["Mon", "out via the Highline", 5, 600], ["Sun out", "Four Lakes, Rocky Sea Pass, Highline TH", 9, 900]],
     links: [["AllTrails loop", "https://www.alltrails.com/trail/us/utah/highline-trailhead-loop-naturalist-four-lakes-and-grandaddy-basins"], ["Naturalist Basin guide", "https://girlonahike.com/backpacking-to-naturalist-basin-uintas.html"]] },
 
   { id: "tushar", region: "utm", name: "Tushar Skyline: Delano, Belknap, Baldy", where: "Tushar Mountains, Fishlake NF, UT", th: "Big John Flat TH (10,300 ft)",
@@ -85,6 +92,7 @@ const ROUTES = [
     whynot: ["Water is scarce on the Skyline; carry from the few springs.", "Not a lake-camp trip.", "Aspen gold is the show, and it peaks about a week later than our dates."],
     shape: "Thu 6 pm camp at Big John Flat · Fri Skyline Trail to Mud Lake / Blue Lake, tag Delano on the way (8 mi) · Sat Mount Belknap and Baldy from camp (8 mi RT) · Sun down to Bullion Pasture, camp (5 mi) · Mon 3 mi out, home by lunch.",
     sunOut: "Mud Lake → Big John Flat along the Skyline, ~8 mi",
+    days: [["Thu", "camp at Big John Flat", 0, 0], ["Fri", "Skyline Trail, tag Delano, camp Mud or Blue Lake", 8, 2400], ["Sat", "Mount Belknap and Baldy from camp", 8, 2200], ["Sun", "down to Bullion Pasture", 5, 300], ["Mon", "out, home by lunch", 3, 100], ["Sun out", "Mud Lake to Big John Flat along the Skyline", 8, 400]],
     links: [["Skyline Trail (Outdoor Project)", "https://www.outdoorproject.com/united-states/utah/tushar-skyline-trail-hike"], ["Delano Peak AllTrails", "https://www.alltrails.com/trail/us/utah/delano-peak"], ["Visit Utah three summits", "https://www.visitutah.com/articles/three-summits-tushar-mountains"]] },
 
   { id: "grandgulch", region: "ut", name: "Grand Gulch: Kane Gulch → Bullet Canyon", where: "Cedar Mesa, Bears Ears NM, UT", th: "Kane Gulch Ranger Station (6,500 ft)",
@@ -95,6 +103,7 @@ const ROUTES = [
     whynot: ["Permits are limited and must be reserved; a group of eight needs to land one now.", "Water is pools, sometimes brown, sometimes missing in September; carry capacity for a dry day.", "Not 'mountain epic': no passes, no summits, and the wash-bottom miles are sandy and slow."],
     shape: "Thu 6 pm camp at Kane Gulch (primitive) or Natural Bridges CG · Fri Kane Gulch → Junction Ruin → Todie area (7 mi) · Sat past Split Level and Sheiks Canyon to the Bullet junction (8 mi) · Sun up Bullet to Jailhouse and Perfect Kiva, camp near the rim (6 mi) · Mon 2 mi out; bike or second rig back to Kane Gulch.",
     sunOut: "Bullet junction → Bullet Canyon TH, ~7 mi, one steep step near the rim",
+    days: [["Thu", "camp at Kane Gulch (or Natural Bridges CG)", 0, 0], ["Fri", "Kane Gulch, Junction Ruin, camp near Todie", 7, 200], ["Sat", "past Split Level and Sheiks Canyon to the Bullet junction", 8, 300], ["Sun", "up Bullet to Jailhouse and Perfect Kiva, camp near the rim", 6, 1000], ["Mon", "out; bike or second rig back to Kane Gulch", 2, 300], ["Sun out", "Bullet junction to Bullet Canyon TH, one steep step near the rim", 7, 1300]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/utah/bullet-canyon-trail-to-grand-gulch-and-kane-gulch"], ["BLM Cedar Mesa permits", "https://www.blm.gov/visit/cedar-mesa"]] },
 
   { id: "deathhollow", region: "ut", name: "Death Hollow Loop (Boulder Mail Trail → Escalante River)", where: "Grand Staircase–Escalante NM, UT", th: "Boulder Mail Trail TH (6,600 ft)",
@@ -105,6 +114,7 @@ const ROUTES = [
     whynot: ["Thursday storms in slot country mean flash-flood awareness; we don't drop into Death Hollow until Friday.", "Poison ivy is real and constant; long pants and no bare-armed bushwhacking.", "Only 22 mi; the challenge is the terrain, not the distance. Some of the crew may want a summit."],
     shape: "Thu 6 pm camp at the Boulder Mail Trail TH or Deer Creek CG · Fri Boulder Mail Trail across the slickrock, drop into Death Hollow (8 mi) · Sat down Death Hollow to the Escalante (7 mi, all wading) · Sun up the Escalante River toward town, camp in the corridor · Mon short walk out, 15-min shuttle between trailheads.",
     sunOut: "Escalante confluence → Escalante town TH along the river, ~7 mi of wading",
+    days: [["Thu", "camp at the Boulder Mail Trail TH or Deer Creek CG", 0, 0], ["Fri", "Boulder Mail Trail across the slickrock, drop into Death Hollow", 8, 1200], ["Sat", "down Death Hollow to the Escalante, all wading", 7, 200], ["Sun", "up the Escalante toward town, camp in the corridor", 7, 500], ["Mon", "short walk out, 15-min shuttle", 2, 300], ["Sun out", "confluence to the Escalante town TH along the river, wading", 7, 600]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/utah/death-hollow-boulder-mail-trail-loop"], ["The Big Outside report", "https://thebigoutside.com/backpacking-utahs-mind-blowing-death-hollow-loop/"], ["Visit Utah guide", "https://www.visitutah.com/places-to-go/parks-outdoors/grand-staircase-escalante/hiking/boulder-mail-death-hollow"]] },
 
   { id: "coyote", region: "ut", name: "Coyote Gulch: Hurricane Wash → Crack-in-the-Wall", where: "Glen Canyon NRA / Escalante, UT", th: "Hurricane Wash TH, Hole-in-the-Rock Rd (4,600 ft)",
@@ -115,6 +125,7 @@ const ROUTES = [
     whynot: ["Popular: the arch camps fill on a September weekend.", "Easiest trip on the board; the challenge factor is low.", "Hole-in-the-Rock Road after Thursday rain can be a mess for the Sprinter."],
     shape: "Thu 6 pm camp at the trailhead (dispersed) · Fri Hurricane Wash into Coyote Gulch, camp near Jacob Hamblin Arch (8 mi) · Sat down-canyon past the bridge to the Escalante, camp lower gulch (6 mi) · Sun out Crack-in-the-Wall to the Fortymile Ridge TH (3 mi), shuttle, or stay a night at Dance Hall Rock · Mon drive home.",
     sunOut: "lower gulch → Crack-in-the-Wall → Fortymile Ridge TH, ~3 mi plus 600 ft of sand",
+    days: [["Thu", "camp at the Hurricane Wash TH", 0, 0], ["Fri", "Hurricane Wash into Coyote Gulch, camp near Jacob Hamblin Arch", 8, 100], ["Sat", "past the natural bridge to the Escalante, camp lower gulch", 6, 100], ["Sun", "Crack-in-the-Wall to Fortymile Ridge TH (600 ft of sand), or stay", 3, 900], ["Mon", "drive home", 0, 0], ["Sun out", "lower gulch, Crack-in-the-Wall, Fortymile Ridge TH", 3, 900]],
     links: [["AllTrails loop", "https://www.alltrails.com/trail/us/utah/coyote-gulch-loop"], ["Bearfoot Theory guide", "https://bearfoottheory.com/coyote-gulch-backpacking-guide/"]] },
 
   { id: "buckskin", region: "ut", name: "Buckskin Gulch: Wire Pass → White House", where: "Paria Canyon–Vermilion Cliffs Wilderness, UT/AZ", th: "Wire Pass TH (4,900 ft) → White House TH",
@@ -125,6 +136,7 @@ const ROUTES = [
     whynot: ["Flash floods kill people here, and Thursday has storms in the forecast; we would not enter until the sky is clear.", "Overnight permits are capped and usually gone; check availability today.", "Too short for four days; pair with the Wave lottery or a Coyote Gulch day."],
     shape: "Thu 6 pm camp at Stateline CG near Wire Pass · Fri wait for a clear sky, Wire Pass → Buckskin → confluence camp (13 mi, wading) · Sat Paria narrows up to White House (7 mi), shuttle back, camp at White House · Sun Wave / Coyote Buttes lottery or Cottonwood Canyon Road side trip · Mon home.",
     sunOut: "already out Saturday; Sunday is the drive",
+    days: [["Thu", "camp at Stateline CG near Wire Pass", 0, 0], ["Fri", "clear sky only: Wire Pass, Buckskin, camp at the confluence", 13, 100], ["Sat", "Paria narrows up to White House, shuttle, camp there", 7, 300], ["Sun", "Wave lottery or Cottonwood Canyon Road side trip", 0, 0], ["Mon", "home", 0, 0], ["Sun out", "already out Saturday; Sunday is the drive", 0, 0]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/utah/wire-pass-trail-to-white-house-trailhead"], ["BLM permits", "https://www.blm.gov/programs/recreation/permits-and-passes/lotteries-and-permit-systems/arizona/paria-canyon"], ["Treeline Review guide", "https://www.treelinereview.com/where-to-go/buckskin-gulch-paria-canyon"]] },
 
 
@@ -137,6 +149,7 @@ const ROUTES = [
     whynot: ["Sites hold 7; eight of us means two sites on the same nights, which is the hard part in September.", "Water is nearly nonexistent; expect to cache or carry 4 L per person per day.", "Low mileage and gain; the challenge is heat and water, not terrain."],
     shape: "Thu 6 pm camp at Squaw Flat CG or BLM dispersed on the way in · Fri Elephant Hill → Chesler Park (CP sites), Joint Trail loop (7 mi) · Sat Elephant Canyon → Druid Arch → EC sites (7 mi) · Sun Lost Canyon → Peekaboo (LC sites) (7 mi) · Mon 4 mi out, drive home.",
     sunOut: "Druid Arch camp → Elephant Hill, ~6 mi",
+    days: [["Thu", "camp at Squaw Flat CG or BLM dispersed", 0, 0], ["Fri", "Elephant Hill to Chesler Park, Joint Trail loop", 7, 900], ["Sat", "Elephant Canyon and Druid Arch", 7, 900], ["Sun", "Lost Canyon to Peekaboo", 7, 700], ["Mon", "out to Elephant Hill, drive home", 4, 400], ["Sun out", "Druid Arch camp to Elephant Hill", 6, 500]],
     links: [["CleverHiker guide", "https://www.cleverhiker.com/backpacking/big-needles-loop-canyonlands-backpacking-guide/"], ["Chesler Park AllTrails", "https://www.alltrails.com/trail/us/utah/chesler-park"], ["Visit Utah", "https://www.visitutah.com/things-to-do/backpacking/canyon-country-southern-utah/big-needles-loop-canyonlands"]] },
 
 
@@ -147,6 +160,7 @@ const ROUTES = [
     why: [], whynot: [],
     shape: "Thu camp at Broad Canyon TH · Fri Broad Canyon → Betty Lake under Standhope Peak (6 mi) · Sat over the divide to Surprise Valley lakes (5 mi), camp · Sun Goat Lake and Baptie Lake side trip, camp Surprise Valley · Mon 6 mi out the Fall Creek side, rigs shuttled 15 min.",
     sunOut: "Betty Lake → Broad Canyon TH, ~6 mi",
+    days: [["Thu", "camp at Broad Canyon TH", 0, 0], ["Fri", "Broad Canyon to Betty Lake under Standhope Peak", 6, 2300], ["Sat", "over the divide to the Surprise Valley lakes", 5, 1300], ["Sun", "Goat Lake and Baptie Lake side trip, camp Surprise Valley", 5, 900], ["Mon", "out the Fall Creek side, rigs shuttled 15 min", 6, 300], ["Sun out", "Betty Lake to Broad Canyon TH", 6, 100]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/goat-betty-and-baptie-lakes-via-broad-canyon-trail-061-and-jarvis-trail"], ["Girl on a Hike loop", "https://girlonahike.com/hiking-goat-betty-baptie-lakes-via-broad-canyon-loop.html"]] },
 
   { id: "bigboulder", region: "id", name: "Big Boulder Lakes via Walker Lake (east White Clouds)", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Livingston Mill TH (7,200 ft)",
@@ -156,6 +170,7 @@ const ROUTES = [
     why: [], whynot: [],
     shape: "Thu camp at Livingston Mill · Fri Big Boulder Creek → Walker Lake (7 mi) · Sat off-trail to Cove, Sapphire, and Cirque Lakes, camp Cove Lake (3 mi) · Sun Hook Lake and the ridge under D.O. Lee Peak, camp again · Mon 10 mi out.",
     sunOut: "Walker Lake → Livingston Mill, ~7 mi",
+    days: [["Thu", "camp at Livingston Mill", 0, 0], ["Fri", "Big Boulder Creek to Walker Lake", 7, 2400], ["Sat", "off-trail to Cove, Sapphire, and Cirque Lakes, camp Cove Lake", 3, 900], ["Sun", "Hook Lake and the ridge under D.O. Lee Peak, camp again", 4, 700], ["Mon", "out to Livingston Mill", 10, 200], ["Sun out", "Walker Lake to Livingston Mill", 7, 100]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/big-boulder-lakes-via-walker-lake"], ["Big Outside White Clouds", "https://thebigoutside.com/exploring-a-wilderness-hopeful-idahos-white-cloud-mountains/"]] },
 ];
 

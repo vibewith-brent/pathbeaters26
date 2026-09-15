@@ -118,12 +118,18 @@
   .card .det { max-width: 100%; }
   .dl { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 7px 12px; font-size: 13.5px; color: var(--ink-2); }
   @media (min-width: 720px) { .dl { grid-template-columns: 90px minmax(0, 1fr); } }
+  @media (max-width: 719px) { .dl dt.wide { grid-column: 1 / -1; padding-top: 6px; } .dl dd.wide { grid-column: 1 / -1; } }
   .dl dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
   .dl dd b { color: var(--ink); font-weight: 500; }
-  .dl .plan span { display: block; }
-  .dl .plan span b { display: inline-block; width: 34px; font-family: var(--mono); font-size: 12px; }
-  .dl .plan span.alt { margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--rule); }
-  .dl .plan span.alt b { width: 60px; }
+  table.plan { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 2px; }
+  table.plan th { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; text-align: right; padding: 0 0 3px 8px; position: static; background: none; border: none; }
+  table.plan td { padding: 4px 0; border-bottom: 1px solid var(--rule-2); vertical-align: top; white-space: normal; }
+  table.plan td.d { font-family: var(--mono); font-size: 11.5px; color: var(--ink); width: 34px; padding-right: 8px; white-space: nowrap; }
+  table.plan td.t { color: var(--ink-2); }
+  table.plan td.n { font-family: var(--mono); font-size: 12px; text-align: right; white-space: nowrap; padding-left: 10px; color: var(--ink); }
+  table.plan tr:last-child td { border-bottom: none; }
+  table.plan tr.alt td { border-top: 1px dashed var(--rule); padding-top: 6px; color: var(--ink-2); }
+  table.plan tr.alt td.d { width: 52px; white-space: normal; line-height: 1.2; }
   .det .fc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 4px; }
   @media (min-width: 720px) { .det .fc { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
   .det .fc .c { border-radius: 4px; padding: 6px 4px; font-size: 11px; line-height: 1.3; font-family: var(--mono); text-align: center; border: 1px solid var(--rule-2); }
@@ -278,8 +284,8 @@ const rankOf = r => ROUTES.slice().sort((a, b) => rating(b) - rating(a)).indexOf
 /* ----- detail (shared) ----- */
 function detailHTML(r) {
   const hp = WX[r.id].hp, pt = WX[r.id][PT], ws = hpScore(r), am = arriveMin(r);
-  const plan = r.shape.split(" · ").map(seg => { const m = seg.match(/^(Thu|Fri|Sat|Sun|Mon)\s*(.*)$/); return m ? `<span><b>${m[1]}</b>${esc(m[2])}</span>` : `<span>${esc(seg)}</span>`; }).join("")
-    + (r.sunOut ? `<span class="alt"><b>Sun out</b>${esc(r.sunOut)}</span>` : "");
+  const plan = `<table class="plan"><thead><tr><th></th><th></th><th>mi</th><th>gain</th></tr></thead><tbody>` + (r.days || []).map(([d, t, mi, g]) =>
+    `<tr class="${d === "Sun out" ? "alt" : ""}"><td class="d">${d}</td><td class="t">${esc(t)}</td><td class="n">${mi || "\u2014"}</td><td class="n">${g ? "+" + g.toLocaleString() : "\u2014"}</td></tr>`).join("") + `</tbody></table>`;
   const tl = trailLink(r), ph = PHOTO[r.id];
   return `<div class="det">
     ${ph ? `<a class="photo" href="${tl[1]}" target="_blank" rel="noopener" title="Open on ${esc(tl[0])}"><img src="img/${r.id}.jpg" alt="${esc(short(r))}" loading="lazy"><span>${esc(ph.credit)}</span></a>` : ""}
@@ -290,8 +296,8 @@ function detailHTML(r) {
       <dt>Fly home</dt><dd>${esc(r.fly)}</dd>
       <dt>Permits</dt><dd>${esc(r.permits)}</dd>
       <dt>Bears</dt><dd>${esc(r.bears)}</dd>
-      <dt>Plan</dt><dd class="plan">${plan}</dd>
-      <dt>Forecast</dt><dd>${PT === "hp" ? "High point" : "Trailhead"} grid, ${pt.elev_ft.toLocaleString()} ft · weather rating ${ws.score.toFixed(1)} · Fri–Sun avg ${Math.round(ws.avg)}% precip · low ${ws.minT}°${ws.snow ? " · snow possible" : ""}
+      <dt class="wide">Plan</dt><dd class="wide">${plan}</dd>
+      <dt class="wide">Forecast</dt><dd class="wide">${PT === "hp" ? "High point" : "Trailhead"} grid, ${pt.elev_ft.toLocaleString()} ft · weather rating ${ws.score.toFixed(1)} · Fri–Sun avg ${Math.round(ws.avg)}% precip · low ${ws.minT}°${ws.snow ? " · snow possible" : ""}
         <div class="fc">${PERIODS.map((n, i) => pt.periods.find(x => x.n === n)).filter(Boolean).map((p, i) => `<div class="c ${q(p.p)}" title="${esc(p.s)} · ${esc(p.w)}"><i>${PLABEL[PERIODS.indexOf(p.n)] || p.n}</i><b>${p.t}°</b><i>${p.p}%</i><i>${cond(p.s)}</i></div>`).join("")}</div></dd>
     </dl>
     <div class="links"><a class="primary" href="${wuLink(r)}" target="_blank" rel="noopener">10-day · ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}<a href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions from ${ORIGIN[FROM].label}</a></div>
