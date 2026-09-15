@@ -128,11 +128,13 @@
   table.plan td.t { color: var(--ink-2); }
   table.plan td.n { font-family: var(--mono); font-size: 12px; text-align: right; white-space: nowrap; padding-left: 10px; color: var(--ink); }
   table.plan tr:last-child td { border-bottom: none; }
-  table.plan tr.alt td { border-top: 1px dashed var(--rule); padding-top: 6px; color: var(--ink-2); }
+  table.plan tr.alt td { border-top: 1px dashed var(--accent); padding-top: 7px; color: var(--accent-ink); }
+  table.plan tr.alt td.d { color: var(--accent-ink); font-weight: 500; }
+  .det .chart { margin-top: 10px; }
+  .det .chart svg { display: block; width: 100%; height: auto; }
   table.plan tr.tot td { border-bottom: none; padding-top: 5px; font-weight: 600; color: var(--ink); }
   table.plan tr.tot td.t { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding-top: 7px; }
-  table.plan tr.tot.alt2 td { color: var(--ink-2); }
-  table.plan tr.alt td.d { width: 52px; white-space: normal; line-height: 1.2; }
+  table.plan tr.alt td.d { width: 56px; white-space: nowrap; }
   .det .fc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 4px; }
   @media (min-width: 720px) { .det .fc { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
   .det .fc .c { border-radius: 4px; padding: 6px 4px; font-size: 11px; line-height: 1.3; font-family: var(--mono); text-align: center; border: 1px solid var(--rule-2); }
@@ -186,7 +188,7 @@
 <header>
   <div class="lab">Sept 17–20, or 21 · leaving Pocatello or SLC around noon Thursday</div>
   <h1>Plan B board</h1>
-  <p>Spanish Peaks has the worst forecast on the page. Twenty-one alternatives below, all 30 miles or less and under 6,000 ft of gain, with the same stats and the same NWS forecast. Each plan has a Sunday hike-out option. Tap a route for details, or a marker on the map.</p>
+  <p>Spanish Peaks has the worst forecast on the page. Nineteen alternatives below, all 30 miles or less and under 6,000 ft of gain, with the same stats and the same NWS forecast. Each plan shows the early-exit Sunday for anyone hiking all the way out. Tap a route for details, or a marker on the map.</p>
   <div class="meta">Forecast <span id="st-updated">snapshot</span></div>
 </header>
 
@@ -216,6 +218,7 @@
   <ul>
     <li><strong>Forecast cells</strong>: high or low temperature over chance of precipitation, Thursday through Sunday night, from the NWS point forecast at the trailhead or a grid cell near the high point. Refreshed live on load; the snapshot is from Sept 14.</li>
     <li><strong>Limits</strong>: every alternative is 30 miles or less with under 6,000 ft of gain. Plan A is on the board for comparison.</li>
+    <li><strong>Sun → out</strong>: the whole group camps together Saturday and walks to Sunday camp; the highlighted row is for anyone who keeps going from Sunday camp to the trailhead that same day (Sunday plus Monday legs combined).</li>
     <li><strong>Arrive</strong>: departure plus drive, no stops. Green is before 6 pm, amber is by sunset (about 7:30), red is after dark.</li>
     <li><strong>Weather rating</strong>: 0–10 from the Friday through Sunday night forecast at the high point. Average chance of precip is the main term; any period at 65% or more, a low under 28°F, or a snow mention costs extra points.</li>
     <li><strong>Drive</strong>: highway estimates from SLC airport and Pocatello, dirt not included. Southern Utah is 6–8.5 h from Pocatello.</li>
@@ -233,6 +236,7 @@
 <script src="routes.js"></script>
 <script src="wx.js"></script>
 <script src="photos.js"></script>
+<script src="chart.js"></script>
 <script>
 const REGION_NAME = { mt: "Montana", wy: "Wyoming", id: "Idaho", utm: "Utah mtns", ut: "Utah desert" };
 const ORIGIN = { poc: { label: "Pocatello", maps: "Pocatello,+ID", key: "drivePoc" }, slc: { label: "SLC", maps: "Salt+Lake+City+International+Airport", key: "drive" } };
@@ -287,15 +291,17 @@ const rankOf = r => ROUTES.slice().sort((a, b) => rating(b) - rating(a)).indexOf
 /* ----- detail (shared) ----- */
 function detailHTML(r) {
   const hp = WX[r.id].hp, pt = WX[r.id][PT], ws = hpScore(r), am = arriveMin(r);
-  const days = r.days || [], num = v => v ? v.toLocaleString() : "\u2014";
+  const days = (r.days || []).filter(x => x[0] !== "Sun out"), num = v => v ? v.toLocaleString() : "—";
   const sum = rows => rows.reduce((a, x) => [a[0] + (x[2] || 0), a[1] + (x[3] || 0), a[2] + (x[4] || 0)], [0, 0, 0]);
-  const main = days.filter(x => x[0] !== "Sun out"), sunOut = days.find(x => x[0] === "Sun out");
-  const tMon = sum(main), tSun = sunOut ? sum([...main.filter(x => !/^(Sun|Mon)$/.test(x[0])), sunOut]) : null;
-  const row = (x, cls) => `<tr class="${cls}"><td class="d">${x[0]}</td><td class="t">${esc(x[1])}</td><td class="n">${num(x[2])}</td><td class="n">${x[3] ? "+" + num(x[3]) : "\u2014"}</td><td class="n">${x[4] ? "\u2212" + num(x[4]) : "\u2014"}</td></tr>`;
-  const tot = (label, t, cls) => `<tr class="tot ${cls}"><td class="d"></td><td class="t">${label}</td><td class="n">${num(t[0])}</td><td class="n">+${num(t[1])}</td><td class="n">\u2212${num(t[2])}</td></tr>`;
+  const sunRow = days.find(x => x[0] === "Sun"), monRow = days.find(x => x[0] === "Mon");
+  const out = sunRow && monRow && monRow[2] ? ["Sun → out", "early exit: Sunday leg plus the Monday leg, camp to trailhead in one day", sunRow[2] + monRow[2], sunRow[3] + monRow[3], sunRow[4] + monRow[4]] : null;
+  const total = sum(days);
+  const row = (x, cls) => `<tr class="${cls}"><td class="d">${x[0]}</td><td class="t">${esc(x[1])}</td><td class="n">${num(x[2])}</td><td class="n">${x[3] ? "+" + num(x[3]) : "—"}</td><td class="n">${x[4] ? "−" + num(x[4]) : "—"}</td></tr>`;
   const plan = `<table class="plan"><thead><tr><th></th><th></th><th>mi</th><th>up</th><th>down</th></tr></thead><tbody>`
-    + main.map(x => row(x, "")).join("") + tot("Total, out Monday", tMon, "")
-    + (sunOut ? row(sunOut, "alt") + tot("Total, out Sunday", tSun, "alt2") : "") + `</tbody></table>`;
+    + days.map(x => row(x, "")).join("")
+    + `<tr class="tot"><td class="d"></td><td class="t">Trip total</td><td class="n">${num(total[0])}</td><td class="n">+${num(total[1])}</td><td class="n">−${num(total[2])}</td></tr>`
+    + (out ? row(out, "alt") : "") + `</tbody></table>`
+    + (typeof dayChart === "function" ? `<div class="chart">${dayChart(days.map(x => ({ label: x[0], mi: x[2], up: x[3], down: x[4] })).concat(out ? [{ label: "Sun→out", mi: out[2], up: out[3], down: out[4], alt: true }] : []), { width: chartWidth() })}</div>` : "");
   const tl = trailLink(r), ph = PHOTO[r.id];
   return `<div class="det">
     ${ph ? `<a class="photo" href="${tl[1]}" target="_blank" rel="noopener" title="Open on ${esc(tl[0])}"><img src="img/${r.id}.jpg" alt="${esc(short(r))}" loading="lazy"><span>${esc(ph.credit)}</span></a>` : ""}
@@ -313,6 +319,8 @@ function detailHTML(r) {
     <div class="links"><a class="primary" href="${wuLink(r)}" target="_blank" rel="noopener">10-day · ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}<a href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions from ${ORIGIN[FROM].label}</a></div>
   </div>`;
 }
+const chartWidth = () => window.innerWidth < 760 ? Math.max(280, window.innerWidth - 64) : Math.min(860, window.innerWidth - 140);
+let rsz; window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { if (OPEN.size) render(); }, 200); });
 function toggle(id) { if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id); render(); }
 function jumpTo(id) {
   const r = ROUTES.find(x => x.id === id); if (!r) return;
