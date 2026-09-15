@@ -34,7 +34,12 @@
   }).join("");
   if (T.thursday && T.thursday.fallback) {
     const thu = daysBox.querySelector(".day.thu");
-    if (thu) thu.insertAdjacentHTML("beforeend", `<div class="alt" style="border-color:var(--rule);color:var(--ink-2)"><b>If the weather is bad</b> · ${esc(T.thursday.fallback)}</div>`);
+    if (thu) thu.insertAdjacentHTML("beforeend", `<div class="alt" style="border-color:var(--rule);color:var(--ink-2)"><b>If it is raining</b> · ${esc(T.thursday.fallback)}</div>`);
+  }
+  if (T.rain_plan) {
+    const rp = T.rain_plan; const tot = rp.legs.reduce((x, l) => [x[0] + l[2], x[1] + l[3], x[2] + l[4]], [0, 0, 0]);
+    daysBox.insertAdjacentHTML("beforeend", `<div class="day" style="border-left-color:var(--rule);background:var(--paper)"><div class="head"><span class="d">Plan B</span><h3>${esc(rp.title)}</h3><span class="n"><b>${num(tot[0])}</b> mi · <b>+${num(tot[1])}</b> · <b>−${num(tot[2])}</b></span></div>
+      <table class="rain">${rp.legs.map(l => `<tr><td class="d">${l[0]}</td><td>${esc(l[1])}</td><td class="n">${l[2] ? num(l[2]) : "—"}</td><td class="n">${l[3] ? "+" + num(l[3]) : "—"}</td><td class="n">${l[4] ? "−" + num(l[4]) : "—"}</td></tr>`).join("")}</table></div>`);
   }
   const rows = plan.filter(l => l.miles != null && !/out/i.test(l.day)).map(l => ({ label: l.day.slice(0, 3), mi: l.miles, up: l.up_ft || 0, down: l.down_ft || 0 }));
   if (sunOut && sunOut.miles != null) rows.push({ label: "Sun→out", mi: sunOut.miles, up: sunOut.up_ft || 0, down: sunOut.down_ft || 0, alt: true });
@@ -130,7 +135,6 @@
   camps.forEach(c => (c.alternatives || []).forEach(a => { if (a.lat && a.lon) pt(a.lat, a.lon, { radius: 5, color: "#a0522d", weight: 1.5, fillColor: "#fff", fillOpacity: 1, dashArray: "2 2" }).bindTooltip("alt · " + a.name).bindPopup(`<b>Alternative camp · ${esc(a.name)}</b>${esc(a.note || "")}`); }));
   (T.dayhikes || []).forEach((h, i) => {
     const pts = (h.points || []).map(p => [p[0], p[1]]);
-    if (pts.length > 1) L.polyline(pts, { color: "#c98a3a", weight: 3, dashArray: "6 6", opacity: 0.9 }).bindTooltip("Day hike " + (i + 1) + " · " + h.name).addTo(hikeLayer);
     (h.points || []).forEach(p => { if (p[2]) L.circleMarker([p[0], p[1]], { radius: 4.5, color: "#1c1b18", weight: 1.5, fillColor: "#fff", fillOpacity: 1 }).bindTooltip(p[2]).addTo(hikeLayer); bounds.push([p[0], p[1]]); });
   });
   document.querySelectorAll("[data-fly]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); const [la, lo] = a.dataset.fly.split(",").map(Number); document.getElementById("map-sec").scrollIntoView({ behavior: "smooth" }); setTimeout(() => map.flyTo([la, lo], 14, { duration: 0.8 }), 300); }));

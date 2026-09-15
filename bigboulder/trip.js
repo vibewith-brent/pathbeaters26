@@ -10,11 +10,11 @@ const TRIP = {
     camping_thursday: "Dispersed car camping at the Livingston Mill road end, or a flat pullout on the last mile of road. This is the fallback if the weather stops the Thursday hike-in."
   },
   thursday: {
-    camp: { name: "Big Boulder Creek bench, ~3 mi in", lat: 44.11231, lon: -114.55844, elev_ft: 8300, miles_from_th: 3, up_ft: 1150, down_ft: 50, time_hr: 1.5,
-      why: "The first miles climb gently along Big Boulder Creek past the old Livingston Mine, open to motorcycles for the first two. At about 2 to 2.5 miles the trail splits: left goes to Frog Lake and the Boulder Chain, right crosses the creek on a log footbridge toward Walker Lake. This camp is just past that junction on the Walker side, about 8,300 ft, in forest by the creek. Tent spots are a best-judgment estimate from the track, not a surveyed site: take the first good flat bench, 200 ft off the water. Fires are legal here, below 8,800 ft.",
+    camp: { name: "Big Boulder Creek bench, ~4 mi in", lat: 44.11114, lon: -114.57539, elev_ft: 8600, miles_from_th: 4, up_ft: 1700, down_ft: 200, time_hr: 2.25,
+      why: "The first miles climb gently along Big Boulder Creek past the old Livingston Mine, open to motorcycles for the first two. At about 2 to 2.5 miles the trail splits: left goes to Frog Lake and the Boulder Chain, right crosses the creek on a log footbridge toward Walker Lake. This camp is about a mile and a half past that junction on the Walker side, roughly 8,600 ft, in forest by the creek, before the trail steepens for the last two miles to Walker Lake. Tent spots are a best-judgment estimate from the track, not a surveyed site: take the first good flat bench, 200 ft off the water. Fires are legal here, below 8,800 ft.",
       water: "Big Boulder Creek, filter.", tents: "Small forest benches; expect two or three clusters rather than one big pad. Plenty of room for eight spread out." },
-    fallback: "If it is raining or lightning is around at the trailhead, sleep in the rigs at Livingston Mill and do the full 6.4 miles to Walker Lake Friday, with Cove Lake as a Saturday move.",
-    notes: "Leaving Pocatello at noon puts us at the trailhead about 3:30. Packs on by 4, at the creek camp about 5:30 with two hours of light to spare. Cold dinner or a quick stove meal; the real cooking starts Friday."
+    fallback: "Rain plan: stay in Pocatello Thursday night, leave about 5 am, at the trailhead by 8:30, and hike the full 6.4 miles to Walker Lake Friday. Saturday move over the pass to Cove Lake with the afternoon in the lakes; Sunday a day hike; Monday out.",
+    notes: "Leaving Pocatello at 12:30 puts us at the trailhead about 4:00. Packs on by 4:20 and walking by 4:30, at the 4-mile camp around 6:30 with an hour of light to set up. That is as far as is reasonable without hiking in the dark; if the group is moving slowly, stop at the first good bench after the Frog Lake junction instead. Cold dinner or a quick stove meal.",
   },
   camps: [
     { night: "Fri", name: "Cove Lake, upper Big Boulder Lakes", lat: 44.10125, lon: -114.60833, elev_ft: 9848,
@@ -42,14 +42,21 @@ const TRIP = {
       why: "Cove, Sapphire, and Cirque are the three most fished lakes in the basin, all cutthroat, stocked on a three-year rotation that lands on 2026. Limit six, Idaho license required. The rock spine above Cove is the napping spot." }
   ],
   legs: [
-    { day: "Thu", from: "Trailhead", to: "creek camp", miles: 3, up_ft: 1150, down_ft: 50, time_hr: 1.5, notes: "Weather permitting. Gentle forest trail along Big Boulder Creek; headlamps only if we're slow." },
-    { day: "Fri", from: "creek camp", to: "Walker Lake → Cove Lake", miles: 5.5, up_ft: 1800, down_ft: 300, time_hr: 4.5, notes: "Trail to Walker Lake: gentle, then steep and rocky for the last two miles. At the 5.5-mile junction go right for Walker (left is Island Lake). Lunch at Walker, then the cairned use trail from the west end of the north shore up to the pass above Hook Lake and down to Cove. Follow the GPX on this section; every trip report loses the path here." },
+    { day: "Thu", from: "Trailhead", to: "creek camp", miles: 4, up_ft: 1700, down_ft: 200, time_hr: 2.25, notes: "Weather permitting. Leave Pocatello 12:30, walking by 4:30, camp by about 6:30. Gentle forest trail along Big Boulder Creek past the old mine and the Frog Lake junction; the steep part is tomorrow." },
+    { day: "Fri", from: "creek camp", to: "Walker Lake → Cove Lake", miles: 3.5, up_ft: 1500, down_ft: 250, time_hr: 3.5, notes: "Two and a half miles to Walker Lake, steep and rocky at the end. At the 5.5-mile junction go right for Walker (left is Island Lake). Lunch at Walker, then the cairned use trail from the west end of the north shore up to the pass above Hook Lake and down to Cove, under a mile. Follow the GPX on this section; every trip report loses the path here." },
     { day: "Sat", from: "Cove Lake", to: "Sapphire and Cirque lakes, back to camp", miles: 3, up_ft: 700, down_ft: 700, time_hr: 3, notes: "Light packs. The three-lake loop, with the rest of the day at camp." },
     { day: "Sun", from: "Cove Lake", to: "day hike, back to camp", miles: 4, up_ft: 1100, down_ft: 1100, time_hr: 4, notes: "Pick from the day-hike list: D.O. Lee Peak for the summit crew, Hook Lake and the ridge for the rest." },
-    { day: "Mon", from: "Cove Lake", to: "Trailhead", miles: 8.5, up_ft: 250, down_ft: 2900, time_hr: 4, notes: "Over the pass and down to Walker Lake, the one place to be careful: the use trail fades near the bottom and wanders toward the cliffs above the lake. Stay on the GPX line. Then the trail out Big Boulder Creek." },
-    { day: "Sun → out", note: "Early exit from Cove Lake straight to the rigs instead of the day hike", miles: 8.5, up_ft: 250, down_ft: 2900 }
+    { day: "Mon", from: "Cove Lake", to: "Trailhead", miles: 8, up_ft: 450, down_ft: 3100, time_hr: 4, notes: "Over the pass and down to Walker Lake, the one place to be careful: the use trail fades near the bottom and wanders toward the cliffs above the lake. Stay on the GPX line. Then the trail out Big Boulder Creek." },
+    { day: "Sun → out", note: "Early exit from Cove Lake straight to the rigs instead of the day hike", miles: 8, up_ft: 450, down_ft: 3100 }
   ],
   alt_schedule: [],
+  rain_plan: { title: "Rain plan: Pocatello Thursday night", legs: [
+    ["Thu", "sleep in Pocatello; leave about 5 am Friday", 0, 0, 0],
+    ["Fri", "trailhead by 8:30, hike to Walker Lake, camp (fires legal here)", 6.5, 2200, 150],
+    ["Sat", "over the pass to Cove Lake, afternoon in the lakes", 1, 700, 100],
+    ["Sun", "day hike from Cove, camp again", 4, 1100, 1100],
+    ["Mon", "out", 8, 450, 3100]
+  ] },
   gpx_segments: [{ day: "Fri", label: "Thu + Fri: trailhead to Walker Lake" }, { day: "Fri", label: "Fri: Walker Lake to Cove Lake, over the pass" }, { day: "Sat", label: "Sat + Sun: the basin lakes" }, { day: "Mon", label: "Mon: out, also the Sunday early exit" }],
   water: "Water everywhere: Big Boulder Creek the whole way in, Walker Lake, and the basin lakes. Filter everything.",
   bears_food: "Black bear country, no established grizzlies. Forest Service rule: hang food 10 ft up and 4 ft out, or use canisters. Mountain goats and bighorn are common in the basin; September is hunting season, so a bright layer is smart.",

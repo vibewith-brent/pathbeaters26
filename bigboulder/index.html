@@ -96,6 +96,11 @@
   .day p { color: var(--ink-2); margin-top: 8px; font-size: 14.5px; }
   .day .alt { margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--accent); border-radius: 6px; font-size: 13.5px; color: var(--accent-ink); }
   .day .alt b { font-family: var(--mono); font-weight: 500; }
+  table.rain { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }
+  table.rain td { padding: 4px 0; border-bottom: 1px solid var(--rule-2); color: var(--ink-2); vertical-align: top; }
+  table.rain td.d { font-family: var(--mono); font-size: 11.5px; color: var(--ink); width: 34px; }
+  table.rain td.n { font-family: var(--mono); font-size: 12px; text-align: right; white-space: nowrap; padding-left: 10px; color: var(--ink); }
+  table.rain tr:last-child td { border-bottom: none; }
   .chart { margin-top: 12px; }
   .chart svg { display: block; width: 100%; height: auto; }
 
@@ -221,7 +226,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="../options/chart.js"></script>
-<script src="trip.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="trip.js?v=6"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
