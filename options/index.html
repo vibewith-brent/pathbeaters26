@@ -304,6 +304,15 @@ function detailHTML(r) {
   </div>`;
 }
 function toggle(id) { if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id); render(); }
+function jumpTo(id) {
+  const r = ROUTES.find(x => x.id === id); if (!r) return;
+  if (REGION !== "all" && r.region !== REGION) { REGION = "all"; document.querySelectorAll("#regionseg button").forEach(x => x.classList.toggle("on", x.dataset.r === "all")); }
+  OPEN.add(id); render();
+  setTimeout(() => {
+    const el = [...document.querySelectorAll(`[data-id="${id}"]`)].find(e => e.offsetParent !== null);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 52, behavior: "smooth" });
+  }, 60);
+}
 
 /* ----- desktop table ----- */
 const HEAD = [["name", "Route", ""], ["drive", "SLC h", "num"], ["drivePoc", "Poc h", "num"], ["arrive", "Arrive", "num"], ["miles", "Mi", "num"], ["gain", "Gain", "num"], ["high", "High", "num"]];
@@ -394,8 +403,7 @@ document.getElementById("expandall").addEventListener("click", e => {
   });
   map.on("popupopen", e => {
     const a = e.popup.getElement().querySelector("[data-jump]"); if (!a) return;
-    a.addEventListener("click", ev => { ev.preventDefault(); const id = a.dataset.jump; OPEN.add(id); render(); map.closePopup();
-      const el = document.querySelector(`[data-id="${id}"]:not(.hidden)`); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    a.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); jumpTo(a.dataset.jump); map.closePopup(); });
   });
   [["Pocatello", 42.8713, -112.4455], ["SLC", 40.7884, -111.9778]].forEach(([n, la, lo]) => {
     L.circleMarker([la, lo], { radius: 3.5, color: "#8b877c", weight: 1, fillColor: "#8b877c", fillOpacity: 1 }).addTo(map)
@@ -406,7 +414,7 @@ document.getElementById("expandall").addEventListener("click", e => {
 })();
 
 render();
-if (location.hash && ROUTES.some(r => r.id === location.hash.slice(1))) { OPEN.add(location.hash.slice(1)); render(); }
+if (location.hash && ROUTES.some(r => r.id === location.hash.slice(1))) jumpTo(location.hash.slice(1));
 
 (function () {
   const stamp = (iso, live) => {
