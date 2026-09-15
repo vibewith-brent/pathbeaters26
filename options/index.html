@@ -216,7 +216,7 @@
 <section id="method" class="method">
   <div class="lab">Method</div>
   <ul>
-    <li><strong>Forecast cells</strong>: high or low temperature over chance of precipitation, Thursday through Sunday night, from the NWS point forecast at the trailhead or a grid cell near the high point. Refreshed live on load; the snapshot is from Sept 14.</li>
+    <li><strong>Forecast cells</strong>: high or low temperature over chance of precipitation, Thursday through Sunday night, from the NWS point forecast at the trailhead or a grid cell near the high point. Refreshed live on load; the snapshot is from Sept 14. The "NWS forecast, this spot" link opens exactly the grid the cells come from, so it matches the page. The Weather Underground link is the nearest town, usually thousands of feet lower and from a different forecast model, so expect it to read warmer and sometimes disagree.</li>
     <li><strong>Limits</strong>: every alternative is 30 miles or less with under 6,000 ft of gain. Plan A is on the board for comparison.</li>
     <li><strong>Sun → out</strong>: the whole group camps together Saturday and walks to Sunday camp; the highlighted row is for anyone who keeps going from Sunday camp to the trailhead that same day (Sunday plus Monday legs combined).</li>
     <li><strong>Arrive</strong>: departure plus drive, no stops. Green is before 6 pm, amber is by sunset (about 7:30), red is after dark.</li>
@@ -246,6 +246,7 @@ const mapLink = r => `https://www.google.com/maps/search/?api=1&query=${thPt(r).
 const wuLink = r => `https://www.wunderground.com/forecast/us/${r.wu}`;
 const wuTown = r => r.wu.split("/")[1].split("-").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
 const nwsLink = pt => `https://forecast.weather.gov/MapClick.php?lat=${pt.lat}&lon=${pt.lon}`;
+const nwsHourly = pt => `https://forecast.weather.gov/MapClick.php?lat=${pt.lat}&lon=${pt.lon}&FcstType=graphical`;
 const short = r => SHORT[r.id] || r.name;
 const trailLink = r => { const at = r.links.find(([l, u]) => /alltrails\.com\/trail/.test(u)) || r.links.find(([l, u]) => /alltrails/.test(u)); return at ? ["AllTrails", at[1]] : r.links[0]; };
 const PERIODS = ["Thursday", "Thursday Night", "Friday", "Friday Night", "Saturday", "Saturday Night", "Sunday", "Sunday Night"];
@@ -316,7 +317,7 @@ function detailHTML(r) {
       <dt class="wide">Forecast</dt><dd class="wide">${PT === "hp" ? "High point" : "Trailhead"} grid, ${pt.elev_ft.toLocaleString()} ft · weather rating ${ws.score.toFixed(1)} · Fri–Sun avg ${Math.round(ws.avg)}% precip · low ${ws.minT}°${ws.snow ? " · snow possible" : ""}
         <div class="fc">${PERIODS.map((n, i) => pt.periods.find(x => x.n === n)).filter(Boolean).map((p, i) => `<div class="c ${q(p.p)}" title="${esc(p.s)} · ${esc(p.w)}"><i>${PLABEL[PERIODS.indexOf(p.n)] || p.n}</i><b>${p.t}°</b><i>${p.p}%</i><i>${cond(p.s)}</i></div>`).join("")}</div></dd>
     </dl>
-    <div class="links"><a class="primary" href="${wuLink(r)}" target="_blank" rel="noopener">10-day · ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}<a href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions from ${ORIGIN[FROM].label}</a></div>
+    <div class="links"><a class="primary" href="${nwsLink(pt)}" target="_blank" rel="noopener">NWS forecast, this spot (${pt.elev_ft.toLocaleString()} ft)</a><a href="${nwsHourly(pt)}" target="_blank" rel="noopener">NWS hourly graph</a><a href="${wuLink(r)}" target="_blank" rel="noopener">10-day, ${wuTown(r)} (town)</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}<a href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions from ${ORIGIN[FROM].label}</a></div>
   </div>`;
 }
 const chartWidth = () => window.innerWidth < 760 ? Math.max(280, window.innerWidth - 64) : Math.min(860, window.innerWidth - 140);
@@ -416,7 +417,7 @@ document.getElementById("expandall").addEventListener("click", e => {
     const th = thPt(r), base = r.id === "spanish";
     const m = L.circleMarker([th.lat, th.lon], { radius: base ? 9 : 7, color: base ? "#a0522d" : "#1c1b18", weight: 1.5, fillColor: base ? "#a0522d" : "#fbfaf7", fillOpacity: base ? 0.9 : 0.95 }).addTo(map);
     m.bindTooltip(short(r), { direction: "top", offset: [0, -8] });
-    m.bindPopup(() => { const tl = trailLink(r); return `<b>${esc(r.name)}</b><small>${esc(r.th)}</small><div class="pl"><a class="primary" href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions</a><a href="${tl[1]}" target="_blank" rel="noopener">${esc(tl[0])}</a><a href="#${r.id}" data-jump="${r.id}">Details</a></div>`; }, { maxWidth: 280 });
+    m.bindPopup(() => { const tl = trailLink(r); return `<b>${esc(r.name)}</b><small>${esc(r.th)}</small><div class="pl"><a class="primary" href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions</a><a href="${nwsLink(WX[r.id].hp)}" target="_blank" rel="noopener">NWS</a><a href="${tl[1]}" target="_blank" rel="noopener">${esc(tl[0])}</a><a href="#${r.id}" data-jump="${r.id}">Details</a></div>`; }, { maxWidth: 280 });
     pts.push([th.lat, th.lon]);
   });
   map.on("popupopen", e => {
