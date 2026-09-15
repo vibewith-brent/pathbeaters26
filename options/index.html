@@ -183,9 +183,7 @@
     <div class="scrollx"><span class="seg" id="regionseg"><button class="on" data-r="all">All</button><button data-r="mt">MT</button><button data-r="wy">WY</button><button data-r="id">ID</button><button data-r="utm">UT mtns</button><button data-r="ut">UT desert</button></span></div>
     <div class="crow">
       <select class="sortsel" id="sortsel" aria-label="Sort by">
-        <option value="rating:-1">Sort: rating</option>
-        <option value="wxs:-1">Sort: driest</option>
-        <option value="epic:-1">Sort: most epic</option>
+        <option value="rating:-1">Sort: weather rating</option>
         <option value="arrive:1">Sort: earliest arrival</option>
         <option value="miles:-1">Sort: longest</option>
         <option value="gain:-1">Sort: most climbing</option>
@@ -203,7 +201,7 @@
   <ul>
     <li><strong>Forecast cells</strong>: high or low temperature over chance of precipitation, Thursday through Sunday night, from the NWS point forecast at the trailhead or a grid cell near the high point. Refreshed live on load; the snapshot is from Sept 14.</li>
     <li><strong>Arrive</strong>: departure plus drive, no stops. Green is before 6 pm, amber is by sunset (about 7:30), red is after dark.</li>
-    <li><strong>Rating</strong> = 40% epicness (1–10, our call) + 30% weather score (Fri–Sun precip at the high point, with penalties for storms, hard freezes, and snow) + 20% logistics + 10% new ground.</li>
+    <li><strong>Weather rating</strong>: 0–10 from the Friday through Sunday night forecast at the high point. Average chance of precip is the main term; any period at 65% or more, a low under 28°F, or a snow mention costs extra points.</li>
     <li><strong>Drive</strong>: highway estimates from SLC airport and Pocatello, dirt not included. Southern Utah is 6–8.5 h from Pocatello.</li>
     <li><strong>Permits</strong>: Tetons, Zion, Canyonlands, Cedar Mesa, Paria, and Buckskin cap groups and need reservations or walk-ins. Slot canyons are out on any day with storms in the forecast.</li>
   </ul>
@@ -251,7 +249,7 @@ function wxScore(periods) {
 }
 const q = p => p < 15 ? "q0" : p < 30 ? "q1" : p < 45 ? "q2" : p < 65 ? "q3" : p < 80 ? "q4" : "q5";
 const hpScore = r => wxScore(WX[r.id].hp.periods);
-const rating = r => 0.4 * r.epic + 0.3 * hpScore(r).score + 0.2 * r.logistics + 0.1 * r.novelty;
+const rating = r => hpScore(r).score;
 
 let FROM = "poc", DEPART = 12 * 60;
 const driveHrs = r => r[ORIGIN[FROM].key];
@@ -264,7 +262,7 @@ const arrNote = m => m <= 18 * 60 ? "before 6, time to walk in" : m <= SUNSET ? 
 let PT = "hp", REGION = "all", SORT = { key: "rating", dir: -1 };
 const OPEN = new Set();
 const GET = { name: r => r.name, drive: r => r.drive, drivePoc: r => r.drivePoc, arrive: r => arriveMin(r), miles: r => r.miles, gain: r => r.gain, high: r => r.high,
-  avg: r => hpScore(r).avg, wxs: r => hpScore(r).score, epic: r => r.epic, rating: r => rating(r) };
+  avg: r => hpScore(r).avg, rating: r => rating(r) };
 const ordered = () => { const get = GET[SORT.key]; return ROUTES.slice().sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; }); };
 const shown = r => REGION === "all" || r.region === REGION;
 const rankOf = r => ROUTES.slice().sort((a, b) => rating(b) - rating(a)).indexOf(r) + 1;
@@ -282,7 +280,7 @@ function detailHTML(r) {
       <dt>Permits</dt><dd>${esc(r.permits)}</dd>
       <dt>Bears</dt><dd>${esc(r.bears)}</dd>
       <dt>Plan</dt><dd class="plan">${plan}</dd>
-      <dt>Forecast</dt><dd>${PT === "hp" ? "High point" : "Trailhead"} grid, ${pt.elev_ft.toLocaleString()} ft · Fri–Sun avg ${Math.round(ws.avg)}% · low ${ws.minT}°${ws.snow ? " · snow possible" : ""}
+      <dt>Forecast</dt><dd>${PT === "hp" ? "High point" : "Trailhead"} grid, ${pt.elev_ft.toLocaleString()} ft · weather rating ${ws.score.toFixed(1)} · Fri–Sun avg ${Math.round(ws.avg)}% precip · low ${ws.minT}°${ws.snow ? " · snow possible" : ""}
         <div class="fc">${pt.periods.map((p, i) => `<div class="c ${q(p.p)}" title="${esc(p.s)} · ${esc(p.w)}"><i>${PLABEL[PERIODS.indexOf(p.n)] || p.n}</i><b>${p.t}°</b><i>${p.p}%</i><i>${cond(p.s)}</i></div>`).join("")}</div></dd>
     </dl>
     <div class="links"><a class="primary" href="${wuLink(r)}" target="_blank" rel="noopener">10-day · ${wuTown(r)}</a><a href="${nwsLink(hp)}" target="_blank" rel="noopener">NWS</a>${r.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}<a href="${mapLink(r)}" target="_blank" rel="noopener">Google Maps</a><a href="${dirLink(r, FROM)}" target="_blank" rel="noopener">Directions from ${ORIGIN[FROM].label}</a></div>
@@ -292,7 +290,7 @@ function toggle(id) { if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id); rend
 
 /* ----- desktop table ----- */
 const HEAD = [["name", "Route", ""], ["drive", "SLC h", "num"], ["drivePoc", "Poc h", "num"], ["arrive", "Arrive", "num"], ["miles", "Mi", "num"], ["gain", "Gain", "num"], ["high", "High", "num"]];
-const TAIL = [["avg", "Fri–Sun", "num"], ["wxs", "Wx", "num"], ["epic", "Epic", "num"], ["rating", "Rating", "num"]];
+const TAIL = [["avg", "Fri–Sun precip", "num"], ["rating", "Weather rating", "num"]];
 function renderBoard() {
   const t = document.getElementById("board-table"); t.textContent = "";
   const thead = document.createElement("thead"), hr = document.createElement("tr");
@@ -320,7 +318,7 @@ function renderBoard() {
       const p = pt.periods.find(x => x.n === n);
       h += p ? `<td class="wx"><span class="c ${q(p.p)}" title="${esc(p.s)} · ${esc(p.w)}">${p.t}°<small>${p.p}%</small></span></td>` : `<td class="wx">—</td>`;
     });
-    h += `<td class="num avg">${Math.round(ws.avg)}%${ws.snow ? " ·snow" : ""}</td><td class="num">${ws.score.toFixed(1)}</td><td class="num">${r.epic}</td><td class="num rating">${f.toFixed(1)}</td>`;
+    h += `<td class="num avg">${Math.round(ws.avg)}%${ws.snow ? " ·snow" : ""}</td><td class="num rating">${f.toFixed(1)}</td>`;
     tr.innerHTML = h;
     tr.addEventListener("click", e => { if (e.target.closest("a")) return; toggle(r.id); });
     tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(r.id); } });
@@ -341,9 +339,9 @@ function renderCards() {
     const pt = WX[r.id][PT], ws = hpScore(r), f = rating(r), open = OPEN.has(r.id), am = arriveMin(r), tl = trailLink(r);
     const el = document.createElement("div"); el.dataset.id = r.id; el.className = "card" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
     const strip = PERIODS.map((n, i) => { const p = pt.periods.find(x => x.n === n); return p ? `<div class="c ${q(p.p)}"><em>${PLABEL[i]}</em>${p.t}°<small>${p.p}%</small></div>` : `<div class="c">—</div>`; }).join("");
-    el.innerHTML = `<div class="top"><div class="rank">${rankOf(r)}</div><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]}</small></div><div class="score">${f.toFixed(1)}</div></div>
+    el.innerHTML = `<div class="top"><div class="rank">${rankOf(r)}</div><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]}</small></div><div class="score" title="Weather rating">${f.toFixed(1)}</div></div>
       <div class="line"><span class="${arrClass(am)}">${fmtTime(am)}</span> arrive · ${r.miles} mi · +${kft(r.gain)} ft · ${r.high.toLocaleString()} ft</div>
-      <div class="line">Fri–Sun ${Math.round(ws.avg)}%${ws.snow ? " snow" : ""} · epic ${r.epic} · permit ${permShort(r)} · ${driveHrs(r)} h</div>
+      <div class="line">Fri–Sun ${Math.round(ws.avg)}% precip${ws.snow ? ", snow" : ""} · permit ${permShort(r)} · ${driveHrs(r)} h</div>
       <div class="strip">${strip}</div>
       <div class="more"><span>${open ? "Less" : "Details"}</span><a href="${tl[1]}" target="_blank" rel="noopener">${esc(tl[0])}</a></div>${detailHTML(r)}`;
     el.querySelector(".top").addEventListener("click", () => toggle(r.id));
