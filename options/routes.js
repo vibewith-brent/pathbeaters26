@@ -72,7 +72,7 @@ const ROUTES = [
     days: [["Thu", "camp at Fourth of July TH", 0, 0, 0], ["Fri", "Ants Basin, Born Lakes, over Windy Devil (10,300), camp Hummock or Hourglass Lake", 9.5, 2600, 1900], ["Sat", "short lakes day: Headwall and Lonesome Lakes, back to camp", 4, 400, 400], ["Sun", "back over Windy Devil, camp Born Lakes", 5, 1300, 1400], ["Mon", "out via Ants Basin", 4.5, 700, 1300]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/boulder-chain-lakes-trail"], ["Backcountry Post report", "https://backcountrypost.com/threads/idahos-white-cloud-mountains-boulder-chain-lakes-chamberlain-basin.8734/"]] },
 
-  { id: "littleboulder", region: "id", name: "Boulder Chain Lakes up Little Boulder Creek (east side)", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Livingston Mill TH (7,200 ft)",
+  { id: "littleboulder", region: "id", name: "Boulder Chain Lakes up Little Boulder Creek (east side)", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Big Boulder Creek TH, Livingston Mill (7,100 ft)",
     miles: 27.5, gain: 5700, high: 10450, nights: "3 on trail", drive: 5.5, drivePoc: 3.5, driveNote: "Mackay, Challis, Clayton, then 10 mi of East Fork Salmon gravel", fly: "SLC Mon night",
     permits: "Free self-issue", bears: "Black bear only", wu: "id/mackay",
     epic: 9, logistics: 8, novelty: 10, done: "Never",
@@ -83,16 +83,16 @@ const ROUTES = [
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/little-boulder-creek-trail-to-hummock-lake"], ["The Roam Wild guide", "https://theroamwild.com/boulder-chain-lakes/"]] },
 
   { id: "bornlakes", region: "id", name: "Born Lakes + Four Lakes Basin + Quiet Lake", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Fourth of July TH (8,800 ft)",
-    miles: 20, gain: 5600, high: 10872, nights: "3 on trail", drive: 5.75, drivePoc: 4.25, driveNote: "Ketchum, over Galena, then 10 mi of decent dirt", fly: "SLC Mon night; BOI 3.5 hr",
+    miles: 18, gain: 4200, high: 10872, nights: "3 on trail", drive: 5.75, drivePoc: 4.25, driveNote: "Ketchum, over Galena, then 10 mi of decent dirt", fly: "SLC Mon night; BOI 3.5 hr",
     permits: "Free self-issue; group limit 12", bears: "Black bear only", wu: "id/stanley",
     epic: 9, logistics: 8, novelty: 10, done: "Never",
     why: [], whynot: [],
     shape: "Thu camp at Fourth of July TH · Fri Ants Basin to Born Lakes · Sat Four Lakes Basin, Quiet and Shallow Lakes · Sun Patterson Peak option, camp Born Lakes · Mon out.",
     sunOut: "Born Lakes → Fourth of July TH, ~5 mi",
-    days: [["Thu", "camp at Fourth of July TH", 0, 0, 0], ["Fri", "Fourth of July Lake, Ants Basin, camp Born Lakes", 4.5, 1300, 700], ["Sat", "Four Lakes Basin, Quiet Lake, Scree and Shallow Lakes, back to camp", 7, 2100, 2100], ["Sun", "Patterson Peak scramble or Washington Lake loop, camp Born Lakes", 4, 1500, 1500], ["Mon", "out via Ants Basin", 4.5, 700, 1300]],
+    days: [["Thu", "camp at Fourth of July TH", 0, 0, 0], ["Fri", "Fourth of July Lake, Ants Basin, camp Born Lakes", 4.5, 1300, 700], ["Sat", "day pack to Four Lakes Basin and Quiet Lake, back to camp", 6, 1500, 1500], ["Sun", "Washington Lake loop or a rest day, camp Born Lakes", 3, 700, 700], ["Mon", "out via Ants Basin", 4.5, 700, 1300]],
     links: [["AllTrails Born Lakes", "https://www.alltrails.com/trail/us/idaho/fourth-of-july-creek-to-born-lakes"], ["AllTrails Four Lakes Basin", "https://www.alltrails.com/trail/us/idaho/four-lakes-basin-to-quiet-lake-scree-lake-and-shallow-lake"]] },
 
-  { id: "champion", region: "id", name: "Champion Lakes under Washington Peak", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Champion Creek TH (Hwy 75 south of Stanley)",
+  { id: "champion", region: "id", name: "Champion Lakes under Washington Peak", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Champion Creek TH (7,400 ft, off Fourth of July Creek Rd)",
     miles: 23, gain: 4000, high: 9900, nights: "2\u20133 on trail", drive: 5.5, drivePoc: 4, driveNote: "Hwy 75 toward Clayton, then Champion Creek Rd dirt", fly: "SLC Mon night; BOI 3 hr",
     permits: "Free self-issue", bears: "Black bear only", wu: "id/stanley",
     epic: 9, logistics: 8, novelty: 10, done: "Never",
@@ -121,7 +121,7 @@ const ROUTES = [
     whynot: ["Same Thursday/Friday storm forecast as Kings.", "Out-and-back unless we do the long loop.", "Popular with Wyoming horse packers; expect stock at the lower lake."],
     shape: "Thu 6 pm hike 2 mi to the wilderness boundary meadows · Fri 9 mi to Lower Red Castle Lake, camp · Sat day pack: Upper Red Castle, Smiths Fork Pass, maybe the Wilson Peak ridge · Sun 7 mi back to Broadbent Meadow · Mon 4 mi out, home for dinner.",
     sunOut: "Lower Red Castle → China Meadows, ~11 mi, gentle",
-    days: [["Thu", "walk in to the wilderness-boundary meadows", 2, 200, 0], ["Fri", "to Lower Red Castle Lake", 9, 1600, 300], ["Sat", "day pack: Upper Red Castle Lake and the Smiths Fork Pass overlook", 7, 1200, 1200], ["Sun", "back to Broadbent Meadow", 7, 200, 1200], ["Mon", "out, home for dinner", 4, 100, 500]],
+    days: [["Thu", "walk in to the wilderness-boundary meadows", 2, 200, 0], ["Fri", "to Lower Red Castle Lake", 9, 1600, 300], ["Sat", "day pack: Upper Red Castle Lake and the Smiths Fork Pass overlook", 7, 1200, 1200], ["Sun", "down to Broadbent Meadow", 3, 100, 700], ["Mon", "out to China Meadows, home for dinner", 7, 200, 1000]],
     links: [["AllTrails (loop w/ Kings Peak)", "https://www.alltrails.com/trail/us/utah/red-castle-lake-and-king-s-peak-loop-from-china-meadows"]] },
 
   { id: "naturalist", region: "utm", name: "Naturalist + Four Lakes + Grandaddy Basins (Highline loop)", where: "High Uintas Wilderness, UT", th: "Highline TH, Hayden Pass (10,300 ft)",
@@ -204,17 +204,17 @@ const ROUTES = [
     links: [["CleverHiker guide", "https://www.cleverhiker.com/backpacking/big-needles-loop-canyonlands-backpacking-guide/"], ["Chesler Park AllTrails", "https://www.alltrails.com/trail/us/utah/chesler-park"], ["Visit Utah", "https://www.visitutah.com/things-to-do/backpacking/canyon-country-southern-utah/big-needles-loop-canyonlands"]] },
 
 
-  { id: "pioneers", region: "id", name: "Copper Basin: Goat, Betty, Baptie Lakes + Surprise Valley", where: "Pioneer Mountains, Salmon-Challis NF, ID", th: "Broad Canyon TH, Copper Basin (7,600 ft)",
+  { id: "pioneers", region: "id", name: "Copper Basin: Goat, Betty, Baptie Lakes + Surprise Valley", where: "Pioneer Mountains, Salmon-Challis NF, ID", th: "Broad Canyon TH, Copper Basin (7,800 ft)",
     miles: 23.5, gain: 4700, high: 10600, nights: "3", drive: 5, drivePoc: 3, driveNote: "Mackay, then 25 mi of Copper Basin gravel; high clearance helps", fly: "SLC Sun night or Mon",
     permits: "None", bears: "Black bear only", wu: "id/mackay",
     epic: 9, logistics: 8, novelty: 10, done: "Never",
     why: [], whynot: [],
     shape: "Thu camp at Broad Canyon TH · Fri Broad Canyon → Betty Lake under Standhope Peak (6 mi) · Sat over the divide to Surprise Valley lakes (5 mi), camp · Sun Goat Lake and Baptie Lake side trip, camp Surprise Valley · Mon 6 mi out the Fall Creek side, rigs shuttled 15 min.",
     sunOut: "Betty Lake → Broad Canyon TH, ~6 mi",
-    days: [["Thu", "camp at Broad Canyon TH", 0, 0, 0], ["Fri", "Broad Canyon to Betty Lake under Standhope Peak", 5.5, 2700, 100], ["Sat", "over the divide to the Surprise Valley lakes", 3.5, 400, 700], ["Sun", "Goat Lake and Baptie Lake side trip, camp Surprise Valley", 7, 1500, 1500], ["Mon", "out the Fall Creek side, rigs shuttled 15 min", 7.5, 100, 2900]],
+    days: [["Thu", "camp at Broad Canyon TH", 0, 0, 0], ["Fri", "Broad Canyon to Betty Lake under Standhope Peak", 5.5, 2700, 100], ["Sat", "over the divide to the Surprise Valley lakes", 3.5, 400, 700], ["Sun", "Goat Lake and Baptie Lake side trip, camp Surprise Valley", 7, 1500, 1500], ["Mon", "out the Jarvis Trail to the rigs, 250 yards from where we started", 7.5, 100, 2900]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/goat-betty-and-baptie-lakes-via-broad-canyon-trail-061-and-jarvis-trail"], ["Girl on a Hike loop", "https://girlonahike.com/hiking-goat-betty-baptie-lakes-via-broad-canyon-loop.html"]] },
 
-  { id: "bigboulder", region: "id", name: "Big Boulder Lakes via Walker Lake (east White Clouds)", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Livingston Mill TH (7,200 ft)",
+  { id: "bigboulder", region: "id", name: "Big Boulder Lakes via Walker Lake (east White Clouds)", where: "Cecil D. Andrus–White Clouds Wilderness, ID", th: "Big Boulder Creek TH, Livingston Mill (7,100 ft)",
     miles: 23.5, gain: 4600, high: 10800, nights: "2–3", drive: 5.5, drivePoc: 3.5, driveNote: "Mackay → Challis → Clayton, then 10 mi of East Fork Salmon gravel", fly: "SLC Sun night or Mon",
     permits: "Free self-issue", bears: "Black bear only", wu: "id/mackay",
     epic: 9, logistics: 8, novelty: 10, done: "Never",
