@@ -12,8 +12,8 @@
 <style>
   :root {
     color-scheme: light;
-    --paper: #f3f1ec; --surface: #fbfaf7; --ink: #1c1b18; --ink-2: #57544c; --muted: #8b877c;
-    --rule: #dcd8ce; --rule-2: #ebe8e0; --accent: #a0522d; --accent-ink: #7c3f22; --accent-bg: #f7efe9;
+    --paper: #ebe8e0; --surface: #ffffff; --ink: #1c1b18; --ink-2: #57544c; --muted: #857f73;
+    --rule: #cfcabd; --rule-2: #e6e2d8; --accent: #a0522d; --accent-ink: #7c3f22; --accent-bg: #f7efe9;
     --p1: #e9eef4; --p2: #d3dfeb; --p3: #b3c8dd; --p4: #8aa9c8; --p5: #5f88ad;
     --ok: #2f7a4f; --tight: #a8731a; --dark: #a0522d;
     --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -29,7 +29,7 @@
   a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
   button, select, input { font: inherit; }
 
-  nav.top { position: sticky; top: 0; z-index: 500; background: rgba(243,241,236,0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+  nav.top { position: sticky; top: 0; z-index: 500; background: rgba(235,232,224,0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
   nav.top .inner { max-width: 1360px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 11px 16px; }
   nav.top .brand { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; white-space: nowrap; color: var(--ink); margin-right: auto; }
   nav.top a.lnk { font-size: 13.5px; color: var(--ink-2); white-space: nowrap; text-decoration: none; }
@@ -41,7 +41,7 @@
   .meta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 10px; }
 
   /* ----- map ----- */
-  #map { height: 260px; border: 1px solid var(--rule); border-radius: 8px; margin-top: 14px; background: #e9e7e0; z-index: 1; }
+  #map { height: 260px; border: 1px solid var(--rule); border-radius: 10px; margin-top: 14px; background: #e4e1d9; z-index: 1; box-shadow: 0 1px 2px rgba(28,27,24,0.06); }
   @media (min-width: 760px) { #map { height: 420px; } }
   .leaflet-container { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 13px; }
   .leaflet-tooltip { background: var(--ink); color: var(--paper); border: none; border-radius: 4px; padding: 3px 7px; font-family: var(--mono); font-size: 11px; box-shadow: none; }
@@ -78,7 +78,7 @@
   .arr-ok { color: var(--ok); } .arr-tight { color: var(--tight); } .arr-dark { color: var(--dark); }
 
   /* ----- desktop table ----- */
-  .tblwrap { display: none; border: 1px solid var(--rule); border-radius: 6px; overflow-x: auto; background: var(--surface); margin-top: 14px; }
+  .tblwrap { display: none; border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto; background: var(--surface); margin-top: 14px; box-shadow: 0 1px 2px rgba(28,27,24,0.06), 0 3px 10px rgba(28,27,24,0.05); }
   @media (min-width: 760px) { .tblwrap { display: block; } }
   table { border-collapse: collapse; width: 100%; font-size: 13px; }
   th, td { padding: 8px 8px; border-bottom: 1px solid var(--rule-2); vertical-align: middle; white-space: nowrap; text-align: left; }
@@ -140,9 +140,9 @@
   .det .links a.primary { color: var(--paper); background: var(--ink); border-color: var(--ink); }
 
   /* ----- mobile cards ----- */
-  .cards { display: grid; margin-top: 12px; gap: 8px; }
+  .cards { display: grid; margin-top: 12px; gap: 12px; }
   @media (min-width: 760px) { .cards { display: none; } }
-  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px 10px; min-width: 0; overflow: hidden; }
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px 10px; min-width: 0; overflow: hidden; box-shadow: 0 1px 2px rgba(28,27,24,0.06), 0 3px 10px rgba(28,27,24,0.05); }
   .card.baseline { border-color: var(--accent); background: var(--accent-bg); }
   .card.hidden { display: none; }
   .card .top { display: flex; align-items: baseline; gap: 12px; cursor: pointer; }
