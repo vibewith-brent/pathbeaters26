@@ -24,6 +24,16 @@ const ROUTES = [
     days: [["Thu", "camp at Big Sandy TH (big, free, vault toilet)", 0, 0], ["Fri", "Big Sandy Lake, Jackass Pass, camp Lonesome Lake", 9, 2000], ["Sat", "Texas Pass, camp Shadow Lake or Washakie Creek", 7, 1200], ["Sun", "Fremont Trail to Dads or Marms Lake", 6, 500], ["Mon", "out to Big Sandy, drive home", 6, 200], ["Sun out", "Shadow Lake, Fremont Trail, Big Sandy; mostly gentle", 12, 700]],
     links: [["AllTrails", "https://www.alltrails.com/trail/us/wyoming/cirque-of-the-towers-to-fremont-trail-loop"], ["Bearfoot Theory guide", "https://bearfoottheory.com/cirque-of-the-towers-backpacking-wyoming/"], ["Girl on a Hike report", "https://girlonahike.com/hiking-the-cirque-of-the-towers-to-fremont-trail-loop.html"]] },
 
+  { id: "titcomb", region: "wy", name: "Titcomb Basin from Island Lake (Pole Creek Trail)", where: "Bridger Wilderness, Wind River Range, WY", th: "Elkhart Park TH (9,300 ft)",
+    miles: 30, gain: 4200, high: 10500, nights: "3 on trail", drive: 4.25, drivePoc: 4.25, driveNote: "paved to the trailhead, Pinedale is 15 mi away", fly: "SLC Mon night; JAC 1.5 hr",
+    permits: "None", bears: "Grizzly range; spray + storage required", wu: "wy/pinedale",
+    epic: 9, logistics: 8, novelty: 6, done: "Winds in 2022 and 2024",
+    why: [], whynot: [],
+    shape: "Thu camp at Elkhart Park · Fri 12 mi to Island Lake · Sat day-pack Titcomb Basin, camp Island Lake again · Sun 8 mi back to Seneca / Hobbs Lake · Mon 4 mi out.",
+    sunOut: "Island Lake → Elkhart Park, ~12 mi",
+    days: [["Thu","camp at Elkhart Park (campground at the trailhead)",0,0],["Fri","Pole Creek Trail past Seneca Lake to Island Lake",12,2200],["Sat","day pack into Titcomb Basin to the upper lake and back, camp Island Lake",6,900],["Sun","back over Lester Pass side to Seneca or Hobbs Lake",8,900],["Mon","out to Elkhart Park",4,200],["Sun out","Island Lake to Elkhart Park",12,1100]],
+    links: [["AllTrails", "https://www.alltrails.com/trail/us/wyoming/titcomb-basin-via-pole-creek-trail-crooks-lakes-loop"], ["Hiking Walking guide", "https://www.hikingwalking.com/destinations/wy/wy_ww/elkhart_park/bp_islandlake/titcomb_basin"]] },
+
   { id: "lizardhead", region: "wy", name: "Lizard Head Plateau → Cirque (Dickinson Park to Big Sandy)", where: "Popo Agie + Bridger Wilderness, Wind River Range, WY", th: "Bears Ears TH, Dickinson Park (9,300 ft) → Big Sandy TH",
     miles: 27, gain: 5000, high: 11864, nights: "3 on trail", drive: 5.5, drivePoc: 6.0, driveNote: "via Lander; 16 mi of rough dirt through the reservation to Dickinson Park", fly: "SLC Mon night or Tue",
     permits: "None; check Wind River Reservation road access", bears: "Grizzly possible; spray + storage", wu: "wy/lander",
@@ -174,7 +184,7 @@ const ROUTES = [
     links: [["AllTrails", "https://www.alltrails.com/trail/us/idaho/big-boulder-lakes-via-walker-lake"], ["Big Outside White Clouds", "https://thebigoutside.com/exploring-a-wilderness-hopeful-idahos-white-cloud-mountains/"]] },
 ];
 
-const SHORT = { spanish: "Spanish Peaks", cirque: "Cirque of the Towers", lizardhead: "Lizard Head Plateau",
+const SHORT = { spanish: "Spanish Peaks", cirque: "Cirque of the Towers", titcomb: "Titcomb Basin", lizardhead: "Lizard Head Plateau",
   alice: "Alice–Toxaway", kings: "Kings Peak", redcastle: "Red Castle",
   naturalist: "Naturalist Basin", tushar: "Tushar Skyline", grandgulch: "Grand Gulch", deathhollow: "Death Hollow", coyote: "Coyote Gulch", buckskin: "Buckskin Gulch",
   needles: "Needles loop", pioneers: "Copper Basin Pioneers", bigboulder: "Big Boulder Lakes" };
