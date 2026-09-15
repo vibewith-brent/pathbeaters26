@@ -136,21 +136,19 @@
   /* ----- mobile cards ----- */
   .cards { display: grid; margin-top: 12px; gap: 8px; }
   @media (min-width: 760px) { .cards { display: none; } }
-  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px 10px; min-width: 0; overflow: hidden; }
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px 10px; min-width: 0; overflow: hidden; }
   .card.baseline { border-color: var(--accent); background: var(--accent-bg); }
   .card.hidden { display: none; }
-  .card .top { display: flex; align-items: baseline; gap: 10px; cursor: pointer; }
-  .card .rank { font-family: var(--mono); font-size: 11px; color: var(--muted); min-width: 20px; }
-  .card .name { font-weight: 600; flex: 1; font-size: 16px; line-height: 1.2; min-width: 0; }
-  .card .name small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
-  .card .score { font-family: var(--mono); font-size: 18px; font-weight: 500; line-height: 1; }
-  .card .line { font-family: var(--mono); font-size: 12px; color: var(--ink-2); margin-top: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card .line + .line { margin-top: 3px; color: var(--muted); }
-  .card .line a { color: var(--ink); }
-  .card .strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; margin-top: 10px; font-family: var(--mono); font-size: 11px; text-align: center; }
-  .card .strip .c { border-radius: 4px; padding: 4px 0 3px; line-height: 1.2; min-width: 0; }
-  .card .strip .c small { display: block; font-size: 9px; opacity: 0.85; }
-  .card .strip .c em { display: block; font-style: normal; font-size: 8.5px; color: var(--muted); margin-bottom: 1px; }
+  .card .top { display: flex; align-items: baseline; gap: 12px; cursor: pointer; }
+  .card .name { font-weight: 600; flex: 1; font-size: 17px; line-height: 1.2; min-width: 0; }
+  .card .name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 3px; font-family: var(--mono); }
+  .card .score { font-family: var(--mono); font-size: 20px; font-weight: 500; line-height: 1; }
+  .card .line { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); margin-top: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 10px; font-family: var(--mono); font-size: 14px; text-align: center; }
+  .card .strip .c { border-radius: 5px; padding: 7px 0 6px; line-height: 1.25; min-width: 0; }
+  .card .strip .c small { display: inline; font-size: 11px; opacity: 0.8; margin-left: 4px; }
+  .card .strip .c small + small { display: block; margin: 2px 0 0; font-size: 10.5px; }
+  .card .strip .c em { display: block; font-style: normal; font-size: 10px; color: var(--muted); margin-bottom: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
   .card .strip .c.q4 em, .card .strip .c.q5 em { color: rgba(255,255,255,0.85); }
   .card .more { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; display: flex; justify-content: space-between; }
   .card .more a { color: var(--ink-2); text-decoration: none; }
@@ -179,7 +177,7 @@
 <header>
   <div class="lab">Sept 17–20, or 21 · leaving Pocatello or SLC around noon Thursday</div>
   <h1>Plan B board</h1>
-  <p>Spanish Peaks has the worst forecast on the page. Twenty-three alternatives below with the same stats and the same NWS forecast. Each plan has a Sunday hike-out option. Tap a route for details, or a marker on the map.</p>
+  <p>Spanish Peaks has the worst forecast on the page. Fourteen alternatives below, all 30 miles or less and 5,000 ft of gain or less, with the same stats and the same NWS forecast. Each plan has a Sunday hike-out option. Tap a route for details, or a marker on the map.</p>
   <div class="meta">Forecast <span id="st-updated">snapshot</span></div>
 </header>
 
@@ -208,6 +206,7 @@
   <div class="lab">Method</div>
   <ul>
     <li><strong>Forecast cells</strong>: high or low temperature over chance of precipitation, Thursday through Sunday night, from the NWS point forecast at the trailhead or a grid cell near the high point. Refreshed live on load; the snapshot is from Sept 14.</li>
+    <li><strong>Limits</strong>: every alternative is 30 miles or less with 5,000 ft of gain or less. Plan A is on the board for comparison at 5,500 ft.</li>
     <li><strong>Arrive</strong>: departure plus drive, no stops. Green is before 6 pm, amber is by sunset (about 7:30), red is after dark.</li>
     <li><strong>Weather rating</strong>: 0–10 from the Friday through Sunday night forecast at the high point. Average chance of precip is the main term; any period at 65% or more, a low under 28°F, or a snow mention costs extra points.</li>
     <li><strong>Drive</strong>: highway estimates from SLC airport and Pocatello, dirt not included. Southern Utah is 6–8.5 h from Pocatello.</li>
@@ -350,10 +349,9 @@ function renderCards() {
   ordered().forEach(r => {
     const pt = WX[r.id][PT], ws = hpScore(r), f = rating(r), open = OPEN.has(r.id), am = arriveMin(r), tl = trailLink(r);
     const el = document.createElement("div"); el.dataset.id = r.id; el.className = "card" + (r.id === "spanish" ? " baseline" : "") + (open ? " open" : "") + (shown(r) ? "" : " hidden");
-    const strip = PERIODS.map((n, i) => { const p = pt.periods.find(x => x.n === n); return p ? `<div class="c ${q(p.p)}"><em>${PLABEL[i]}</em>${p.t}°<small>${p.p}%</small></div>` : `<div class="c">—</div>`; }).join("");
-    el.innerHTML = `<div class="top"><div class="rank">${rankOf(r)}</div><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]}</small></div><div class="score" title="Weather rating">${f.toFixed(1)}</div></div>
-      <div class="line"><span class="${arrClass(am)}">${fmtTime(am)}</span> arrive · ${r.miles} mi · +${kft(r.gain)} ft · ${r.high.toLocaleString()} ft</div>
-      <div class="line">Fri–Sun ${Math.round(ws.avg)}% precip${ws.snow ? ", snow" : ""} · permit ${permShort(r)} · ${driveHrs(r)} h</div>
+    const strip = ["Thursday", "Friday", "Saturday", "Sunday"].map(n => { const d = pt.periods.find(x => x.n === n), nt = pt.periods.find(x => x.n === n + " Night"); return d ? `<div class="c ${q(d.p)}"><em>${n.slice(0, 3)}</em>${d.t}°<small>${nt ? nt.t + "°" : ""}</small><small>${d.p}%</small></div>` : `<div class="c">—</div>`; }).join("");
+    el.innerHTML = `<div class="top"><div class="name">${esc(short(r))}<small>${REGION_NAME[r.region]} · ${driveHrs(r)} h</small></div><div class="score" title="Weather rating">${f.toFixed(1)}</div></div>
+      <div class="line"><span class="${arrClass(am)}">${fmtTime(am)}</span> arrive · ${r.miles} mi · +${kft(r.gain)} ft${ws.snow ? " · snow" : ""}</div>
       <div class="strip">${strip}</div>
       <div class="more"><span>${open ? "Less" : "Details"}</span><a href="${tl[1]}" target="_blank" rel="noopener">${esc(tl[0])}</a></div>${detailHTML(r)}`;
     el.querySelector(".top").addEventListener("click", () => toggle(r.id));
